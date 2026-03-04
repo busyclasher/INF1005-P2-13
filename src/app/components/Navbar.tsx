@@ -1,0 +1,256 @@
+import { useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router';
+import { Menu, X, ChevronDown, LayoutDashboard, Settings, LogOut, Shield, Zap } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+
+const navLinks = [
+  { to: '/classes', label: 'Classes' },
+  { to: '/programmes', label: 'Programmes' },
+  { to: '/membership', label: 'Membership' },
+  { to: '/about', label: 'About Us' },
+];
+
+const LIME = '#C8F400';
+
+export function Navbar() {
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    setDropdownOpen(false);
+    setMobileOpen(false);
+    navigate('/');
+  };
+
+  return (
+    <header style={{ background: '#111111' }} className="sticky top-0 z-50 border-b border-white/5">
+      <nav
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16"
+        aria-label="Main navigation"
+      >
+        {/* Logo */}
+        <Link
+          to="/"
+          className="flex items-center gap-2 shrink-0 group"
+          aria-label="KineticHub – Home"
+        >
+          <span
+            className="flex items-center justify-center w-8 h-8 rounded-lg"
+            style={{ background: LIME }}
+          >
+            <Zap className="w-4 h-4" style={{ color: '#111' }} aria-hidden="true" />
+          </span>
+          <span className="text-white" style={{ fontWeight: 800, fontSize: '1.125rem', letterSpacing: '-0.02em' }}>
+            KINETIC<span style={{ color: LIME }}>HUB</span>
+          </span>
+        </Link>
+
+        {/* Desktop nav links */}
+        <div className="hidden md:flex items-center gap-1" role="list">
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              role="listitem"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-lg transition-colors text-sm ${
+                  isActive
+                    ? 'text-white bg-white/10'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                }`
+              }
+              style={{ fontWeight: 500 }}
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </div>
+
+        {/* Desktop auth */}
+        <div className="hidden md:flex items-center gap-3">
+          {isAuthenticated && user ? (
+            <div className="relative">
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                aria-expanded={dropdownOpen}
+                aria-haspopup="true"
+                aria-label="Account menu"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-white/70 hover:bg-white/10 transition-colors"
+              >
+                <span
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs"
+                  style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                >
+                  {user.avatarInitials}
+                </span>
+                <span className="max-w-[120px] truncate text-white">{user.name.split(' ')[0]}</span>
+                {user.role === 'admin' && (
+                  <span className="px-1.5 py-0.5 text-xs rounded" style={{ background: LIME, color: '#111', fontWeight: 600 }}>Admin</span>
+                )}
+                <ChevronDown className={`w-3.5 h-3.5 text-white/50 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+              </button>
+
+              {dropdownOpen && (
+                <div
+                  className="absolute right-0 mt-2 w-52 rounded-xl shadow-2xl border py-1 z-50"
+                  style={{ background: '#1a1a1a', borderColor: '#2a2a2a' }}
+                  role="menu"
+                  aria-label="Account options"
+                >
+                  <div className="px-4 py-2 border-b" style={{ borderColor: '#2a2a2a' }}>
+                    <p className="text-xs text-white/40">Signed in as</p>
+                    <p className="text-sm text-white truncate" style={{ fontWeight: 500 }}>{user.email}</p>
+                  </div>
+                  {user.role === 'admin' ? (
+                    <Link
+                      to="/admin"
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                      onClick={() => setDropdownOpen(false)}
+                      role="menuitem"
+                    >
+                      <Shield className="w-4 h-4 text-white/30" aria-hidden="true" />
+                      Admin Panel
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/dashboard"
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                      onClick={() => setDropdownOpen(false)}
+                      role="menuitem"
+                    >
+                      <LayoutDashboard className="w-4 h-4 text-white/30" aria-hidden="true" />
+                      My Dashboard
+                    </Link>
+                  )}
+                  <Link
+                    to={user.role === 'admin' ? '/admin' : '/dashboard'}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                    onClick={() => { setDropdownOpen(false); }}
+                    role="menuitem"
+                  >
+                    <Settings className="w-4 h-4 text-white/30" aria-hidden="true" />
+                    Settings
+                  </Link>
+                  <div className="border-t mt-1" style={{ borderColor: '#2a2a2a' }}>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                      role="menuitem"
+                    >
+                      <LogOut className="w-4 h-4" aria-hidden="true" />
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="px-4 py-2 text-sm text-white/70 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                style={{ fontWeight: 500 }}
+              >
+                Log in
+              </Link>
+              <Link
+                to="/register"
+                className="px-5 py-2 text-sm rounded-full transition-all hover:opacity-90"
+                style={{ background: LIME, color: '#111', fontWeight: 700 }}
+              >
+                Try for free
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden p-2 rounded-lg text-white/70 hover:bg-white/10 transition-colors"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-menu"
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+        >
+          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      </nav>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div
+          id="mobile-menu"
+          className="md:hidden border-t px-4 py-4"
+          style={{ background: '#111111', borderColor: '#2a2a2a' }}
+          role="navigation"
+          aria-label="Mobile navigation"
+        >
+          <div className="flex flex-col gap-1">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) =>
+                  `px-4 py-3 rounded-lg text-sm transition-colors ${
+                    isActive ? 'text-white bg-white/10' : 'text-white/60 hover:text-white hover:bg-white/5'
+                  }`
+                }
+                style={{ fontWeight: 500 }}
+                onClick={() => setMobileOpen(false)}
+              >
+                {link.label}
+              </NavLink>
+            ))}
+            <div className="border-t pt-3 mt-2 flex flex-col gap-2" style={{ borderColor: '#2a2a2a' }}>
+              {isAuthenticated && user ? (
+                <>
+                  <div className="flex items-center gap-3 px-4 py-2">
+                    <span
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
+                      style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                    >
+                      {user.avatarInitials}
+                    </span>
+                    <div>
+                      <p className="text-sm text-white" style={{ fontWeight: 600 }}>{user.name}</p>
+                      <p className="text-xs text-white/40">{user.membershipTier} member</p>
+                    </div>
+                  </div>
+                  {user.role === 'admin' ? (
+                    <Link to="/admin" className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm text-white/70 hover:bg-white/5" onClick={() => setMobileOpen(false)}>
+                      <Shield className="w-4 h-4" aria-hidden="true" /> Admin Panel
+                    </Link>
+                  ) : (
+                    <Link to="/dashboard" className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm text-white/70 hover:bg-white/5" onClick={() => setMobileOpen(false)}>
+                      <LayoutDashboard className="w-4 h-4" aria-hidden="true" /> My Dashboard
+                    </Link>
+                  )}
+                  <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm text-red-400 hover:bg-red-500/10 text-left">
+                    <LogOut className="w-4 h-4" aria-hidden="true" /> Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="px-4 py-3 rounded-lg text-sm text-white/70 hover:bg-white/5 text-center" onClick={() => setMobileOpen(false)}>
+                    Log in
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="px-4 py-3 rounded-full text-sm text-center transition-colors"
+                    style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Try for free
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}

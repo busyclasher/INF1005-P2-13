@@ -1,0 +1,260 @@
+import { MapPin, Phone, Mail, Clock, Award, Heart, Users, Zap } from 'lucide-react';
+import { teamMembers } from '../data/mockData';
+import { Link } from 'react-router';
+
+const STUDIO_IMG = 'https://images.unsplash.com/photo-1761971975769-97e598bf526b?w=1200&q=80';
+
+const values = [
+  { icon: Heart, title: 'Inclusivity', desc: 'Fitness is for everyone. We welcome all fitness levels, backgrounds, and abilities, creating a space where everyone belongs.' },
+  { icon: Award, title: 'Excellence', desc: 'We hold ourselves to the highest standards — in coaching quality, facility maintenance, and the member experience.' },
+  { icon: Users, title: 'Community', desc: 'We foster genuine connection between members and trainers, building a community that motivates and supports each other.' },
+  { icon: Zap, title: 'Innovation', desc: 'We continuously evolve our programmes, equipment, and technology to deliver the best possible training environment.' },
+];
+
+export function AboutPage() {
+  return (
+    <main>
+      {/* Hero */}
+      <section
+        className="relative py-24 bg-slate-900 flex items-center overflow-hidden"
+        aria-labelledby="about-heading"
+      >
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-25"
+          style={{ backgroundImage: `url(${STUDIO_IMG})` }}
+          aria-hidden="true"
+          role="img"
+          aria-label="KineticHub studio interior"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 to-slate-900/90" aria-hidden="true" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-orange-400 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            Our Story
+          </p>
+          <h1 id="about-heading" className="text-white mb-4" style={{ fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.5rem)', letterSpacing: '-0.02em' }}>
+            We exist to make you move
+          </h1>
+          <p className="text-slate-300 max-w-2xl mx-auto" style={{ fontSize: '1.125rem', lineHeight: 1.7 }}>
+            KineticHub was born from a simple belief: that expert fitness coaching, delivered in an inspiring environment, should be accessible to everyone — not just elite athletes.
+          </p>
+        </div>
+      </section>
+
+      {/* Our Story */}
+      <section className="py-16 bg-white" aria-labelledby="story-heading">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-orange-500 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                How We Started
+              </p>
+              <h2 id="story-heading" className="text-slate-900 mb-4" style={{ fontWeight: 800, fontSize: 'clamp(1.5rem, 3.5vw, 2.25rem)', letterSpacing: '-0.02em' }}>
+                Built by fitness professionals, for real people
+              </h2>
+              <div className="space-y-4 text-slate-600" style={{ lineHeight: 1.8 }}>
+                <p>
+                  KineticHub was founded in 2021 by a team of certified coaches and wellness professionals who were frustrated by the impersonal, intimidating nature of traditional gym culture. They envisioned a studio where every person — regardless of their starting point — would receive expert guidance, genuine encouragement, and a welcoming community.
+                </p>
+                <p>
+                  Starting with just two class formats and a converted railway arch in Shoreditch, KineticHub quickly grew through word of mouth. Members didn't just see results — they genuinely enjoyed the process. Today, we operate from a purpose-built 3,000 sq ft studio, offer six class formats across 36 weekly sessions, and have welcomed over 1,200 members through our doors.
+                </p>
+                <p>
+                  Our mission remains unchanged: to help every person who walks through our doors move with purpose, train with passion, and build a healthier, more confident version of themselves.
+                </p>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="rounded-3xl overflow-hidden aspect-[4/3]">
+                <img
+                  src={STUDIO_IMG}
+                  alt="KineticHub studio space showing modern fitness equipment and open floor"
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+              {/* Stats overlay */}
+              <div className="absolute -bottom-6 -left-6 bg-orange-500 rounded-2xl p-5 shadow-xl text-white hidden sm:block">
+                <p style={{ fontWeight: 800, fontSize: '2rem', lineHeight: 1 }}>1,200+</p>
+                <p className="text-orange-100 text-sm">Happy members</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="py-16 bg-slate-50" aria-labelledby="values-heading">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="text-orange-500 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+              What Drives Us
+            </p>
+            <h2 id="values-heading" className="text-slate-900" style={{ fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.25rem)', letterSpacing: '-0.02em' }}>
+              Our Core Values
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {values.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="bg-white rounded-2xl p-6 border border-slate-200 text-center hover:shadow-md transition-shadow">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Icon className="w-6 h-6 text-orange-500" aria-hidden="true" />
+                </div>
+                <h3 className="text-slate-900 mb-2" style={{ fontWeight: 700 }}>{title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team */}
+      <section className="py-16 bg-white" aria-labelledby="team-heading">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="text-orange-500 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+              The People Behind KineticHub
+            </p>
+            <h2 id="team-heading" className="text-slate-900 mb-3" style={{ fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.25rem)', letterSpacing: '-0.02em' }}>
+              Meet Our Trainers
+            </h2>
+            <p className="text-slate-500 max-w-xl mx-auto">
+              Our instructors are certified professionals with genuine passion for their disciplines — and for helping you succeed.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {teamMembers.map((member) => (
+              <article key={member.id} className="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden group" aria-label={`${member.name}, ${member.role}`}>
+                <div className="relative h-56 overflow-hidden">
+                  <img
+                    src={member.imageUrl}
+                    alt={member.name}
+                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" aria-hidden="true" />
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <span className="text-xs bg-orange-500 text-white px-2.5 py-1 rounded-full" style={{ fontWeight: 500 }}>
+                      {member.experience}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-slate-900 mb-0.5" style={{ fontWeight: 700 }}>{member.name}</h3>
+                  <p className="text-orange-500 text-sm mb-3" style={{ fontWeight: 500 }}>{member.role}</p>
+                  <p className="text-slate-500 text-sm leading-relaxed mb-4">{member.bio}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {member.specialities.map((s) => (
+                      <span key={s} className="text-xs px-2 py-0.5 bg-slate-200 text-slate-600 rounded-full">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Studio Details */}
+      <section className="py-16 bg-slate-50" aria-labelledby="studio-info-heading">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+              <p className="text-orange-500 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                Find Us
+              </p>
+              <h2 id="studio-info-heading" className="text-slate-900 mb-6" style={{ fontWeight: 800, fontSize: '1.75rem', letterSpacing: '-0.02em' }}>
+                Visit the Studio
+              </h2>
+              <address className="not-italic space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+                    <MapPin className="w-4 h-4 text-orange-500" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="text-slate-900 text-sm" style={{ fontWeight: 600 }}>Address</p>
+                    <p className="text-slate-500 text-sm">14 Kinetic Way, Shoreditch<br />London, EC2A 4BX</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+                    <Clock className="w-4 h-4 text-orange-500" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="text-slate-900 text-sm" style={{ fontWeight: 600 }}>Opening Hours</p>
+                    <div className="text-slate-500 text-sm space-y-0.5">
+                      <p>Monday – Friday: 05:30 – 22:00</p>
+                      <p>Saturday: 07:00 – 19:00</p>
+                      <p>Sunday: 08:00 – 17:00</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+                    <Phone className="w-4 h-4 text-orange-500" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="text-slate-900 text-sm" style={{ fontWeight: 600 }}>Phone</p>
+                    <a href="tel:+442071234567" className="text-slate-500 text-sm hover:text-orange-500 transition-colors">
+                      +44 (0)20 7123 4567
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+                    <Mail className="w-4 h-4 text-orange-500" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="text-slate-900 text-sm" style={{ fontWeight: 600 }}>Email</p>
+                    <a href="mailto:hello@kinetikhub.com" className="text-slate-500 text-sm hover:text-orange-500 transition-colors">
+                      hello@kinetikhub.com
+                    </a>
+                  </div>
+                </div>
+              </address>
+            </div>
+
+            {/* Map placeholder */}
+            <div className="bg-slate-200 rounded-2xl overflow-hidden min-h-[320px] flex items-center justify-center" aria-label="Map showing studio location">
+              <div className="text-center p-8">
+                <MapPin className="w-12 h-12 text-slate-400 mx-auto mb-3" aria-hidden="true" />
+                <p className="text-slate-600 text-sm" style={{ fontWeight: 500 }}>14 Kinetic Way, Shoreditch</p>
+                <p className="text-slate-400 text-xs mt-1">London EC2A 4BX</p>
+                <a
+                  href="https://maps.google.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition-colors"
+                  style={{ fontWeight: 500 }}
+                >
+                  Open in Maps
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-slate-900 py-14" aria-labelledby="about-cta">
+        <div className="max-w-xl mx-auto px-4 text-center">
+          <h2 id="about-cta" className="text-white mb-3" style={{ fontWeight: 800, fontSize: '2rem', letterSpacing: '-0.02em' }}>
+            Come say hello
+          </h2>
+          <p className="text-slate-400 mb-7">
+            Visit us for a free trial class and see for yourself what makes KineticHub different.
+          </p>
+          <Link
+            to="/register"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-colors"
+            style={{ fontWeight: 600 }}
+          >
+            Get Your Free Class
+          </Link>
+        </div>
+      </section>
+    </main>
+  );
+}
