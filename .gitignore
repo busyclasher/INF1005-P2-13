@@ -33,3 +33,4 @@ pgdata/
 # ML models
 *.joblib
 *.pkl
+.vercel
