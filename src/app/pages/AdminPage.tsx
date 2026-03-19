@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Navigate } from 'react-router';
 import {
   LayoutDashboard, Calendar, Users, BookOpen, Shield, LogOut,
   TrendingUp, CheckCircle2, XCircle, Plus, Search,
-  Edit3, Trash2, Eye,
+  Edit3, Trash2, Eye, Bell,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { adminMembers, adminBookings, fitnessClasses } from '../data/mockData';
 import { toast } from 'sonner';
 
-type AdminTab = 'overview' | 'classes' | 'members' | 'bookings';
+type AdminTab = 'overview' | 'classes' | 'members' | 'bookings'| 'notices';
 
 const statusColour: Record<string, string> = {
   Active: 'bg-green-100 text-green-700',
@@ -23,6 +23,15 @@ const bookingStatusColour: Record<string, string> = {
   Cancelled: 'bg-red-100 text-red-600',
 };
 
+type AdminNotice = {
+  id: number;
+  title: string;
+  content: string;
+  author_name: string;
+  created_at: string;
+  is_published: number;
+};
+
 export function AdminPage() {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -33,6 +42,14 @@ export function AdminPage() {
   const [bookings, setBookings] = useState(adminBookings);
   const [showAddClass, setShowAddClass] = useState(false);
   const [newClassName, setNewClassName] = useState('');
+  const [notices, setNotices] = useState<AdminNotice[]>([]);
+  const [noticesLoading, setNoticesLoading] = useState(false);
+  const [showAddNotice, setShowAddNotice] = useState(false);
+  const [noticeTitle, setNoticeTitle] = useState('');
+  const [noticeContent, setNoticeContent] = useState('');
+  const [noticeAuthorName, setNoticeAuthorName] = useState('');
+  const [noticeSubmitting, setNoticeSubmitting] = useState(false);
+  const [deletingNoticeId, setDeletingNoticeId] = useState<number | null>(null);
 
   if (!isAuthenticated || !user || user.role !== 'admin') {
     return <Navigate to="/login" replace />;
@@ -62,6 +79,101 @@ export function AdminPage() {
     toast.success('Booking cancelled.');
   };
 
+  const fetchNotices = async () => {
+    setNoticesLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:8000/api/notices.php');
+      const result: { success: boolean; data?: AdminNotice[]; error?: string } = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to fetch notices.');
+      }
+
+      setNotices(result.data || []);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to fetch notices.';
+      toast.error(message);
+    } finally {
+      setNoticesLoading(false);
+    }
+  };
+
+  const handleCreateNotice = async () => {
+    if (!noticeTitle.trim() || !noticeContent.trim() || !noticeAuthorName.trim()) {
+      toast.error('Please enter a title, content, and author name.');
+      return;
+    }
+
+    setNoticeSubmitting(true);
+
+    try {
+      const response = await fetch('http://localhost:8000/api/notices.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: noticeTitle.trim(),
+          content: noticeContent.trim(),
+          author_name: noticeAuthorName.trim(),
+        }),
+      });
+
+      const result: { success: boolean; data?: AdminNotice; error?: string } = await response.json();
+
+      if (!response.ok || !result.success || !result.data) {
+        throw new Error(result.error || 'Failed to create notice.');
+      }
+
+      setNotices((prev) => [result.data as AdminNotice, ...prev]);
+      setNoticeTitle('');
+      setNoticeContent('');
+      setNoticeAuthorName('');
+      setShowAddNotice(false);
+      toast.success('Notice created.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to create notice.';
+      toast.error(message);
+    } finally {
+      setNoticeSubmitting(false);
+    }
+  };
+
+  const handleDeleteNotice = async (id: number) => {
+    setDeletingNoticeId(id);
+
+    try {
+      const response = await fetch('http://localhost:8000/api/notices.php', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      const result: { success: boolean; error?: string } = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to delete notice.');
+      }
+
+      setNotices((prev) => prev.filter((notice) => notice.id !== id));
+      toast.success('Notice deleted.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to delete notice.';
+      toast.error(message);
+    } finally {
+      setDeletingNoticeId(null);
+    }
+  };
+
+  useEffect(() => {
+    if (tab === 'notices') {
+      void fetchNotices();
+    }
+  }, [tab]);
+
   const filteredMembers = members.filter(
     (m) =>
       m.name.toLowerCase().includes(memberSearch.toLowerCase()) ||
@@ -85,6 +197,7 @@ export function AdminPage() {
     { id: 'classes', label: 'Classes', icon: Calendar },
     { id: 'members', label: 'Members', icon: Users },
     { id: 'bookings', label: 'Bookings', icon: BookOpen },
+    { id: 'notices', label: 'Notices', icon: Bell },
   ];
 
   return (
@@ -509,6 +622,116 @@ export function AdminPage() {
                   {filteredBookings.length === 0 && (
                     <div className="p-10 text-center">
                       <p className="text-slate-400 text-sm">No bookings match your search.</p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* ── NOTICES ── */}
+            {tab === 'notices' && (
+              <section aria-labelledby="admin-notices-heading">
+                <div className="flex items-center justify-between mb-6">
+                  <h1 id="admin-notices-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>Manage Notices</h1>
+                  <button
+                    onClick={() => setShowAddNotice(!showAddNotice)}
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors"
+                    style={{ fontWeight: 600 }}
+                    aria-expanded={showAddNotice}
+                  >
+                    <Plus className="w-4 h-4" aria-hidden="true" /> Add Notice
+                  </button>
+                </div>
+
+                {showAddNotice && (
+                  <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-5" role="region" aria-label="Add new notice form">
+                    <h2 className="text-slate-900 mb-4" style={{ fontWeight: 600 }}>Add New Notice</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      <div className="sm:col-span-2">
+                        <label htmlFor="new-notice-title" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Title</label>
+                        <input
+                          id="new-notice-title"
+                          type="text"
+                          value={noticeTitle}
+                          onChange={(e) => setNoticeTitle(e.target.value)}
+                          placeholder="Notice title"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="new-notice-author" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Author Name</label>
+                        <input
+                          id="new-notice-author"
+                          type="text"
+                          value={noticeAuthorName}
+                          onChange={(e) => setNoticeAuthorName(e.target.value)}
+                          placeholder="Author name"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label htmlFor="new-notice-content" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Content</label>
+                        <textarea
+                          id="new-notice-content"
+                          value={noticeContent}
+                          onChange={(e) => setNoticeContent(e.target.value)}
+                          placeholder="Write the notice content"
+                          rows={5}
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-y"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => void handleCreateNotice()}
+                        disabled={noticeSubmitting}
+                        className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white text-sm rounded-lg transition-colors"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {noticeSubmitting ? 'Saving...' : 'Save Notice'}
+                      </button>
+                      <button
+                        onClick={() => setShowAddNotice(false)}
+                        className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors"
+                        style={{ fontWeight: 500 }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                  {noticesLoading ? (
+                    <div className="p-10 text-center">
+                      <p className="text-slate-400 text-sm">Loading notices...</p>
+                    </div>
+                  ) : notices.length === 0 ? (
+                    <div className="p-10 text-center">
+                      <p className="text-slate-400 text-sm">No notices available.</p>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-slate-100">
+                      {notices.map((notice) => (
+                        <div key={notice.id} className="p-5 flex items-start justify-between gap-4">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                              <p className="text-slate-900 text-sm" style={{ fontWeight: 700 }}>{notice.title}</p>
+                              <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full">{notice.author_name}</span>
+                            </div>
+                            <p className="text-slate-600 text-sm whitespace-pre-line">{notice.content}</p>
+                            <p className="text-slate-400 text-xs mt-2">Posted {new Date(notice.created_at).toLocaleString()}</p>
+                          </div>
+                          <button
+                            onClick={() => void handleDeleteNotice(notice.id)}
+                            disabled={deletingNoticeId === notice.id}
+                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 disabled:text-slate-300 rounded-lg transition-colors shrink-0"
+                            aria-label={`Delete ${notice.title}`}
+                          >
+                            <Trash2 className="w-4 h-4" aria-hidden="true" />
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
