@@ -73,6 +73,7 @@ export function RegisterPage() {
     agreeTerms: false,
     agreeMarketing: false,
   });
+  
 
   const update = (key: keyof FormData, value: string | boolean) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -101,18 +102,56 @@ export function RegisterPage() {
   };
 
   const handleNext = () => {
-    if (step === 0 && validateStep0()) setStep(1);
-    else if (step === 1 && validateStep1()) setStep(2);
+    console.log("handleNext called, current step:", step);
+    if (step === 0 && validateStep0()){
+      console.log("Step 0 validated, moving to step 1");
+      setStep(1);
+    } 
+    else if (step === 1 && validateStep1()){
+      console.log("Step 1 validated, moving to step 2");
+      setStep(2);
+    } 
   };
+
+  const handleRegister = async () => {
+
+    try {
+      const response = await fetch('http://35.212.166.173/register.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          phone_number: form.phone,
+          email: form.email,
+          password: form.password
+        })
+      });
+      const result = await response.json();
+      if (!result.success) {
+        console.error("Server error: ", result.error);
+        setErrors((errs) => ({ ...errs, submit: result.error || 'Registration failed.' }));
+        setSuccess(false);
+        return false;
+      }
+      return true;
+    } catch (error) {
+      setErrors((errs) => ({ ...errs, submit: 'Error while submitting to backend: ' + error }));
+      setSuccess(false);
+      return false;
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (step !== 2) return;
+    if (step !== 2) { return;}
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1200));
+    const registered = await handleRegister();
     setSubmitting(false);
-    setSuccess(true);
-    setTimeout(() => navigate('/login'), 2500);
+    if (registered) {
+      setSuccess(true);
+      setTimeout(() => navigate('/login'), 2500);
+    }
   };
 
   const pwStrength = passwordStrength(form.password);
@@ -479,6 +518,11 @@ export function RegisterPage() {
                 </button>
               )}
             </div>
+            {step === 2 && errors.firstName && (
+              <div className="mt-2 text-red-400 text-xs flex items-center gap-1" role="alert">
+                <span>{errors.firstName}</span>
+              </div>
+            )}
           </form>
 
           <div className="px-8 pb-6 text-center">

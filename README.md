@@ -1,7 +1,6 @@
 
   # Fitness Studio Website
 
-  This is a code bundle for Fitness Studio Website. The original project is available at https://www.figma.com/design/Ev2swuOLtQdo75ZjVGRf2b/Fitness-Studio-Website.
 
   ## Running the code
 
