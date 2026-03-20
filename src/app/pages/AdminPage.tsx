@@ -83,7 +83,7 @@ export function AdminPage() {
     setNoticesLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/notices.php');
+      const response = await fetch('http://35.212.166.173/backend/api/notices.php');
       const result: { success: boolean; data?: AdminNotice[]; error?: string } = await response.json();
 
       if (!response.ok || !result.success) {
@@ -108,7 +108,7 @@ export function AdminPage() {
     setNoticeSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/notices.php', {
+      const response = await fetch('http://35.212.166.173/backend/api/notices.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ export function AdminPage() {
     setDeletingNoticeId(id);
 
     try {
-      const response = await fetch('http://localhost:8000/api/notices.php', {
+      const response = await fetch('http://35.212.166.173/backend/api/notices.php', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ export function AdminPage() {
     { id: 'classes', label: 'Classes', icon: Calendar },
     { id: 'members', label: 'Members', icon: Users },
     { id: 'bookings', label: 'Bookings', icon: BookOpen },
-    { id: 'notices', label: 'Notices', icon: Bell },
+    { id: 'notices', label: 'Notices', icon: BookOpen }
   ];
 
   return (

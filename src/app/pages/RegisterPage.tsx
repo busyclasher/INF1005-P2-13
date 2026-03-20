@@ -116,7 +116,7 @@ export function RegisterPage() {
   const handleRegister = async () => {
 
     try {
-      const response = await fetch('http://35.212.166.173/register.php', {
+      const response = await fetch('http://35.212.166.173/backend/api/register.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
