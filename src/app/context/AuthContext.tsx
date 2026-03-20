@@ -1,86 +1,108 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type UserRole = 'member' | 'admin';
-
-export interface User {
-  id: string;
-  name: string;
+interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
   email: string;
-  role: UserRole;
-  membershipTier: string;
-  joinDate: string;
-  avatarInitials: string;
   phone?: string;
-  bookings: string[];
+  role: 'member' | 'admin' | 'instructor';
+  membershipTier?: string;
+  joinDate?: string;
 }
 
+// In AuthContext.tsx
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => { success: boolean; error?: string };
-  logout: () => void;
   isAuthenticated: boolean;
-  updateProfile: (data: Partial<User>) => void;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  logout: () => void;
+  loading: boolean;
+  updateProfile: (data: { firstName: string; lastName: string; phone?: string }) => void; // Add this
 }
 
-const DEMO_USERS: Array<User & { password: string }> = [
-  {
-    id: 'u1',
-    name: 'Alex Johnson',
-    email: 'member@kinetikhub.com',
-    password: 'Member@1234',
-    role: 'member',
-    membershipTier: 'Premium',
-    joinDate: '2024-06-15',
-    avatarInitials: 'AJ',
-    phone: '+44 7700 900123',
-    bookings: ['b1', 'b2', 'b3'],
-  },
-  {
-    id: 'u2',
-    name: 'Sarah Mitchell',
-    email: 'admin@kinetikhub.com',
-    password: 'Admin@1234',
-    role: 'admin',
-    membershipTier: 'Staff',
-    joinDate: '2023-01-10',
-    avatarInitials: 'SM',
-    phone: '+44 7700 900456',
-    bookings: [],
-  },
-];
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (email: string, password: string): { success: boolean; error?: string } => {
-    const found = DEMO_USERS.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-    );
-    if (found) {
-      const { password: _pwd, ...userWithoutPwd } = found;
-      setUser(userWithoutPwd);
-      return { success: true };
+  // Check for existing session on load
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
-    return { success: false, error: 'Invalid email address or password. Please try again.' };
+    setLoading(false);
+  }, []);
+
+  // In the AuthProvider component, add the updateProfile function:
+const updateProfile = (data: { firstName: string; lastName: string; phone?: string }) => {
+  if (user) {
+    const updatedUser = { ...user, ...data };
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  }
+};
+
+
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await fetch('http://35.212.166.173/backend/api/login.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const userData: User = {
+          id: data.user.user_id,
+          firstName: data.user.firstName,
+          lastName: data.user.lastName,
+          email: data.user.email,
+          role: data.user.role,
+          phone: data.user.phone || '',
+          membershipTier: data.user.membershipTier || 'Basic',
+          joinDate: data.user.joinDate || new Date().toISOString()
+        };
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+        return { success: true };
+      } else {
+        return { success: false, error: data.error };
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, error: 'Network error. Please try again.' };
+    }
   };
 
-  const logout = () => setUser(null);
-
-  const updateProfile = (data: Partial<User>) => {
-    if (user) setUser({ ...user, ...data });
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, updateProfile }}>
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated: !!user,
+      login,
+      logout,
+      loading,
+      updateProfile,
+    }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
-}
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

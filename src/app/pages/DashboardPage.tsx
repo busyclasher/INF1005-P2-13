@@ -8,6 +8,8 @@ import { useAuth } from '../context/AuthContext';
 import { adminBookings, membershipTiers } from '../data/mockData';
 import { toast } from 'sonner';
 
+
+
 type Tab = 'overview' | 'bookings' | 'profile' | 'membership';
 
 const statusColour: Record<string, string> = {
@@ -17,12 +19,28 @@ const statusColour: Record<string, string> = {
 };
 
 export function DashboardPage() {
+  console.log("Dashboard rendering");
   const { user, logout, isAuthenticated, updateProfile } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>('overview');
   const [editMode, setEditMode] = useState(false);
+  console.log("User data: ", user);
+    if (user) {
+    console.log("🔵 user.id:", user.id);
+    console.log("🔵 user.firstName:", user.firstName);
+    console.log("🔵 user.lastName:", user.lastName);
+    console.log("🔵 user.email:", user.email);
+    console.log("🔵 user.role:", user.role);
+    console.log("🔵 user.membershipTier:", user.membershipTier);
+    console.log("🔵 user.joinDate:", user.joinDate);
+    console.log("🔵 user.phone:", user.phone);
+  }
+  // Get user's full name
+  const fullName = user ? `${user.firstName} ${user.lastName}` : '';
+  const initials = user ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}` : 'U';
+  
   const [profileForm, setProfileForm] = useState({
-    name: user?.name || '',
+    name: fullName,
     phone: user?.phone || '',
   });
   const [profileErrors, setProfileErrors] = useState<{ name?: string }>({});
@@ -31,10 +49,13 @@ export function DashboardPage() {
     return <Navigate to="/login" replace />;
   }
 
-  const myBookings = adminBookings.filter((b) => b.memberId === user.id);
+  // For demo purposes - you'll need to implement actual bookings
+  const myBookings = adminBookings.filter((b) => b.memberId === String(user.id));
   const confirmedCount = myBookings.filter((b) => b.status === 'Confirmed').length;
   const attendedCount = myBookings.filter((b) => b.status === 'Attended').length;
-  const currentTier = membershipTiers.find((t) => t.name === user.membershipTier);
+  
+  // For membership - you'll need to add membershipTier to user or use default
+  const currentTier = membershipTiers.find((t) => t.name === (user.membershipTier || 'Basic'));
 
   const handleLogout = () => {
     logout();
@@ -46,7 +67,12 @@ export function DashboardPage() {
       setProfileErrors({ name: 'Name is required.' });
       return;
     }
-    updateProfile({ name: profileForm.name, phone: profileForm.phone });
+    // Split name back to firstName and lastName
+    const nameParts = profileForm.name.trim().split(' ') || [''];
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+    
+    updateProfile({ firstName, lastName, phone: profileForm.phone });
     setEditMode(false);
     toast.success('Profile updated successfully.');
   };
@@ -68,17 +94,17 @@ export function DashboardPage() {
               {/* Profile card */}
               <div className="bg-slate-900 p-5">
                 <div className="flex items-center gap-3">
-                  <span className="w-11 h-11 bg-orange-500 rounded-full flex items-center justify-center text-white" style={{ fontWeight: 700, fontSize: '1rem' }}>
-                    {user.avatarInitials}
+                  <span className="w-11 h-11 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-base">
+                    {initials}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-white text-sm truncate" style={{ fontWeight: 600 }}>{user.name}</p>
+                    <p className="text-white text-sm truncate font-semibold">{fullName}</p>
                     <p className="text-slate-400 text-xs truncate">{user.email}</p>
                   </div>
                 </div>
                 <div className="mt-3 flex items-center gap-1.5">
-                  <span className="px-2.5 py-0.5 bg-orange-500 text-white text-xs rounded-full" style={{ fontWeight: 500 }}>
-                    {user.membershipTier}
+                  <span className="px-2.5 py-0.5 bg-orange-500 text-white text-xs rounded-full font-medium">
+                    {user.membershipTier || 'Basic'}
                   </span>
                   <span className="text-slate-400 text-xs">Member</span>
                 </div>
@@ -121,8 +147,8 @@ export function DashboardPage() {
             {/* Overview */}
             {tab === 'overview' && (
               <section aria-labelledby="overview-heading">
-                <h1 id="overview-heading" className="text-slate-900 mb-6" style={{ fontWeight: 700, fontSize: '1.5rem' }}>
-                  Welcome back, {user.name.split(' ')[0]}! 👋
+                <h1 id="overview-heading" className="text-slate-900 mb-6 font-bold text-2xl">
+                  Welcome back, {user.firstName}! 👋
                 </h1>
 
                 {/* Stats */}
@@ -131,13 +157,13 @@ export function DashboardPage() {
                     { label: 'Upcoming Classes', value: confirmedCount, icon: Calendar, colour: 'text-blue-600', bg: 'bg-blue-50' },
                     { label: 'Classes Attended', value: attendedCount, icon: CheckCircle2, colour: 'text-green-600', bg: 'bg-green-50' },
                     { label: 'Total Bookings', value: myBookings.length, icon: Zap, colour: 'text-orange-600', bg: 'bg-orange-50' },
-                    { label: 'Member Since', value: new Date(user.joinDate).getFullYear(), icon: User, colour: 'text-purple-600', bg: 'bg-purple-50' },
+                    { label: 'Member Since', value: new Date(user.joinDate || Date.now()).getFullYear(), icon: User, colour: 'text-purple-600', bg: 'bg-purple-50' },
                   ].map(({ label, value, icon: Icon, colour, bg }) => (
                     <div key={label} className="bg-white rounded-xl border border-slate-200 p-4">
                       <div className={`w-9 h-9 ${bg} rounded-lg flex items-center justify-center mb-3`}>
                         <Icon className={`w-4 h-4 ${colour}`} aria-hidden="true" />
                       </div>
-                      <p className="text-slate-900" style={{ fontWeight: 800, fontSize: '1.5rem', lineHeight: 1 }}>{value}</p>
+                      <p className="text-slate-900 font-extrabold text-2xl leading-none">{value}</p>
                       <p className="text-slate-500 text-xs mt-1">{label}</p>
                     </div>
                   ))}
@@ -146,8 +172,8 @@ export function DashboardPage() {
                 {/* Upcoming bookings */}
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-slate-900" style={{ fontWeight: 700 }}>Upcoming Classes</h2>
-                    <button onClick={() => setTab('bookings')} className="text-orange-500 text-sm hover:underline" style={{ fontWeight: 500 }}>
+                    <h2 className="text-slate-900 font-bold">Upcoming Classes</h2>
+                    <button onClick={() => setTab('bookings')} className="text-orange-500 text-sm hover:underline font-medium">
                       View all
                     </button>
                   </div>
@@ -155,7 +181,7 @@ export function DashboardPage() {
                     <div className="text-center py-8">
                       <Calendar className="w-10 h-10 text-slate-300 mx-auto mb-2" aria-hidden="true" />
                       <p className="text-slate-500 text-sm">No upcoming bookings.</p>
-                      <Link to="/classes" className="text-orange-500 text-sm hover:underline mt-1 inline-block" style={{ fontWeight: 500 }}>Browse classes</Link>
+                      <Link to="/classes" className="text-orange-500 text-sm hover:underline mt-1 inline-block font-medium">Browse classes</Link>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -166,7 +192,7 @@ export function DashboardPage() {
                               <Calendar className="w-4 h-4 text-orange-500" aria-hidden="true" />
                             </div>
                             <div>
-                              <p className="text-slate-800 text-sm" style={{ fontWeight: 600 }}>{booking.className}</p>
+                              <p className="text-slate-800 text-sm font-semibold">{booking.className}</p>
                               <p className="text-slate-500 text-xs">{booking.day} at {booking.time}</p>
                             </div>
                           </div>
@@ -181,7 +207,7 @@ export function DashboardPage() {
 
                 {/* Quick links */}
                 <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                  <h2 className="text-slate-900 mb-4" style={{ fontWeight: 700 }}>Quick Actions</h2>
+                  <h2 className="text-slate-900 mb-4 font-bold">Quick Actions</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
                       { label: 'Book a Class', desc: 'Browse the weekly timetable', to: '/classes', icon: Calendar },
@@ -190,12 +216,12 @@ export function DashboardPage() {
                       { label: 'Edit Profile', desc: 'Update your details', action: () => setTab('profile'), icon: Settings },
                     ].map((item) => (
                       <div key={item.label} className="group">
-                        {'to' in item ? (
+                        {'to' in item && item.to ? (
                           <Link to={item.to} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-orange-50 transition-colors">
                             <div className="flex items-center gap-3">
                               <item.icon className="w-4 h-4 text-orange-500" aria-hidden="true" />
                               <div>
-                                <p className="text-slate-800 text-sm" style={{ fontWeight: 600 }}>{item.label}</p>
+                                <p className="text-slate-800 text-sm font-semibold">{item.label}</p>
                                 <p className="text-slate-400 text-xs">{item.desc}</p>
                               </div>
                             </div>
@@ -206,7 +232,7 @@ export function DashboardPage() {
                             <div className="flex items-center gap-3">
                               <item.icon className="w-4 h-4 text-orange-500" aria-hidden="true" />
                               <div>
-                                <p className="text-slate-800 text-sm" style={{ fontWeight: 600 }}>{item.label}</p>
+                                <p className="text-slate-800 text-sm font-semibold">{item.label}</p>
                                 <p className="text-slate-400 text-xs">{item.desc}</p>
                               </div>
                             </div>
@@ -220,28 +246,28 @@ export function DashboardPage() {
               </section>
             )}
 
-            {/* Bookings */}
+            {/* Bookings - Keep as is, it already uses correct properties */}
             {tab === 'bookings' && (
               <section aria-labelledby="bookings-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="bookings-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>My Bookings</h1>
-                  <Link to="/classes" className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors" style={{ fontWeight: 500 }}>
+                  <h1 id="bookings-heading" className="text-slate-900 font-bold text-2xl">My Bookings</h1>
+                  <Link to="/classes" className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-medium">
                     Book a Class
                   </Link>
                 </div>
                 {myBookings.length === 0 ? (
                   <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
                     <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" aria-hidden="true" />
-                    <p className="text-slate-600" style={{ fontWeight: 500 }}>No bookings yet</p>
+                    <p className="text-slate-600 font-medium">No bookings yet</p>
                     <p className="text-slate-400 text-sm">Browse our classes and book your first session.</p>
                   </div>
                 ) : (
                   <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-                    <table className="w-full" role="table" aria-label="My class bookings">
+                    <table className="w-full" role="table">
                       <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
                           {['Class', 'Day & Time', 'Booked On', 'Status'].map((h) => (
-                            <th key={h} scope="col" className="text-left text-xs text-slate-500 px-4 py-3" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <th key={h} scope="col" className="text-left text-xs text-slate-500 px-4 py-3 font-semibold uppercase tracking-wide">
                               {h}
                             </th>
                           ))}
@@ -251,7 +277,7 @@ export function DashboardPage() {
                         {myBookings.map((b) => (
                           <tr key={b.id} className="hover:bg-slate-50 transition-colors">
                             <td className="px-4 py-3.5">
-                              <p className="text-slate-800 text-sm" style={{ fontWeight: 600 }}>{b.className}</p>
+                              <p className="text-slate-800 text-sm font-semibold">{b.className}</p>
                             </td>
                             <td className="px-4 py-3.5">
                               <p className="text-slate-600 text-sm">{b.day}</p>
@@ -276,9 +302,9 @@ export function DashboardPage() {
             {tab === 'profile' && (
               <section aria-labelledby="profile-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="profile-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>My Profile</h1>
+                  <h1 id="profile-heading" className="text-slate-900 font-bold text-2xl">My Profile</h1>
                   {!editMode && (
-                    <button onClick={() => setEditMode(true)} className="px-4 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors" style={{ fontWeight: 500 }}>
+                    <button onClick={() => setEditMode(true)} className="px-4 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium">
                       Edit Profile
                     </button>
                   )}
@@ -287,7 +313,7 @@ export function DashboardPage() {
                   {editMode ? (
                     <div>
                       <div className="mb-4">
-                        <label htmlFor="profile-name" className="block text-slate-700 text-sm mb-1.5" style={{ fontWeight: 500 }}>Full Name</label>
+                        <label htmlFor="profile-name" className="block text-slate-700 text-sm mb-1.5 font-medium">Full Name</label>
                         <input
                           id="profile-name"
                           type="text"
@@ -300,12 +326,12 @@ export function DashboardPage() {
                         {profileErrors.name && <p className="mt-1 text-red-600 text-xs" role="alert">{profileErrors.name}</p>}
                       </div>
                       <div className="mb-4">
-                        <label htmlFor="profile-email" className="block text-slate-700 text-sm mb-1.5" style={{ fontWeight: 500 }}>Email Address</label>
+                        <label htmlFor="profile-email" className="block text-slate-700 text-sm mb-1.5 font-medium">Email Address</label>
                         <input id="profile-email" type="email" value={user.email} disabled className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-sm text-slate-500 cursor-not-allowed" />
                         <p className="mt-1 text-slate-400 text-xs">Email cannot be changed. Contact support if needed.</p>
                       </div>
                       <div className="mb-6">
-                        <label htmlFor="profile-phone" className="block text-slate-700 text-sm mb-1.5" style={{ fontWeight: 500 }}>Phone Number</label>
+                        <label htmlFor="profile-phone" className="block text-slate-700 text-sm mb-1.5 font-medium">Phone Number</label>
                         <input
                           id="profile-phone"
                           type="tel"
@@ -315,10 +341,10 @@ export function DashboardPage() {
                         />
                       </div>
                       <div className="flex gap-3">
-                        <button onClick={handleProfileSave} className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors" style={{ fontWeight: 600 }}>
+                        <button onClick={handleProfileSave} className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-semibold">
                           Save Changes
                         </button>
-                        <button onClick={() => { setEditMode(false); setProfileErrors({}); }} className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors" style={{ fontWeight: 500 }}>
+                        <button onClick={() => { setEditMode(false); setProfileErrors({}); }} className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium">
                           Cancel
                         </button>
                       </div>
@@ -326,15 +352,15 @@ export function DashboardPage() {
                   ) : (
                     <dl className="divide-y divide-slate-100">
                       {[
-                        { label: 'Full Name', value: user.name },
+                        { label: 'Full Name', value: fullName },
                         { label: 'Email Address', value: user.email },
                         { label: 'Phone Number', value: user.phone || 'Not provided' },
-                        { label: 'Member Since', value: new Date(user.joinDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) },
+                        { label: 'Member Since', value: new Date(user.joinDate || Date.now()).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) },
                         { label: 'Account Role', value: user.role === 'admin' ? 'Administrator' : 'Member' },
                       ].map(({ label, value }) => (
                         <div key={label} className="flex items-center justify-between py-3.5 gap-4">
                           <dt className="text-slate-500 text-sm">{label}</dt>
-                          <dd className="text-slate-800 text-sm text-right" style={{ fontWeight: 500 }}>{value}</dd>
+                          <dd className="text-slate-800 text-sm text-right font-medium">{value}</dd>
                         </div>
                       ))}
                     </dl>
@@ -346,21 +372,21 @@ export function DashboardPage() {
             {/* Membership */}
             {tab === 'membership' && (
               <section aria-labelledby="membership-dash-heading">
-                <h1 id="membership-dash-heading" className="text-slate-900 mb-6" style={{ fontWeight: 700, fontSize: '1.5rem' }}>My Membership</h1>
+                <h1 id="membership-dash-heading" className="text-slate-900 mb-6 font-bold text-2xl">My Membership</h1>
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
                   <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
                     <div>
                       <p className="text-slate-500 text-sm">Current Plan</p>
-                      <p className="text-slate-900 mt-0.5" style={{ fontWeight: 800, fontSize: '1.375rem' }}>{user.membershipTier}</p>
+                      <p className="text-slate-900 mt-0.5 font-extrabold text-xl">{user.membershipTier || 'Basic'}</p>
                     </div>
-                    <span className="px-3 py-1.5 bg-green-100 text-green-700 text-sm rounded-full" style={{ fontWeight: 600 }}>
+                    <span className="px-3 py-1.5 bg-green-100 text-green-700 text-sm rounded-full font-semibold">
                       Active
                     </span>
                   </div>
                   {currentTier && (
                     <>
-                      <p className="text-slate-900 mb-1" style={{ fontWeight: 700, fontSize: '1.875rem' }}>
-                        £{currentTier.monthlyPrice}<span className="text-slate-400 text-base" style={{ fontWeight: 400 }}>/month</span>
+                      <p className="text-slate-900 mb-1 font-bold text-3xl">
+                        £{currentTier.monthlyPrice}<span className="text-slate-400 text-base font-normal">/month</span>
                       </p>
                       <p className="text-slate-500 text-sm mb-5">{currentTier.description}</p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
@@ -374,23 +400,22 @@ export function DashboardPage() {
                     </>
                   )}
                   <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-100">
-                    <Link to="/membership" className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors" style={{ fontWeight: 600 }}>
+                    <Link to="/membership" className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-semibold">
                       Upgrade Plan
                     </Link>
-                    <button className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors" style={{ fontWeight: 500 }}>
+                    <button className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium">
                       Freeze Membership
                     </button>
-                    <button className="px-5 py-2.5 border border-red-200 text-red-500 text-sm rounded-lg hover:bg-red-50 transition-colors" style={{ fontWeight: 500 }}>
+                    <button className="px-5 py-2.5 border border-red-200 text-red-500 text-sm rounded-lg hover:bg-red-50 transition-colors font-medium">
                       Cancel Membership
                     </button>
                   </div>
                 </div>
 
-                {/* Billing notice */}
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
                   <AlertCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" aria-hidden="true" />
                   <div>
-                    <p className="text-blue-800 text-sm" style={{ fontWeight: 600 }}>Next billing date</p>
+                    <p className="text-blue-800 text-sm font-semibold">Next billing date</p>
                     <p className="text-blue-700 text-sm">Your next payment of £{currentTier?.monthlyPrice || 0} is due on 1 April 2026.</p>
                   </div>
                 </div>

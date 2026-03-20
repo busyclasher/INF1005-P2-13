@@ -18,6 +18,18 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+    const userInitials = user?.firstName && user?.lastName 
+    ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+    : user?.email?.[0]?.toUpperCase() || 'U';
+  
+  const userDisplayName = user?.firstName 
+    ? user.firstName 
+    : user?.email?.split('@')[0] || 'User';
+  
+  const userFullName = user?.firstName && user?.lastName
+    ? `${user.firstName} ${user.lastName}`
+    : user?.email?.split('@')[0] || 'User';
+
   const handleLogout = () => {
     logout();
     setDropdownOpen(false);
@@ -84,9 +96,9 @@ export function Navbar() {
                   className="w-7 h-7 rounded-full flex items-center justify-center text-xs"
                   style={{ background: LIME, color: '#111', fontWeight: 700 }}
                 >
-                  {user.avatarInitials}
+                  {userInitials}
                 </span>
-                <span className="max-w-[120px] truncate text-white">{user.name.split(' ')[0]}</span>
+                <span className="max-w-[120px] truncate text-white">{userDisplayName}</span>
                 {user.role === 'admin' && (
                   <span className="px-1.5 py-0.5 text-xs rounded" style={{ background: LIME, color: '#111', fontWeight: 600 }}>Admin</span>
                 )}
@@ -212,10 +224,10 @@ export function Navbar() {
                       className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
                       style={{ background: LIME, color: '#111', fontWeight: 700 }}
                     >
-                      {user.avatarInitials}
+                      {userInitials}
                     </span>
                     <div>
-                      <p className="text-sm text-white" style={{ fontWeight: 600 }}>{user.name}</p>
+                      <p className="text-sm text-white" style={{ fontWeight: 600 }}>{userDisplayName}</p>
                       <p className="text-xs text-white/40">{user.membershipTier} member</p>
                     </div>
                   </div>

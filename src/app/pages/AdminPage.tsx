@@ -33,7 +33,9 @@ type AdminNotice = {
 };
 
 export function AdminPage() {
+  console.log("Admin page: ");
   const { user, logout, isAuthenticated } = useAuth();
+  console.log("admin user data", user);
   const navigate = useNavigate();
   const [tab, setTab] = useState<AdminTab>('overview');
   const [memberSearch, setMemberSearch] = useState('');
@@ -210,10 +212,10 @@ export function AdminPage() {
               <div className="bg-slate-900 p-5">
                 <div className="flex items-center gap-3">
                   <span className="w-11 h-11 bg-orange-500 rounded-full flex items-center justify-center text-white" style={{ fontWeight: 700, fontSize: '1rem' }}>
-                    {user.avatarInitials}
+                    {user?.firstName?.[0]}{user?.lastName?.[0]}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-white text-sm truncate" style={{ fontWeight: 600 }}>{user.name}</p>
+                    <p className="text-white text-sm truncate" style={{ fontWeight: 600 }}>{user?.firstName} {user?.lastName}</p>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <Shield className="w-3 h-3 text-orange-400" aria-hidden="true" />
                       <span className="text-orange-400 text-xs" style={{ fontWeight: 500 }}>Administrator</span>
@@ -485,7 +487,7 @@ export function AdminPage() {
                             <td className="px-4 py-3.5">
                               <div className="flex items-center gap-2.5">
                                 <span className="w-7 h-7 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center text-xs shrink-0" style={{ fontWeight: 700 }}>
-                                  {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                  {member.name ? member.name.split(' ').map(n => n[0]).join('').slice(0, 2) : ''}
                                 </span>
                                 <div>
                                   <p className="text-slate-800 text-sm" style={{ fontWeight: 500 }}>{member.name}</p>

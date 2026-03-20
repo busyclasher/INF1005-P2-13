@@ -19,7 +19,7 @@ function validateEmail(email: string): boolean {
 }
 
 export function LoginPage() {
-  const { login, isAuthenticated, user } = useAuth();
+  const { login, isAuthenticated, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -29,6 +29,7 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [touched, setTouched] = useState({ email: false, password: false });
 
+  // Redirect if already authenticated
   if (isAuthenticated && user) {
     return <Navigate to={user.role === 'admin' ? '/admin' : '/dashboard'} replace />;
   }
@@ -53,28 +54,46 @@ export function LoginPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("handleSubmit triggered", { email, password });
     e.preventDefault();
+    
+    console.log("Validating fields...");
     setTouched({ email: true, password: true });
 
     const emailErr = validateField('email', email);
     const pwErr = validateField('password', password);
+    
+    console.log("Validation results:", { emailErr, pwErr });
+    
     if (emailErr || pwErr) {
+      console.log("Validation failed");
       setErrors({ email: emailErr, password: pwErr });
       return;
     }
 
+    console.log("Validation passed, attempting login...");
     setLoading(true);
     setErrors({});
-    await new Promise((r) => setTimeout(r, 600));
 
-    const result = login(email, password);
-    setLoading(false);
-
-    if (result.success) {
-      const loggedUser = { role: email === 'admin@kinetikhub.com' ? 'admin' : 'member' };
-      navigate(loggedUser.role === 'admin' ? '/admin' : '/dashboard', { replace: true });
-    } else {
-      setErrors({ general: result.error });
+    try {
+      console.log("Calling login from AuthContext...");
+      // Use the login function from AuthContext instead of direct fetch
+      const result = await login(email, password);
+      
+      console.log("Login result:", result);
+      
+      if (result.success) {
+        console.log("Login successful! Redirecting...");
+        // Navigation will happen automatically via the redirect check above
+      } else {
+        console.log("Login failed:", result.error);
+        setErrors({ general: result.error || 'Login failed. Please check your credentials.' });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setErrors({ general: 'Network error. Please try again.' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,6 +103,14 @@ export function LoginPage() {
         ? 'border-red-500/50 bg-red-500/10 focus:ring-red-500/30'
         : 'focus:ring-[#C8F400]/30 focus:border-[#C8F400]/50'
     }`;
+
+  if (authLoading) {
+    return (
+      <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center" style={{ background: DARK }}>
+        <div className="text-white">Loading...</div>
+      </main>
+    );
+  }
 
   return (
     <main
@@ -136,8 +163,7 @@ export function LoginPage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} noValidate aria-label="Login form">
-              {/* Email */}
+            <form onSubmit={handleSubmit} noValidate>
               <div className="mb-5">
                 <label htmlFor="email" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
                   Email address
@@ -162,7 +188,7 @@ export function LoginPage() {
                   required
                 />
                 {errors.email && (
-                  <p id="email-error" className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
+                  <p className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
                     <AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.email}
                   </p>
                 )}
@@ -209,7 +235,7 @@ export function LoginPage() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p id="password-error" className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
+                  <p className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
                     <AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.password}
                   </p>
                 )}
@@ -218,7 +244,7 @@ export function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-full transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-full transition-all hover:opacity-90 disabled:opacity-50"
                 style={{ background: LIME, color: '#111', fontWeight: 700 }}
                 aria-busy={loading}
               >
