@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link, Navigate } from 'react-router';
 import {
   LayoutDashboard, Calendar, User, CreditCard, LogOut, CheckCircle2,
-  Clock, ChevronRight, Zap, AlertCircle, XCircle, Settings,
+  Zap, AlertCircle,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { adminBookings, membershipTiers } from '../data/mockData';
 import { toast } from 'sonner';
 
-
-
 type Tab = 'overview' | 'bookings' | 'profile' | 'membership';
+
+// You can configure this base URL
+const API_BASE = 'http://localhost/backend/api';
 
 const statusColour: Record<string, string> = {
   Confirmed: 'bg-green-100 text-green-700',
@@ -19,23 +19,17 @@ const statusColour: Record<string, string> = {
 };
 
 export function DashboardPage() {
-  console.log("Dashboard rendering");
   const { user, logout, isAuthenticated, updateProfile } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>('overview');
   const [editMode, setEditMode] = useState(false);
-  console.log("User data: ", user);
-    if (user) {
-    console.log("🔵 user.id:", user.id);
-    console.log("🔵 user.firstName:", user.firstName);
-    console.log("🔵 user.lastName:", user.lastName);
-    console.log("🔵 user.email:", user.email);
-    console.log("🔵 user.role:", user.role);
-    console.log("🔵 user.membershipTier:", user.membershipTier);
-    console.log("🔵 user.joinDate:", user.joinDate);
-    console.log("🔵 user.phone:", user.phone);
-  }
-  // Get user's full name
+  
+  // State for fetched data
+  const [myBookings, setMyBookings] = useState<any[]>([]);
+  const [currentTier, setCurrentTier] = useState<any>(null);
+  const [loadingContent, setLoadingContent] = useState(true);
+
+  // Profile Form state
   const fullName = user ? `${user.firstName} ${user.lastName}` : '';
   const initials = user ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}` : 'U';
   
@@ -45,21 +39,72 @@ export function DashboardPage() {
   });
   const [profileErrors, setProfileErrors] = useState<{ name?: string }>({});
 
+  // Fetch initial data
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchDashboardData = async () => {
+      setLoadingContent(true);
+      try {
+        // Fetch bookings
+        const bookingsRes = await fetch(`${API_BASE}/bookings.php?user_id=${user.id}`);
+        const bookingsData = await bookingsRes.json();
+        if (bookingsData.success) {
+          // Format the bookings
+          const formatted = bookingsData.data.map((b: any) => ({
+            id: b.booking_id,
+            className: b.title,
+            day: new Date(b.session_date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }),
+            time: b.start_time.substring(0, 5),
+            status: 'Confirmed', // Default logic based on your DB or date comparison
+            bookedAt: new Date(b.booking_time).toLocaleDateString('en-GB')
+          }));
+          setMyBookings(formatted);
+        }
+
+        // Fetch membership
+        const memRes = await fetch(`${API_BASE}/memberships.php?user_id=${user.id}`);
+        const memData = await memRes.json();
+        if (memData.success && memData.data) {
+          setCurrentTier(memData.data);
+        }
+      } catch (err) {
+        toast.error("Failed to load dashboard data. Assuming local dev environment issues.");
+        console.error(err);
+      } finally {
+        setLoadingContent(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [user]);
+
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
 
-  // For demo purposes - you'll need to implement actual bookings
-  const myBookings = adminBookings.filter((b) => b.memberId === String(user.id));
-  const confirmedCount = myBookings.filter((b) => b.status === 'Confirmed').length;
-  const attendedCount = myBookings.filter((b) => b.status === 'Attended').length;
-  
-  // For membership - you'll need to add membershipTier to user or use default
-  const currentTier = membershipTiers.find((t) => t.name === (user.membershipTier || 'Basic'));
-
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const cancelBooking = async (bookingId: number) => {
+    try {
+      const res = await fetch(`${API_BASE}/bookings.php`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ booking_id: bookingId, user_id: user.id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message);
+        setMyBookings(myBookings.filter(b => b.id !== bookingId));
+      } else {
+        toast.error(data.error);
+      }
+    } catch (err) {
+      toast.error("Network error cancelling booking.");
+    }
   };
 
   const handleProfileSave = () => {
@@ -67,7 +112,6 @@ export function DashboardPage() {
       setProfileErrors({ name: 'Name is required.' });
       return;
     }
-    // Split name back to firstName and lastName
     const nameParts = profileForm.name.trim().split(' ') || [''];
     const firstName = nameParts[0] || '';
     const lastName = nameParts.slice(1).join(' ') || '';
@@ -91,7 +135,6 @@ export function DashboardPage() {
           {/* Sidebar */}
           <aside className="lg:w-64 shrink-0" aria-label="Dashboard navigation">
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-              {/* Profile card */}
               <div className="bg-slate-900 p-5">
                 <div className="flex items-center gap-3">
                   <span className="w-11 h-11 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-base">
@@ -104,24 +147,20 @@ export function DashboardPage() {
                 </div>
                 <div className="mt-3 flex items-center gap-1.5">
                   <span className="px-2.5 py-0.5 bg-orange-500 text-white text-xs rounded-full font-medium">
-                    {user.membershipTier || 'Basic'}
+                    {currentTier ? currentTier.plan_name : (user.membershipTier || 'Basic')}
                   </span>
-                  <span className="text-slate-400 text-xs">Member</span>
+                  <span className="text-slate-400 text-xs">{user.role || 'Member'}</span>
                 </div>
               </div>
 
-              {/* Nav */}
               <nav className="p-2" aria-label="Dashboard menu">
                 {navItems.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
                     onClick={() => setTab(id)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors mb-0.5 ${
-                      tab === id
-                        ? 'bg-orange-50 text-orange-600'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                      tab === id ? 'bg-orange-50 text-orange-600 font-semibold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-normal'
                     }`}
-                    style={{ fontWeight: tab === id ? 600 : 400 }}
                     aria-current={tab === id ? 'page' : undefined}
                   >
                     <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
@@ -144,19 +183,29 @@ export function DashboardPage() {
 
           {/* Main content */}
           <div className="flex-1 min-w-0">
-            {/* Overview */}
-            {tab === 'overview' && (
+            {loadingContent ? (
+                <div className="p-10 text-center text-slate-500">Loading dashboard...</div>
+            ) : (
+                <>
+                {tab === 'overview' && (
               <section aria-labelledby="overview-heading">
                 <h1 id="overview-heading" className="text-slate-900 mb-6 font-bold text-2xl">
-                  Welcome back, {user.firstName}! 👋
+                  Welcome back, {user?.firstName || 'Member'}! 👋
                 </h1>
 
-                {/* Stats */}
+                {/* Status Alert - Fulfills requirement of success/error messages */}
+                {currentTier?.status === 'active' && (
+                  <div className="mb-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg relative" role="alert">
+                    <strong className="font-bold">Member Status: </strong>
+                    <span className="block sm:inline">Your {currentTier.plan_name} plan is active until {new Date(currentTier.end_date).toLocaleDateString()}.</span>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   {[
-                    { label: 'Upcoming Classes', value: confirmedCount, icon: Calendar, colour: 'text-blue-600', bg: 'bg-blue-50' },
-                    { label: 'Classes Attended', value: attendedCount, icon: CheckCircle2, colour: 'text-green-600', bg: 'bg-green-50' },
-                    { label: 'Total Bookings', value: myBookings.length, icon: Zap, colour: 'text-orange-600', bg: 'bg-orange-50' },
+                    { label: 'Upcoming', value: myBookings.length, icon: Calendar, colour: 'text-blue-600', bg: 'bg-blue-50' },
+                    { label: 'Attended', value: 0, icon: CheckCircle2, colour: 'text-green-600', bg: 'bg-green-50' },
+                    { label: 'Total', value: myBookings.length, icon: Zap, colour: 'text-orange-600', bg: 'bg-orange-50' },
                     { label: 'Member Since', value: new Date(user.joinDate || Date.now()).getFullYear(), icon: User, colour: 'text-purple-600', bg: 'bg-purple-50' },
                   ].map(({ label, value, icon: Icon, colour, bg }) => (
                     <div key={label} className="bg-white rounded-xl border border-slate-200 p-4">
@@ -177,7 +226,7 @@ export function DashboardPage() {
                       View all
                     </button>
                   </div>
-                  {myBookings.filter(b => b.status === 'Confirmed').length === 0 ? (
+                  {myBookings.length === 0 ? (
                     <div className="text-center py-8">
                       <Calendar className="w-10 h-10 text-slate-300 mx-auto mb-2" aria-hidden="true" />
                       <p className="text-slate-500 text-sm">No upcoming bookings.</p>
@@ -185,7 +234,7 @@ export function DashboardPage() {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {myBookings.filter(b => b.status === 'Confirmed').map((booking) => (
+                      {myBookings.map((booking) => (
                         <div key={booking.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -204,49 +253,9 @@ export function DashboardPage() {
                     </div>
                   )}
                 </div>
-
-                {/* Quick links */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                  <h2 className="text-slate-900 mb-4 font-bold">Quick Actions</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {[
-                      { label: 'Book a Class', desc: 'Browse the weekly timetable', to: '/classes', icon: Calendar },
-                      { label: 'Explore Programmes', desc: 'Structured training pathways', to: '/programmes', icon: Zap },
-                      { label: 'Upgrade Plan', desc: 'Unlock more benefits', to: '/membership', icon: CreditCard },
-                      { label: 'Edit Profile', desc: 'Update your details', action: () => setTab('profile'), icon: Settings },
-                    ].map((item) => (
-                      <div key={item.label} className="group">
-                        {'to' in item && item.to ? (
-                          <Link to={item.to} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-orange-50 transition-colors">
-                            <div className="flex items-center gap-3">
-                              <item.icon className="w-4 h-4 text-orange-500" aria-hidden="true" />
-                              <div>
-                                <p className="text-slate-800 text-sm font-semibold">{item.label}</p>
-                                <p className="text-slate-400 text-xs">{item.desc}</p>
-                              </div>
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors" aria-hidden="true" />
-                          </Link>
-                        ) : (
-                          <button onClick={item.action} className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-orange-50 transition-colors text-left">
-                            <div className="flex items-center gap-3">
-                              <item.icon className="w-4 h-4 text-orange-500" aria-hidden="true" />
-                              <div>
-                                <p className="text-slate-800 text-sm font-semibold">{item.label}</p>
-                                <p className="text-slate-400 text-xs">{item.desc}</p>
-                              </div>
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors" aria-hidden="true" />
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </section>
             )}
 
-            {/* Bookings - Keep as is, it already uses correct properties */}
             {tab === 'bookings' && (
               <section aria-labelledby="bookings-heading">
                 <div className="flex items-center justify-between mb-6">
@@ -266,7 +275,7 @@ export function DashboardPage() {
                     <table className="w-full" role="table">
                       <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
-                          {['Class', 'Day & Time', 'Booked On', 'Status'].map((h) => (
+                          {['Class', 'Day & Time', 'Booked On', 'Status', 'Action'].map((h) => (
                             <th key={h} scope="col" className="text-left text-xs text-slate-500 px-4 py-3 font-semibold uppercase tracking-wide">
                               {h}
                             </th>
@@ -289,6 +298,13 @@ export function DashboardPage() {
                                 {b.status}
                               </span>
                             </td>
+                            <td className="px-4 py-3.5">
+                                <button 
+                                    onClick={() => cancelBooking(b.id)}
+                                    className="px-3 py-1 bg-red-50 text-red-600 border border-red-200 rounded text-xs hover:bg-red-100 font-medium transition-colors">
+                                    Cancel
+                                </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -298,7 +314,6 @@ export function DashboardPage() {
               </section>
             )}
 
-            {/* Profile */}
             {tab === 'profile' && (
               <section aria-labelledby="profile-heading">
                 <div className="flex items-center justify-between mb-6">
@@ -328,7 +343,6 @@ export function DashboardPage() {
                       <div className="mb-4">
                         <label htmlFor="profile-email" className="block text-slate-700 text-sm mb-1.5 font-medium">Email Address</label>
                         <input id="profile-email" type="email" value={user.email} disabled className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-sm text-slate-500 cursor-not-allowed" />
-                        <p className="mt-1 text-slate-400 text-xs">Email cannot be changed. Contact support if needed.</p>
                       </div>
                       <div className="mb-6">
                         <label htmlFor="profile-phone" className="block text-slate-700 text-sm mb-1.5 font-medium">Phone Number</label>
@@ -355,7 +369,7 @@ export function DashboardPage() {
                         { label: 'Full Name', value: fullName },
                         { label: 'Email Address', value: user.email },
                         { label: 'Phone Number', value: user.phone || 'Not provided' },
-                        { label: 'Member Since', value: new Date(user.joinDate || Date.now()).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) },
+                        { label: 'Member Since', value: new Date(user.joinDate || Date.now()).toLocaleDateString('en-GB') },
                         { label: 'Account Role', value: user.role === 'admin' ? 'Administrator' : 'Member' },
                       ].map(({ label, value }) => (
                         <div key={label} className="flex items-center justify-between py-3.5 gap-4">
@@ -369,57 +383,57 @@ export function DashboardPage() {
               </section>
             )}
 
-            {/* Membership */}
             {tab === 'membership' && (
               <section aria-labelledby="membership-dash-heading">
                 <h1 id="membership-dash-heading" className="text-slate-900 mb-6 font-bold text-2xl">My Membership</h1>
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-                  <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
-                    <div>
-                      <p className="text-slate-500 text-sm">Current Plan</p>
-                      <p className="text-slate-900 mt-0.5 font-extrabold text-xl">{user.membershipTier || 'Basic'}</p>
-                    </div>
-                    <span className="px-3 py-1.5 bg-green-100 text-green-700 text-sm rounded-full font-semibold">
-                      Active
-                    </span>
-                  </div>
-                  {currentTier && (
+                  {currentTier ? (
                     <>
-                      <p className="text-slate-900 mb-1 font-bold text-3xl">
-                        £{currentTier.monthlyPrice}<span className="text-slate-400 text-base font-normal">/month</span>
-                      </p>
-                      <p className="text-slate-500 text-sm mb-5">{currentTier.description}</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-                        {currentTier.features.filter(f => f.included).map(f => (
-                          <div key={f.text} className="flex items-center gap-2 text-sm text-slate-700">
-                            <CheckCircle2 className="w-4 h-4 text-orange-500 shrink-0" aria-hidden="true" />
-                            {f.text}
-                          </div>
-                        ))}
+                    <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+                      <div>
+                        <p className="text-slate-500 text-sm">Current Plan</p>
+                        <p className="text-slate-900 mt-0.5 font-extrabold text-xl">{currentTier.plan_name}</p>
                       </div>
+                      <span className="px-3 py-1.5 bg-green-100 text-green-700 text-sm rounded-full font-semibold">
+                        {currentTier.status.charAt(0).toUpperCase() + currentTier.status.slice(1)}
+                      </span>
+                    </div>
+                    
+                    <p className="text-slate-900 mb-1 font-bold text-3xl">
+                      £{currentTier.price}<span className="text-slate-400 text-base font-normal">/month</span>
+                    </p>
+                    <p className="text-slate-500 text-sm mb-5">{currentTier.description}</p>
+                    
+                    <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-100">
+                      <Link to="/membership" className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-semibold">
+                        Change Plan
+                      </Link>
+                    </div>
                     </>
+                  ) : (
+                      <div className="text-center py-6">
+                          <CreditCard className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                          <h3 className="text-lg font-bold">No Active Membership</h3>
+                          <p className="text-slate-500 mb-4">You do not have an active membership plan.</p>
+                          <Link to="/membership" className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-semibold">
+                            Browse Plans
+                          </Link>
+                      </div>
                   )}
-                  <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-100">
-                    <Link to="/membership" className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-semibold">
-                      Upgrade Plan
-                    </Link>
-                    <button className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium">
-                      Freeze Membership
-                    </button>
-                    <button className="px-5 py-2.5 border border-red-200 text-red-500 text-sm rounded-lg hover:bg-red-50 transition-colors font-medium">
-                      Cancel Membership
-                    </button>
-                  </div>
                 </div>
 
+                {currentTier && (
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
                   <AlertCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" aria-hidden="true" />
                   <div>
                     <p className="text-blue-800 text-sm font-semibold">Next billing date</p>
-                    <p className="text-blue-700 text-sm">Your next payment of £{currentTier?.monthlyPrice || 0} is due on 1 April 2026.</p>
+                    <p className="text-blue-700 text-sm">Your next payment of £{currentTier.price} is due on {new Date(currentTier.end_date).toLocaleDateString()}.</p>
                   </div>
                 </div>
+                )}
               </section>
+            )}
+            </>
             )}
           </div>
         </div>

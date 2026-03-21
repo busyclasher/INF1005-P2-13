@@ -1,7 +1,11 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { CheckCircle2, XCircle, ArrowRight, Zap, Info } from 'lucide-react';
-import { membershipTiers } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'sonner';
+
+// You can configure this base URL
+const API_BASE = 'http://localhost/backend/api';
 
 const faqItems = [
   {
@@ -9,58 +13,91 @@ const faqItems = [
     a: 'Monthly memberships can be cancelled with 30 days written notice. Annual memberships are non-refundable but can be frozen for up to 2 months per year.',
   },
   {
-    q: 'Can I freeze my membership?',
-    a: 'Yes. Standard and Premium members can freeze their membership for up to 1 month per year. Annual Elite members can freeze for up to 2 months.',
-  },
-  {
-    q: 'Do unused classes roll over?',
-    a: 'Essential plan classes do not roll over month to month. All unlimited plans give you full access every month regardless of attendance.',
-  },
-  {
-    q: 'Is there a joining fee?',
-    a: 'There is a one-time admin fee of £25 for all new members, waived during promotional periods.',
-  },
-  {
     q: 'Can I change my plan?',
     a: 'Yes. You can upgrade or downgrade your plan at any time via your member dashboard or by contacting us directly.',
   },
 ];
 
-const tierAccentColour: Record<string, string> = {
-  essential: 'text-slate-600',
-  standard: 'text-orange-500',
-  premium: 'text-orange-600',
-  annual: 'text-amber-600',
-};
+const tierAccentColour = ['text-slate-600', 'text-orange-500', 'text-orange-600', 'text-amber-600'];
+const tierBorderColour = ['border-slate-200', 'border-orange-300', 'border-orange-400', 'border-amber-400'];
 
-const tierBorderColour: Record<string, string> = {
-  essential: 'border-slate-200',
-  standard: 'border-orange-300',
-  premium: 'border-orange-400',
-  annual: 'border-amber-400',
-};
-
-const allFeatures = [
-  'Classes per month',
-  'Unlimited classes',
-  'Access to studio facilities',
-  'Member app access',
-  'PT sessions per month',
-  'Nutrition guidance',
-  'Priority booking',
-  'Guest passes',
-  'Body composition analysis',
+const hardcodedFeatures = [
+    { text: 'Access to gym equipment', included: true },
+    { text: 'Group classes', included: true },
+    { text: 'Personal Training', included: false },
+    { text: 'Locker use', included: true },
 ];
 
 export function MembershipPage() {
-  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
+  // Always use monthly for now since DB only has one price column
+  const [billing] = useState<'monthly'>('monthly');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [plans, setPlans] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  const displayPrice = (tier: typeof membershipTiers[0]) =>
-    billing === 'annual' ? Math.round(tier.annualPrice / 12) : tier.monthlyPrice;
+  useEffect(() => {
+    const fetchPlans = async () => {
+        try {
+            const res = await fetch(`${API_BASE}/membership_plans.php`);
+            const data = await res.json();
+            if (data.success) {
+                setPlans(data.data);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    }
+    fetchPlans();
+  }, []);
 
-  const saving = (tier: typeof membershipTiers[0]) =>
-    Math.round(((tier.monthlyPrice * 12 - tier.annualPrice) / (tier.monthlyPrice * 12)) * 100);
+  const handleSubscribe = async (planId: number) => {
+    if (!isAuthenticated || !user) {
+        toast.info("Please log in to subscribe to a plan.");
+        navigate('/login');
+        return;
+    }
+
+    try {
+        // We will try to POST first. If it fails due to active membership, we could PUT.
+        // For simplicity, let's just POST. Our memberships.php PUT method is also available.
+        // We will do a generic approach: if they get the "already active" error, we will use PUT.
+        const res = await fetch(`${API_BASE}/memberships.php`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ user_id: user.id, plan_id: planId })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            toast.success(data.message);
+            navigate('/dashboard');
+        } else {
+            // If they already have a membership, try updating it
+            if (data.error.includes("already have an active membership")) {
+                const putRes = await fetch(`${API_BASE}/memberships.php`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: user.id, new_plan_id: planId })
+                });
+                const putData = await putRes.json();
+                if (putData.success) {
+                    toast.success(putData.message);
+                    navigate('/dashboard');
+                } else {
+                    toast.error(putData.error);
+                }
+            } else {
+                toast.error(data.error);
+            }
+        }
+    } catch (err) {
+        toast.error("Network error while subscribing.");
+    }
+  };
 
   return (
     <main>
@@ -76,185 +113,65 @@ export function MembershipPage() {
           <p className="text-slate-400 max-w-xl mx-auto mb-8">
             Choose the plan that fits your lifestyle. No hidden fees. No long-term lock-ins on monthly plans.
           </p>
-
-          {/* Billing toggle */}
-          <div
-            className="inline-flex items-center bg-slate-800 rounded-xl p-1 gap-1"
-            role="group"
-            aria-label="Billing period"
-          >
-            <button
-              onClick={() => setBilling('monthly')}
-              className={`px-5 py-2 rounded-lg text-sm transition-all ${
-                billing === 'monthly'
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-              style={{ fontWeight: 500 }}
-              aria-pressed={billing === 'monthly'}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBilling('annual')}
-              className={`px-5 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${
-                billing === 'annual'
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-              style={{ fontWeight: 500 }}
-              aria-pressed={billing === 'annual'}
-            >
-              Annual
-              <span className="px-1.5 py-0.5 bg-orange-500 text-white text-xs rounded-full">Save up to 18%</span>
-            </button>
-          </div>
         </div>
       </section>
 
       {/* Pricing Cards */}
       <section className="bg-slate-50 py-16" aria-label="Membership pricing">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-            {membershipTiers.map((tier) => (
+            {loading ? (
+                <div className="text-center text-slate-500 py-12">Loading plans...</div>
+            ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 justify-center">
+            {plans.map((tier, index) => (
               <article
-                key={tier.id}
-                className={`bg-white rounded-2xl border-2 ${tierBorderColour[tier.id]} overflow-hidden flex flex-col ${
-                  tier.popular ? 'shadow-xl relative' : ''
-                }`}
-                aria-label={`${tier.name} plan`}
+                key={tier.plan_id}
+                className={`bg-white rounded-2xl border-2 ${tierBorderColour[index % tierBorderColour.length]} overflow-hidden flex flex-col`}
+                aria-label={`${tier.plan_name} plan`}
               >
-                {tier.popular && (
-                  <div className="bg-orange-500 text-white text-center text-xs py-1.5" style={{ fontWeight: 600 }}>
-                    ★ Most Popular
-                  </div>
-                )}
-                {tier.badge && !tier.popular && (
-                  <div className="bg-amber-500 text-white text-center text-xs py-1.5" style={{ fontWeight: 600 }}>
-                    {tier.badge}
-                  </div>
-                )}
-
                 <div className="p-6 flex-1 flex flex-col">
-                  <h2 className={`mb-1 ${tierAccentColour[tier.id]}`} style={{ fontWeight: 700, fontSize: '1.125rem' }}>
-                    {tier.name}
+                  <h2 className={`mb-1 ${tierAccentColour[index % tierAccentColour.length]}`} style={{ fontWeight: 700, fontSize: '1.25rem' }}>
+                    {tier.plan_name}
                   </h2>
                   <p className="text-slate-500 text-sm mb-5">{tier.description}</p>
 
                   {/* Price */}
-                  <div className="mb-1">
+                  <div className="mb-6">
                     <span className="text-slate-900" style={{ fontWeight: 800, fontSize: '2.5rem', lineHeight: 1 }}>
-                      £{displayPrice(tier)}
+                      £{tier.price}
                     </span>
                     <span className="text-slate-500 text-sm">/mo</span>
                   </div>
-                  {billing === 'annual' && (
-                    <p className="text-xs text-green-600 mb-4" style={{ fontWeight: 500 }}>
-                      Billed annually · Save {saving(tier)}%
-                    </p>
-                  )}
-                  {billing === 'monthly' && <div className="mb-4" />}
 
                   {/* Features */}
-                  <ul className="space-y-2.5 mb-6 flex-1">
-                    {tier.features.map((f) => (
-                      <li key={f.text} className="flex items-start gap-2.5">
-                        {f.included ? (
-                          <CheckCircle2 className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" aria-hidden="true" />
-                        ) : (
-                          <XCircle className="w-4 h-4 text-slate-300 shrink-0 mt-0.5" aria-hidden="true" />
-                        )}
-                        <span className={`text-sm ${f.included ? 'text-slate-700' : 'text-slate-400'}`}>
-                          {f.text}
-                        </span>
-                      </li>
+                  <ul className="space-y-2.5 mb-8 flex-1">
+                    {/* Simulated features since our DB doesn't store feature list */}
+                    {hardcodedFeatures.map((f, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                            {f.included || index > 0 ? (
+                            <CheckCircle2 className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" aria-hidden="true" />
+                            ) : (
+                            <XCircle className="w-4 h-4 text-slate-300 shrink-0 mt-0.5" aria-hidden="true" />
+                            )}
+                            <span className={`text-sm ${f.included || index > 0 ? 'text-slate-700' : 'text-slate-400'}`}>
+                            {f.text}
+                            </span>
+                        </li>
                     ))}
                   </ul>
 
-                  <Link
-                    to="/register"
-                    className={`w-full text-center py-3 rounded-xl text-sm transition-colors ${
-                      tier.popular
-                        ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                        : 'bg-slate-900 hover:bg-slate-800 text-white'
-                    }`}
+                  <button
+                    onClick={() => handleSubscribe(tier.plan_id)}
+                    className={`w-full text-center py-3 rounded-xl text-sm transition-colors bg-slate-900 hover:bg-slate-800 text-white`}
                     style={{ fontWeight: 600 }}
-                    aria-label={`Get started with ${tier.name} plan`}
                   >
-                    Get Started
-                  </Link>
+                    Select Plan
+                  </button>
                 </div>
               </article>
             ))}
           </div>
-
-          {/* Money back notice */}
-          <div className="mt-8 flex items-center justify-center gap-2 text-slate-500 text-sm">
-            <Zap className="w-4 h-4 text-orange-400" aria-hidden="true" />
-            All plans include a 7-day satisfaction guarantee. No questions asked.
-          </div>
-        </div>
-      </section>
-
-      {/* Comparison Table */}
-      <section className="py-16 bg-white overflow-x-auto" aria-labelledby="comparison-heading">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 id="comparison-heading" className="text-slate-900 mb-2" style={{ fontWeight: 800, fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.02em' }}>
-              Plan Comparison
-            </h2>
-            <p className="text-slate-500 text-sm">A full breakdown of what's included in each plan.</p>
-          </div>
-
-          <div className="min-w-[640px]">
-            <table className="w-full border-collapse" role="table" aria-label="Membership plan feature comparison">
-              <thead>
-                <tr>
-                  <th scope="col" className="text-left text-sm text-slate-500 pb-4 pr-4 w-48" style={{ fontWeight: 500 }}>
-                    Feature
-                  </th>
-                  {membershipTiers.map((tier) => (
-                    <th key={tier.id} scope="col" className="text-center pb-4 px-4">
-                      <span className={`text-sm ${tierAccentColour[tier.id]}`} style={{ fontWeight: 700 }}>
-                        {tier.name}
-                      </span>
-                      <br />
-                      <span className="text-slate-400 text-xs">
-                        £{displayPrice(tier)}/mo
-                      </span>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {membershipTiers[0].features.map((feature, i) => (
-                  <tr key={feature.text} className={i % 2 === 0 ? 'bg-slate-50' : 'bg-white'}>
-                    <td className="text-sm text-slate-700 py-3 pr-4 pl-3 rounded-l-lg" style={{ fontWeight: 500 }}>
-                      {feature.text}
-                    </td>
-                    {membershipTiers.map((tier) => {
-                      const f = tier.features[i];
-                      return (
-                        <td key={tier.id} className="text-center py-3 px-4">
-                          {f.included ? (
-                            <CheckCircle2
-                              className="w-5 h-5 text-orange-500 mx-auto"
-                              aria-label="Included"
-                            />
-                          ) : (
-                            <XCircle
-                              className="w-5 h-5 text-slate-300 mx-auto"
-                              aria-label="Not included"
-                            />
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+            )}
         </div>
       </section>
 
@@ -271,13 +188,10 @@ export function MembershipPage() {
                   <button
                     onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                     className="w-full flex items-center justify-between px-5 py-4 text-left"
-                    aria-expanded={openFaq === idx}
-                    aria-controls={`faq-answer-${idx}`}
                   >
                     <span className="text-slate-800 text-sm pr-4" style={{ fontWeight: 600 }}>{item.q}</span>
                     <Info
                       className={`w-4 h-4 shrink-0 transition-colors ${openFaq === idx ? 'text-orange-500' : 'text-slate-400'}`}
-                      aria-hidden="true"
                     />
                   </button>
                 </dt>
@@ -292,22 +206,6 @@ export function MembershipPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-orange-500 py-14" aria-labelledby="membership-cta">
-        <div className="max-w-xl mx-auto px-4 text-center">
-          <h2 id="membership-cta" className="text-white mb-3" style={{ fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.02em' }}>
-            Start your journey today
-          </h2>
-          <p className="text-orange-100 mb-7">Join KineticHub and experience a new level of fitness. Your first class is free.</p>
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-orange-600 rounded-xl hover:bg-orange-50 transition-colors"
-            style={{ fontWeight: 700 }}
-          >
-            Join Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
-          </Link>
-        </div>
-      </section>
     </main>
   );
 }
