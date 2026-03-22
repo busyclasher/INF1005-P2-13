@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 type Tab = 'overview' | 'bookings' | 'profile' | 'membership';
 
 // You can configure this base URL
-const API_BASE = 'http://localhost/backend/api';
+const API_BASE = 'http://35.212.166.173/backend/api';
 
 const statusColour: Record<string, string> = {
   Confirmed: 'bg-green-100 text-green-700',

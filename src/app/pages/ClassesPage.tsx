@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 
-const API_BASE = 'http://localhost/backend/api';
+const API_BASE = 'http://35.212.166.173/backend/api';
 
 type Category = 'all' | 'yoga' | 'hiit' | 'cycling' | 'pilates' | 'boxing' | 'barre';
 type Intensity = 'all' | 'Low' | 'Medium' | 'High';

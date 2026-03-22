@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 
 // You can configure this base URL
-const API_BASE = 'http://localhost/backend/api';
+const API_BASE = 'http://35.212.166.173/backend/api';
 
 const faqItems = [
   {
