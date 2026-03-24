@@ -1,20 +1,39 @@
 <?php
-// Database connection configuration
+// db_config.php - Centralised Database Connection
 
-$db_host = '127.0.0.1';
-$db_port = 3306;
-$db_username = 'inf1005-sqldev';
-$db_password = 'KkUufX74-6hM';
-$db_name = 'assignment';
+// Never expose PHP errors to the client in any environment
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
-// Create connection
-$conn = new mysqli($db_host, $db_username, $db_password, $db_name, $db_port);
-
-// Check connection
-if ($conn->connect_error) {
-    die(json_encode(['error' => 'Database connection failed: ' . $conn->connect_error]));
+// Load .env file from the backend directory
+$envFile = __DIR__ . '/.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            [$key, $value] = explode('=', $line, 2);
+            $_ENV[trim($key)] = trim($value);
+        }
+    }
 }
 
-// Set charset to UTF-8
-$conn->set_charset('utf8mb4');
+$db_host     = $_ENV['DB_HOST'] ?? 'localhost';
+$db_name     = $_ENV['DB_NAME'] ?? '';
+$db_username = $_ENV['DB_USER'] ?? '';
+$db_password = $_ENV['DB_PASS'] ?? '';
+$db_port     = 3306;
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+try {
+    $conn = new mysqli($db_host, $db_username, $db_password, $db_name, $db_port);
+    $conn->set_charset('utf8mb4');
+} catch (mysqli_sql_exception $e) {
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Database connection failed.']);
+    exit();
+}
 ?>
