@@ -18,7 +18,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   loading: boolean;
-  updateProfile: (data: { firstName: string; lastName: string; phone?: string }) => void; // Add this
+  updateProfile: (data: { firstName: string; lastName: string; phone?: string }) => Promise<{ success: boolean; error?: string }>;
 }
 
 
@@ -37,17 +37,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(false);
   }, []);
 
-  // In the AuthProvider component, add the updateProfile function:
-const updateProfile = (data: { firstName: string; lastName: string; phone?: string }) => {
-  if (user) {
-    const updatedUser = { ...user, ...data };
-    setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-  }
-};
+  // Update the updateProfile function in AuthContext.tsx
+  const updateProfile = async (data: { firstName: string; lastName: string; phone?: string }): Promise<{success: boolean, error?: string}> => {
+    if (!user) {
+      return { success: false, error: 'User not defined'};
+    };
+
+    try {
+      const response = await fetch('http://35.212.166.173/backend/api/update_profile.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: user.id,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone || ''
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Update local user state
+        const updatedUser = { 
+          ...user, 
+          firstName: data.firstName, 
+          lastName: data.lastName, 
+          phone: data.phone || '' 
+        };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        return { success: true };
+      } else {
+        console.error('Profile update failed:', result.error);
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      console.error('Network error updating profile:', error);
+      return { success: false, error: 'Network error. Please try again.' };
+    }
+  };
 
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<{ success: boolean, error?: string}> => {
     try {
       const response = await fetch('http://35.212.166.173/backend/api/login.php', {
         method: 'POST',
@@ -72,7 +104,7 @@ const updateProfile = (data: { firstName: string; lastName: string; phone?: stri
         localStorage.setItem('user', JSON.stringify(userData));
         return { success: true };
       } else {
-        return { success: false, error: data.error };
+        return { success: false, error: data.error || 'Invalid Credentials'};
       }
     } catch (error) {
       console.error('Login error:', error);

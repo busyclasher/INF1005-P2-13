@@ -59,11 +59,12 @@ if (password_verify($password, $user['password_hash'])) {
     echo json_encode([
         'success' => true,
         'user' => [
-            'id' => $user['user_id'],
+            'user_id' => $user['user_id'],
             'firstName' => $user['first_name'],
             'lastName' => $user['last_name'],
             'email' => $user['email_address'],
-            'role' => $user['role']
+            'role' => $user['role'],
+            'phone' => $user['phone_number'] ?? '',
         ]
     ]);
 } else {

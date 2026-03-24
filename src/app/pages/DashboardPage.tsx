@@ -28,6 +28,7 @@ export function DashboardPage() {
   const [myBookings, setMyBookings] = useState<any[]>([]);
   const [currentTier, setCurrentTier] = useState<any>(null);
   const [loadingContent, setLoadingContent] = useState(true);
+  const [savingProfile, setSavingProfile] = useState(false);
 
   // Profile Form state
   const fullName = user ? `${user.firstName} ${user.lastName}` : '';
@@ -42,6 +43,14 @@ export function DashboardPage() {
   // Fetch initial data
   useEffect(() => {
     if (!user) return;
+
+    if (user) {
+      setProfileForm({
+        name: `${user.firstName} ${user.lastName}`,
+        phone: user.phone || '',
+      });
+    }
+
 
     const fetchDashboardData = async () => {
       setLoadingContent(true);
@@ -107,19 +116,37 @@ export function DashboardPage() {
     }
   };
 
-  const handleProfileSave = () => {
-    if (!profileForm.name.trim()) {
-      setProfileErrors({ name: 'Name is required.' });
-      return;
-    }
-    const nameParts = profileForm.name.trim().split(' ') || [''];
-    const firstName = nameParts[0] || '';
-    const lastName = nameParts.slice(1).join(' ') || '';
-    
-    updateProfile({ firstName, lastName, phone: profileForm.phone });
+  const handleProfileSave = async () => {
+  if (!profileForm.name.trim()) {
+    setProfileErrors({ name: 'Name is required.' });
+    return;
+  }
+  
+  const nameParts = profileForm.name.trim().split(' ') || [''];
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
+
+  // Only include phone if it has a value, otherwise keep existing
+  const phoneToSend = profileForm.phone.trim() !== '' ? profileForm.phone : user?.phone || '';
+  
+  setLoadingContent(true);
+  setSavingProfile(true);
+  const result = await updateProfile({ firstName, lastName, phone: phoneToSend });
+  setLoadingContent(false);
+  setSavingProfile(false);
+  
+  if (result.success) {
     setEditMode(false);
     toast.success('Profile updated successfully.');
-  };
+    // Refresh the form with the new data
+    setProfileForm({
+      name: `${firstName} ${lastName}`,
+      phone: phoneToSend,
+    });
+  } else {
+    toast.error(result.error || 'Failed to update profile.');
+  }
+};
 
   const navItems: { id: Tab; label: string; icon: typeof LayoutDashboard }[] = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -319,7 +346,7 @@ export function DashboardPage() {
                 <div className="flex items-center justify-between mb-6">
                   <h1 id="profile-heading" className="text-slate-900 font-bold text-2xl">My Profile</h1>
                   {!editMode && (
-                    <button onClick={() => setEditMode(true)} className="px-4 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium">
+                    <button onClick={() =>{setEditMode(true);}} className="px-4 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium">
                       Edit Profile
                     </button>
                   )}
@@ -355,8 +382,8 @@ export function DashboardPage() {
                         />
                       </div>
                       <div className="flex gap-3">
-                        <button onClick={handleProfileSave} className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-semibold">
-                          Save Changes
+                        <button onClick={() => {handleProfileSave();}} disabled={savingProfile} className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-semibold">
+                          {savingProfile ? 'Saving...' : 'Save Changes'}
                         </button>
                         <button onClick={() => { setEditMode(false); setProfileErrors({}); }} className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium">
                           Cancel
