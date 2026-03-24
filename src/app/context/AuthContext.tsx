@@ -19,6 +19,7 @@ interface AuthContextType {
   logout: () => void;
   loading: boolean;
   updateProfile: (data: { firstName: string; lastName: string; phone?: string }) => Promise<{ success: boolean; error?: string }>;
+  deleteAccount: () => Promise<{ success: boolean; error?: string}>;
 }
 
 
@@ -36,6 +37,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     setLoading(false);
   }, []);
+
+  const deleteAccount = async (): Promise<{ success: boolean; error?: string}> => {
+    if (!user) {
+      return { success: false, error: 'User not authenticated'};
+    }
+
+    try {
+      const response = await fetch('http://35.212.166.173/backend/api/delete_account.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: user.id })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+      // Clear user data from state and localStorage
+      setUser(null);
+      localStorage.removeItem('user');
+      return { success: true };
+    } 
+      else {
+        return { success: false, error: result.error || 'Failed to delete account' };
+      }
+    }
+
+    catch (error) {
+      console.error('Network error deleting account:', error);
+      return { success: false, error: 'Network error. Please try again.' };
+    }
+  }
 
   // Update the updateProfile function in AuthContext.tsx
   const updateProfile = async (data: { firstName: string; lastName: string; phone?: string }): Promise<{success: boolean, error?: string}> => {
@@ -125,6 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       logout,
       loading,
       updateProfile,
+      deleteAccount,
     }}>
       {children}
     </AuthContext.Provider>

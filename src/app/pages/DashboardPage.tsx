@@ -19,7 +19,7 @@ const statusColour: Record<string, string> = {
 };
 
 export function DashboardPage() {
-  const { user, logout, isAuthenticated, updateProfile } = useAuth();
+  const { user, logout, isAuthenticated, updateProfile, deleteAccount } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>('overview');
   const [editMode, setEditMode] = useState(false);
@@ -29,6 +29,8 @@ export function DashboardPage() {
   const [currentTier, setCurrentTier] = useState<any>(null);
   const [loadingContent, setLoadingContent] = useState(true);
   const [savingProfile, setSavingProfile] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   // Profile Form state
   const fullName = user ? `${user.firstName} ${user.lastName}` : '';
@@ -147,6 +149,21 @@ export function DashboardPage() {
     toast.error(result.error || 'Failed to update profile.');
   }
 };
+
+  const handleDeleteAccount = async () => {
+    setDeletingAccount(true);
+    const result = await deleteAccount();
+    setDeletingAccount(false);
+
+    if (result.success){
+      toast.success('Account deleted successfully');
+      logout();
+      navigate('/');
+    }
+    else {
+      toast.error(result.error || 'Failed to delete account');
+    }
+  } 
 
   const navItems: { id: Tab; label: string; icon: typeof LayoutDashboard }[] = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -391,6 +408,7 @@ export function DashboardPage() {
                       </div>
                     </div>
                   ) : (
+                    <>
                     <dl className="divide-y divide-slate-100">
                       {[
                         { label: 'Full Name', value: fullName },
@@ -405,6 +423,43 @@ export function DashboardPage() {
                         </div>
                       ))}
                     </dl>
+
+                      {/* Delete Account Section */}
+                    <div className="mt-8 pt-6 border-t border-slate-200">
+                      <div className="bg-red-50 rounded-xl p-4 border border-red-200">
+                        <h3 className="text-red-800 font-semibold text-sm mb-2">Danger Zone</h3>
+                        <p className="text-red-600 text-xs mb-4">Once you delete your account, all your data will be permanently removed. This action cannot be undone.</p>
+                        
+                        {!showDeleteConfirm ? (
+                          <button
+                            onClick={() => setShowDeleteConfirm(true)}
+                            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition-colors font-medium"
+                          >
+                            Delete Account
+                          </button>
+                        ) : (
+                          <div className="space-y-3">
+                            <p className="text-red-700 text-sm font-medium">Are you sure you want to delete your account?</p>
+                            <div className="flex gap-3">
+                              <button
+                                onClick={handleDeleteAccount}
+                                disabled={deletingAccount}
+                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors font-medium disabled:opacity-50"
+                              >
+                                {deletingAccount ? 'Deleting...' : 'Yes, Delete My Account'}
+                              </button>
+                              <button
+                                onClick={() => setShowDeleteConfirm(false)}
+                                className="px-4 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    </>
                   )}
                 </div>
               </section>

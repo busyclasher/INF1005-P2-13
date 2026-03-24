@@ -39,7 +39,7 @@ $email = $data['email'];
 $password = $data['password'];
 
 // Query the database for the user
-$stmt = $conn->prepare("SELECT user_id, first_name, last_name, email_address, password_hash, role FROM users WHERE email_address = ?");
+$stmt = $conn->prepare("SELECT user_id, first_name, last_name, email_address, phone_number, password_hash, role FROM users WHERE email_address = ?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
