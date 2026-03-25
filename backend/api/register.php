@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'db.php';
+require_once __DIR__ . '/send_email.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -22,6 +23,20 @@ $lastName     = trim($data['lastName'] ?? '');
 $email        = trim($data['email'] ?? '');
 $phone_number = trim($data['phone_number'] ?? '');
 $password     = $data['password'] ?? '';
+
+// Check if email exists
+$checkStmt = $conn->prepare("SELECT user_id FROM users WHERE email_address = ?");
+$checkStmt->bind_param("s", $email);
+$checkStmt->execute();
+$checkStmt->store_result();
+
+if ($checkStmt->num_rows > 0) {
+    echo json_encode(['success' => false, 'error' => 'Email already registered']);
+    $checkStmt->close();
+    $conn->close();
+    exit;
+}
+$checkStmt->close();
 
 if (empty($firstName) || empty($lastName) || empty($email) || empty($password)) {
     http_response_code(400);
@@ -47,9 +62,38 @@ $role         = 'member';
 try {
     $stmt = $conn->prepare('INSERT INTO users (first_name, last_name, email_address, phone_number, password_hash, role) VALUES (?, ?, ?, ?, ?, ?)');
     $stmt->bind_param('ssssss', $firstName, $lastName, $email, $phone_number, $passwordHash, $role);
-    $stmt->execute();
+    //$stmt->execute();
 
-    echo json_encode(['success' => true, 'message' => 'Registration successful.']);
+    //echo json_encode(['success' => true, 'message' => 'Registration successful.']);
+
+    if ($stmt->execute()) {
+        // Get the new user's ID
+        $userId = $stmt->insert_id;
+        
+        // Send welcome email
+        $emailResult = sendWelcomeEmail($email, $firstName, $lastName);
+        
+        if ($emailResult['success']) {
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Registration successful! Welcome email sent.',
+                'user_id' => $userId
+            ]);
+        } else {
+            // Registration succeeded but email failed
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Registration successful! (Welcome email could not be sent)',
+                'email_error' => $emailResult['error'],
+                'user_id' => $userId
+            ]);
+        }
+    }
+
+    else {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Registration failed. Please try again.']);
+    }
 
 } catch (mysqli_sql_exception $e) {
     // Duplicate email (unique constraint violation)

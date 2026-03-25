@@ -20,6 +20,7 @@ const statusColour: Record<string, string> = {
 };
 
 export function DashboardPage() {
+  console.log("API_BASE", API_BASE);
   const { user, logout, isAuthenticated, updateProfile, deleteAccount } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>('overview');
