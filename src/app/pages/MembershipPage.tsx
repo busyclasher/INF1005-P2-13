@@ -7,7 +7,7 @@ import { PageHeader, PrimaryButton, SurfaceCard } from '../components/brand';
 import { cn } from '../components/ui/utils';
 
 // You can configure this base URL
-const API_BASE = 'http://35.212.166.173/backend/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
 
 const faqItems = [
   {

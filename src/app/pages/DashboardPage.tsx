@@ -11,7 +11,7 @@ import { SurfaceCard } from '../components/brand';
 type Tab = 'overview' | 'bookings' | 'profile' | 'membership';
 
 // You can configure this base URL
-const API_BASE = 'http://35.212.166.173/backend/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
 
 const statusColour: Record<string, string> = {
   Confirmed: 'bg-green-100 text-green-700',
