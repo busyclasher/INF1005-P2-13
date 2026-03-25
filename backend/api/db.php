@@ -1,24 +1,38 @@
 <?php
-// db.php - Centralized Database Connection
+// db.php - Centralised Database Connection
 
-// Avoid displaying errors directly to users in production, but keep for dev
+// Never expose PHP errors to the client in any environment
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Set to 0 to prevent leaking details, use proper JSON error handling
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
-$host = 'localhost';
-$db   = 'assignment';
-$user = 'inf1005-sqldev';
-$pass = 'KkUufX74-6hM';
+// Load .env file from the backend directory
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            [$key, $value] = explode('=', $line, 2);
+            $_ENV[trim($key)] = trim($value);
+        }
+    }
+}
 
-// Enable mysqli exceptions for easier error handling in transactions
+$host = $_ENV['DB_HOST'] ?? 'localhost';
+$db   = $_ENV['DB_NAME'] ?? '';
+$user = $_ENV['DB_USER'] ?? '';
+$pass = $_ENV['DB_PASS'] ?? '';
+
+// Enable mysqli exceptions for consistent error handling
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 try {
     $conn = new mysqli($host, $user, $pass, $db);
-    $conn->set_charset("utf8mb4");
+    $conn->set_charset('utf8mb4');
 } catch (mysqli_sql_exception $e) {
-    // Return a JSON error instead of dying with HTML/text
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
+    http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database connection failed.']);
     exit();
 }

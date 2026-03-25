@@ -1,6 +1,6 @@
 import { MapPin, Phone, Mail, Clock, Award, Heart, Users, Zap } from 'lucide-react';
 import { teamMembers } from '../data/mockData';
-import { Link } from 'react-router';
+import { PageHeader, PrimaryButton, SurfaceCard } from '../components/brand';
 
 const STUDIO_IMG = 'https://images.unsplash.com/photo-1761971975769-97e598bf526b?w=1200&q=80';
 
@@ -23,20 +23,20 @@ export function AboutPage() {
           className="absolute inset-0 bg-cover bg-center opacity-25"
           style={{ backgroundImage: `url(${STUDIO_IMG})` }}
           aria-hidden="true"
-          role="img"
-          aria-label="KineticHub studio interior"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 to-slate-900/90" aria-hidden="true" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-orange-400 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-            Our Story
-          </p>
-          <h1 id="about-heading" className="text-white mb-4" style={{ fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.5rem)', letterSpacing: '-0.02em' }}>
-            We exist to make you move
-          </h1>
-          <p className="text-slate-300 max-w-2xl mx-auto" style={{ fontSize: '1.125rem', lineHeight: 1.7 }}>
-            KineticHub was born from a simple belief: that expert fitness coaching, delivered in an inspiring environment, should be accessible to everyone — not just elite athletes.
-          </p>
+          <PageHeader
+            titleId="about-heading"
+            eyebrow="Our Story"
+            title="We exist to make you move"
+            subtitle="KineticHub was born from a simple belief: that expert fitness coaching, delivered in an inspiring environment, should be accessible to everyone — not just elite athletes."
+            tone="dark"
+            size="large"
+            align="center"
+            titleClassName="mb-4"
+            subtitleClassName="mb-0 text-slate-300 max-w-2xl mx-auto text-lg leading-[1.7]"
+          />
         </div>
       </section>
 
@@ -45,12 +45,16 @@ export function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="text-orange-500 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                How We Started
-              </p>
-              <h2 id="story-heading" className="text-slate-900 mb-4" style={{ fontWeight: 800, fontSize: 'clamp(1.5rem, 3.5vw, 2.25rem)', letterSpacing: '-0.02em' }}>
-                Built by fitness professionals, for real people
-              </h2>
+              <PageHeader
+                titleId="story-heading"
+                heading="h2"
+                tone="light"
+                align="left"
+                className="max-w-none mx-0 px-0 mb-4"
+                eyebrow="How We Started"
+                title="Built by fitness professionals, for real people"
+                titleClassName="text-[clamp(1.5rem,3.5vw,2.25rem)] mb-4"
+              />
               <div className="space-y-4 text-slate-600" style={{ lineHeight: 1.8 }}>
                 <p>
                   KineticHub was founded in 2021 by a team of certified coaches and wellness professionals who were frustrated by the impersonal, intimidating nature of traditional gym culture. They envisioned a studio where every person — regardless of their starting point — would receive expert guidance, genuine encouragement, and a welcoming community.
@@ -85,23 +89,29 @@ export function AboutPage() {
       {/* Values */}
       <section className="py-16 bg-slate-50" aria-labelledby="values-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-orange-500 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-              What Drives Us
-            </p>
-            <h2 id="values-heading" className="text-slate-900" style={{ fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.25rem)', letterSpacing: '-0.02em' }}>
-              Our Core Values
-            </h2>
-          </div>
+          <PageHeader
+            titleId="values-heading"
+            heading="h2"
+            tone="light"
+            align="center"
+            className="max-w-none mx-0 px-0 mb-12"
+            eyebrow="What Drives Us"
+            title="Our Core Values"
+            titleClassName="text-[clamp(1.75rem,4vw,2.25rem)]"
+          />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-white rounded-2xl p-6 border border-slate-200 text-center hover:shadow-md transition-shadow">
+              <SurfaceCard
+                key={title}
+                variant="light"
+                className="text-center hover:shadow-md transition-shadow"
+              >
                 <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <Icon className="w-6 h-6 text-orange-500" aria-hidden="true" />
                 </div>
-                <h3 className="text-slate-900 mb-2" style={{ fontWeight: 700 }}>{title}</h3>
+                <h3 className="text-slate-900 mb-2 font-bold">{title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
-              </div>
+              </SurfaceCard>
             ))}
           </div>
         </div>
@@ -110,21 +120,29 @@ export function AboutPage() {
       {/* Team */}
       <section className="py-16 bg-white" aria-labelledby="team-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-orange-500 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-              The People Behind KineticHub
-            </p>
-            <h2 id="team-heading" className="text-slate-900 mb-3" style={{ fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.25rem)', letterSpacing: '-0.02em' }}>
-              Meet Our Trainers
-            </h2>
-            <p className="text-slate-500 max-w-xl mx-auto">
-              Our instructors are certified professionals with genuine passion for their disciplines — and for helping you succeed.
-            </p>
-          </div>
+          <PageHeader
+            titleId="team-heading"
+            heading="h2"
+            tone="light"
+            align="center"
+            className="max-w-none mx-0 px-0 mb-12"
+            eyebrow="The People Behind KineticHub"
+            title="Meet Our Trainers"
+            subtitle="Our instructors are certified professionals with genuine passion for their disciplines — and for helping you succeed."
+            titleClassName="text-[clamp(1.75rem,4vw,2.25rem)] mb-3"
+            subtitleClassName="max-w-xl"
+          />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {teamMembers.map((member) => (
-              <article key={member.id} className="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden group" aria-label={`${member.name}, ${member.role}`}>
+              <SurfaceCard
+                key={member.id}
+                as="article"
+                variant="muted"
+                padding="none"
+                className="overflow-hidden border-slate-100 shadow-sm group"
+                aria-label={`${member.name}, ${member.role}`}
+              >
                 <div className="relative h-56 overflow-hidden">
                   <img
                     src={member.imageUrl}
@@ -151,7 +169,7 @@ export function AboutPage() {
                     ))}
                   </div>
                 </div>
-              </article>
+              </SurfaceCard>
             ))}
           </div>
         </div>
@@ -246,13 +264,9 @@ export function AboutPage() {
           <p className="text-slate-400 mb-7">
             Visit us for a free trial class and see for yourself what makes KineticHub different.
           </p>
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-colors"
-            style={{ fontWeight: 600 }}
-          >
+          <PrimaryButton to="/register" variant="marketing" rounded="xl" className="px-8 py-3.5 gap-2">
             Get Your Free Class
-          </Link>
+          </PrimaryButton>
         </div>
       </section>
     </main>

@@ -1,25 +1,29 @@
 import { Link } from 'react-router';
 import { Zap, Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 
-const LIME = '#C8F400';
-const DARK = '#111111';
-
 export function Footer() {
   return (
-    <footer style={{ background: DARK, color: 'rgba(255,255,255,0.5)' }} role="contentinfo">
+    <footer
+      className="bg-[#111111] text-white/60"
+      role="contentinfo"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4" aria-label="KineticHub – Home">
-              <span className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: LIME }}>
-                <Zap className="w-4 h-4" style={{ color: '#111' }} aria-hidden="true" />
+            <Link
+              to="/"
+              className="flex items-center gap-2 mb-4 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
+              aria-label="KineticHub – Home"
+            >
+              <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary">
+                <Zap className="w-4 h-4 text-primary-foreground" aria-hidden="true" />
               </span>
-              <span className="text-white" style={{ fontWeight: 800, fontSize: '1.125rem', letterSpacing: '-0.02em' }}>
-                KINETIC<span style={{ color: LIME }}>HUB</span>
+              <span className="text-white font-extrabold text-lg tracking-tight">
+                KINETIC<span className="text-primary">HUB</span>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed mb-5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+            <p className="text-sm leading-relaxed mb-5 text-white/55">
               A boutique fitness studio dedicated to helping you move better, feel stronger, and live fully.
             </p>
             <div className="flex items-center gap-3" aria-label="Social media links">
@@ -33,16 +37,7 @@ export function Footer() {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg transition-all"
-                  style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.4)' }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLAnchorElement).style.background = LIME;
-                    (e.currentTarget as HTMLAnchorElement).style.color = '#111';
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLAnchorElement).style.background = '#1a1a1a';
-                    (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.4)';
-                  }}
+                  className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#1a1a1a] text-white/55 transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                 >
                   <Icon className="w-4 h-4" aria-hidden="true" />
                 </a>
@@ -52,7 +47,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white text-sm mb-4" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            <h3 className="text-white text-sm mb-4 font-semibold uppercase tracking-wider">
               Explore
             </h3>
             <ul className="space-y-2.5">
@@ -65,10 +60,7 @@ export function Footer() {
                 <li key={to}>
                   <Link
                     to={to}
-                    className="text-sm transition-colors"
-                    style={{ color: 'rgba(255,255,255,0.4)' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = LIME)}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+                    className="text-sm text-white/60 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                   >
                     {label}
                   </Link>
@@ -79,7 +71,7 @@ export function Footer() {
 
           {/* Members */}
           <div>
-            <h3 className="text-white text-sm mb-4" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            <h3 className="text-white text-sm mb-4 font-semibold uppercase tracking-wider">
               Members
             </h3>
             <ul className="space-y-2.5">
@@ -92,10 +84,7 @@ export function Footer() {
                 <li key={label}>
                   <Link
                     to={to}
-                    className="text-sm transition-colors"
-                    style={{ color: 'rgba(255,255,255,0.4)' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = LIME)}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+                    className="text-sm text-white/60 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                   >
                     {label}
                   </Link>
@@ -106,36 +95,30 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-white text-sm mb-4" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            <h3 className="text-white text-sm mb-4 font-semibold uppercase tracking-wider">
               Contact
             </h3>
             <address className="not-italic space-y-3">
               <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 mt-0.5 shrink-0" style={{ color: LIME }} aria-hidden="true" />
-                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-primary" aria-hidden="true" />
+                <span className="text-sm text-white/55">
                   14 KineticHub Way, Tanjong Pagar<br />Singapore, 088741
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 shrink-0" style={{ color: LIME }} aria-hidden="true" />
+                <Phone className="w-4 h-4 shrink-0 text-primary" aria-hidden="true" />
                 <a
                   href="tel:+6562345678"
-                  className="text-sm transition-colors"
-                  style={{ color: 'rgba(255,255,255,0.4)' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = LIME)}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+                  className="text-sm text-white/60 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                 >
                   +65 6234 5678
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 shrink-0" style={{ color: LIME }} aria-hidden="true" />
+                <Mail className="w-4 h-4 shrink-0 text-primary" aria-hidden="true" />
                 <a
                   href="mailto:hello@kinetikhub.sg"
-                  className="text-sm transition-colors"
-                  style={{ color: 'rgba(255,255,255,0.4)' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = LIME)}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+                  className="text-sm text-white/60 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                 >
                   hello@kinetikhub.sg
                 </a>
@@ -145,19 +128,16 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderColor: '#1e1e1e' }}>
-          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>
+        <div className="border-t border-[#1e1e1e] mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-white/50">
             © {new Date().getFullYear()} KineticHub Ltd. All rights reserved.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5">
             {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item) => (
               <a
                 key={item}
                 href="#"
-                className="text-xs transition-colors"
-                style={{ color: 'rgba(255,255,255,0.25)' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.25)')}
+                className="text-xs text-white/50 transition-colors hover:text-white/85 focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
               >
                 {item}
               </a>

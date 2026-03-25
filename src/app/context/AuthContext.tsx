@@ -22,6 +22,8 @@ interface AuthContextType {
   deleteAccount: () => Promise<{ success: boolean; error?: string}>;
 }
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -44,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
-      const response = await fetch('http://35.212.166.173/backend/api/delete_account.php', {
+      const response = await fetch(`${API_BASE}/delete_account.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: user.id })
@@ -76,7 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     try {
-      const response = await fetch('http://35.212.166.173/backend/api/update_profile.php', {
+      const response = await fetch(`${API_BASE}/update_profile.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -113,7 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string): Promise<{ success: boolean, error?: string}> => {
     try {
-      const response = await fetch('http://35.212.166.173/backend/api/login.php', {
+      const response = await fetch(`${API_BASE}/login.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 
 type AdminTab = 'overview' | 'classes' | 'members' | 'bookings'| 'notices';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
+
 const statusColour: Record<string, string> = {
   Active: 'bg-green-100 text-green-700',
   Suspended: 'bg-red-100 text-red-600',
@@ -85,7 +87,7 @@ export function AdminPage() {
     setNoticesLoading(true);
 
     try {
-      const response = await fetch('http://35.212.166.173/backend/api/notices.php');
+      const response = await fetch(`${API_BASE}/notices.php`);
       const result: { success: boolean; data?: AdminNotice[]; error?: string } = await response.json();
 
       if (!response.ok || !result.success) {
@@ -110,7 +112,7 @@ export function AdminPage() {
     setNoticeSubmitting(true);
 
     try {
-      const response = await fetch('http://35.212.166.173/backend/api/notices.php', {
+      const response = await fetch(`${API_BASE}/notices.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +148,7 @@ export function AdminPage() {
     setDeletingNoticeId(id);
 
     try {
-      const response = await fetch('http://35.212.166.173/backend/api/notices.php', {
+      const response = await fetch(`${API_BASE}/notices.php`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

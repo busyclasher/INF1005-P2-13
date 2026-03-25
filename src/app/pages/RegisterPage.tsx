@@ -8,6 +8,8 @@ const DARK = '#111111';
 const CARD = '#1a1a1a';
 const BORDER = 'rgba(255,255,255,0.08)';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
+
 interface FormData {
   firstName: string;
   lastName: string;
@@ -116,7 +118,7 @@ export function RegisterPage() {
   const handleRegister = async () => {
 
     try {
-      const response = await fetch('http://35.212.166.173/backend/api/register.php', {
+      const response = await fetch(`${API_BASE}/register.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

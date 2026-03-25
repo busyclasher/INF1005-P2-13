@@ -1,4 +1,8 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 // CORS headers for local development
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
@@ -43,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $response['success'] = true;
             $response['data'] = $result->fetch_all(MYSQLI_ASSOC);
         } else {
-            $response['error'] = 'Failed to fetch notices: ' . $conn->error;
+            $response['error'] = 'Failed to fetch notices.';
             http_response_code(500);
         }
     }
@@ -75,7 +79,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $conn->prepare('INSERT INTO notices (title, content, author_name, is_published) VALUES (?, ?, ?, 1)');
             
             if (!$stmt) {
-                $response['error'] = 'Database error: ' . $conn->error;
+                $response['error'] = 'An unexpected error occurred.';
                 http_response_code(500);
             } else {
                 $stmt->bind_param('sss', $title, $content, $author_name);
@@ -92,7 +96,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ];
                     http_response_code(201);
                 } else {
-                    $response['error'] = 'Failed to create notice: ' . $stmt->error;
+                    $response['error'] = 'Failed to create notice.';
                     http_response_code(500);
                 }
                 $stmt->close();
@@ -124,7 +128,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
                 http_response_code(404);
             }
         } else {
-            $response['error'] = 'Failed to delete notice: ' . $stmt->error;
+            $response['error'] = 'Failed to delete notice.';
             http_response_code(500);
         }
         $stmt->close();
