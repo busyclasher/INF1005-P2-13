@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router';
-import { CheckCircle2, XCircle, ArrowRight, Zap, Info } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { CheckCircle2, XCircle, Info } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
+import { PageHeader, PrimaryButton, SurfaceCard } from '../components/brand';
+import { cn } from '../components/ui/utils';
 
 // You can configure this base URL
 const API_BASE = 'http://35.212.166.173/backend/api';
@@ -101,19 +103,15 @@ export function MembershipPage() {
 
   return (
     <main>
-      {/* Header */}
       <section className="bg-slate-900 py-16" aria-labelledby="membership-page-heading">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-orange-400 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-            Flexible Plans
-          </p>
-          <h1 id="membership-page-heading" className="text-white mb-3" style={{ fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3rem)', letterSpacing: '-0.02em' }}>
-            Membership Plans
-          </h1>
-          <p className="text-slate-400 max-w-xl mx-auto mb-8">
-            Choose the plan that fits your lifestyle. No hidden fees. No long-term lock-ins on monthly plans.
-          </p>
-        </div>
+        <PageHeader
+          titleId="membership-page-heading"
+          eyebrow="Flexible Plans"
+          title="Membership Plans"
+          subtitle="Choose the plan that fits your lifestyle. No hidden fees. No long-term lock-ins on monthly plans."
+          tone="dark"
+          align="center"
+        />
       </section>
 
       {/* Pricing Cards */}
@@ -124,9 +122,15 @@ export function MembershipPage() {
             ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 justify-center">
             {plans.map((tier, index) => (
-              <article
+              <SurfaceCard
                 key={tier.plan_id}
-                className={`bg-white rounded-2xl border-2 ${tierBorderColour[index % tierBorderColour.length]} overflow-hidden flex flex-col`}
+                as="article"
+                variant="light"
+                padding="none"
+                className={cn(
+                  'overflow-hidden flex flex-col border-2 shadow-sm',
+                  tierBorderColour[index % tierBorderColour.length],
+                )}
                 aria-label={`${tier.plan_name} plan`}
               >
                 <div className="p-6 flex-1 flex flex-col">
@@ -160,15 +164,16 @@ export function MembershipPage() {
                     ))}
                   </ul>
 
-                  <button
+                  <PrimaryButton
+                    variant="dark"
+                    rounded="xl"
+                    className="w-full py-3"
                     onClick={() => handleSubscribe(tier.plan_id)}
-                    className={`w-full text-center py-3 rounded-xl text-sm transition-colors bg-slate-900 hover:bg-slate-800 text-white`}
-                    style={{ fontWeight: 600 }}
                   >
                     Select Plan
-                  </button>
+                  </PrimaryButton>
                 </div>
-              </article>
+              </SurfaceCard>
             ))}
           </div>
             )}
@@ -183,7 +188,7 @@ export function MembershipPage() {
           </h2>
           <dl className="space-y-3">
             {faqItems.map((item, idx) => (
-              <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <SurfaceCard key={idx} variant="light" padding="none" className="overflow-hidden rounded-xl border-slate-200 shadow-sm">
                 <dt>
                   <button
                     onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
@@ -200,7 +205,7 @@ export function MembershipPage() {
                     <p className="text-slate-500 text-sm leading-relaxed">{item.a}</p>
                   </dd>
                 )}
-              </div>
+              </SurfaceCard>
             ))}
           </dl>
         </div>

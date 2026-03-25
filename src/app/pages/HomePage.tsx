@@ -6,6 +6,7 @@ import {
   ChevronLeft, Coffee, Maximize2
 } from 'lucide-react';
 import { fitnessClasses, membershipTiers, testimonials } from '../data/mockData';
+import { PrimaryButton, SecondaryButton } from '../components/brand';
 const battleRopesImg = '/images/battle-ropes.png';
 const ptDeadliftImg = '/images/pt-deadlift.png';
 const diverseTrainingImg = '/images/diverse-training.png';
@@ -96,20 +97,22 @@ export function HomePage() {
               A curated selection of group fitness classes, personalised training programmes, and an expert team committed to helping you achieve measurable, lasting results.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link
+              <PrimaryButton
                 to="/register"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full transition-all hover:opacity-90 hover:-translate-y-0.5"
-                style={{ background: LIME, color: '#111', fontWeight: 700, fontSize: '0.95rem' }}
+                variant="brand"
+                rounded="full"
+                className="px-7 py-3.5 text-[0.95rem] font-bold gap-2 hover:-translate-y-0.5 hover:opacity-90"
               >
                 Try for free <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-              </Link>
-              <Link
+              </PrimaryButton>
+              <SecondaryButton
                 to="/about"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border transition-all hover:bg-white/5"
-                style={{ borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.8)', fontWeight: 600, fontSize: '0.95rem' }}
+                variant="onDark"
+                rounded="full"
+                className="px-7 py-3.5 text-[0.95rem] font-semibold border-white/20 text-white/90"
               >
                 More about KineticHub
-              </Link>
+              </SecondaryButton>
             </div>
           </div>
 

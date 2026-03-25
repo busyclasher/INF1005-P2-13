@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
+import { SurfaceCard } from '../components/brand';
 
 type Tab = 'overview' | 'bookings' | 'profile' | 'membership';
 
@@ -178,7 +179,7 @@ export function DashboardPage() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar */}
           <aside className="lg:w-64 shrink-0" aria-label="Dashboard navigation">
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+            <SurfaceCard variant="light" padding="none" className="overflow-hidden shadow-sm">
               <div className="bg-slate-900 p-5">
                 <div className="flex items-center gap-3">
                   <span className="w-11 h-11 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-base">
@@ -222,7 +223,7 @@ export function DashboardPage() {
                   Sign Out
                 </button>
               </div>
-            </div>
+            </SurfaceCard>
           </aside>
 
           {/* Main content */}
@@ -252,18 +253,18 @@ export function DashboardPage() {
                     { label: 'Total', value: myBookings.length, icon: Zap, colour: 'text-orange-600', bg: 'bg-orange-50' },
                     { label: 'Member Since', value: new Date(user.joinDate || Date.now()).getFullYear(), icon: User, colour: 'text-purple-600', bg: 'bg-purple-50' },
                   ].map(({ label, value, icon: Icon, colour, bg }) => (
-                    <div key={label} className="bg-white rounded-xl border border-slate-200 p-4">
+                    <SurfaceCard key={label} variant="light" padding="default" className="rounded-xl p-4 shadow-sm">
                       <div className={`w-9 h-9 ${bg} rounded-lg flex items-center justify-center mb-3`}>
                         <Icon className={`w-4 h-4 ${colour}`} aria-hidden="true" />
                       </div>
                       <p className="text-slate-900 font-extrabold text-2xl leading-none">{value}</p>
                       <p className="text-slate-500 text-xs mt-1">{label}</p>
-                    </div>
+                    </SurfaceCard>
                   ))}
                 </div>
 
                 {/* Upcoming bookings */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+                <SurfaceCard variant="light" className="mb-6 shadow-sm">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-slate-900 font-bold">Upcoming Classes</h2>
                     <button onClick={() => setTab('bookings')} className="text-orange-500 text-sm hover:underline font-medium">
@@ -296,7 +297,7 @@ export function DashboardPage() {
                       ))}
                     </div>
                   )}
-                </div>
+                </SurfaceCard>
               </section>
             )}
 

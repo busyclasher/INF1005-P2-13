@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
 import { CheckCircle2, Clock, BarChart2, ArrowRight, User } from 'lucide-react';
 import { programmes } from '../data/mockData';
+import { PageHeader, PrimaryButton, SurfaceCard } from '../components/brand';
 
 type LevelFilter = 'all' | 'Beginner' | 'Intermediate' | 'Advanced';
 
@@ -26,19 +26,15 @@ export function ProgrammesPage() {
 
   return (
     <main>
-      {/* Header */}
       <section className="bg-slate-900 py-16" aria-labelledby="programmes-heading">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-orange-400 text-sm mb-2" style={{ fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-            Structured Training
-          </p>
-          <h1 id="programmes-heading" className="text-white mb-3" style={{ fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3rem)', letterSpacing: '-0.02em' }}>
-            Training Programmes
-          </h1>
-          <p className="text-slate-400 max-w-xl mx-auto">
-            Goal-driven, expert-designed training programmes that deliver measurable results. Choose your pathway and commit to the transformation.
-          </p>
-        </div>
+        <PageHeader
+          titleId="programmes-heading"
+          eyebrow="Structured Training"
+          title="Training Programmes"
+          subtitle="Goal-driven, expert-designed training programmes that deliver measurable results. Choose your pathway and commit to the transformation."
+          tone="dark"
+          align="center"
+        />
       </section>
 
       {/* How it works */}
@@ -92,9 +88,12 @@ export function ProgrammesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {filtered.map((prog) => (
-              <article
+              <SurfaceCard
                 key={prog.id}
-                className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-300 group"
+                as="article"
+                variant="light"
+                padding="none"
+                className="overflow-hidden border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 group"
                 aria-label={`${prog.name} programme`}
               >
                 <div className="relative h-56 overflow-hidden">
@@ -168,18 +167,19 @@ export function ProgrammesPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-slate-900 mb-0.5" style={{ fontWeight: 800, fontSize: '1.5rem' }}>£{prog.price}</p>
-                      <Link
+                      <PrimaryButton
                         to="/register"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors"
-                        style={{ fontWeight: 600 }}
+                        variant="marketing"
+                        rounded="lg"
+                        className="px-4 py-2 text-sm gap-1.5"
                         aria-label={`Enrol in ${prog.name}`}
                       >
                         Enrol <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-                      </Link>
+                      </PrimaryButton>
                     </div>
                   </div>
                 </div>
-              </article>
+              </SurfaceCard>
             ))}
           </div>
         </div>
@@ -194,13 +194,14 @@ export function ProgrammesPage() {
           <p className="text-slate-400 mb-8">
             Book a free 20-minute consultation with one of our trainers. We'll assess your goals and recommend the best pathway for you.
           </p>
-          <Link
+          <PrimaryButton
             to="/register"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-colors"
-            style={{ fontWeight: 600 }}
+            variant="marketing"
+            rounded="xl"
+            className="px-8 py-3.5 gap-2"
           >
             Book Free Consultation <ArrowRight className="w-4 h-4" aria-hidden="true" />
-          </Link>
+          </PrimaryButton>
         </div>
       </section>
     </main>

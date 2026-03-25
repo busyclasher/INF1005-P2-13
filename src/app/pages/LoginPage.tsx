@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router';
 import { Eye, EyeOff, Zap, AlertCircle, LogIn } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { PrimaryButton } from '../components/brand';
 
 const LIME = '#C8F400';
 const DARK = '#111111';
@@ -241,11 +242,12 @@ export function LoginPage() {
                 )}
               </div>
 
-              <button
+              <PrimaryButton
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-full transition-all hover:opacity-90 disabled:opacity-50"
-                style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                variant="brand"
+                rounded="full"
+                className="w-full py-3 gap-2 ring-offset-[#1a1a1a]"
                 aria-busy={loading}
               >
                 {loading ? (
@@ -258,7 +260,7 @@ export function LoginPage() {
                     <LogIn className="w-4 h-4" aria-hidden="true" /> Sign In
                   </>
                 )}
-              </button>
+              </PrimaryButton>
             </form>
 
             <p className="text-center text-sm mt-6" style={{ color: 'rgba(255,255,255,0.4)' }}>
