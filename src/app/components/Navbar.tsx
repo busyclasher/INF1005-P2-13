@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router';
-import { Menu, X, ChevronDown, LayoutDashboard, Settings, LogOut, Shield, Zap } from 'lucide-react';
+import { Menu, X, ChevronDown, LayoutDashboard, Settings, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import kineticHubLogo from '../../../assets/Kinetic-Hub.png';
 
 const navLinks = [
   { to: '/classes', label: 'Classes' },
@@ -49,15 +50,11 @@ export function Navbar() {
           className="flex items-center gap-2 shrink-0 group"
           aria-label="KineticHub – Home"
         >
-          <span
-            className="flex items-center justify-center w-8 h-8 rounded-lg"
-            style={{ background: LIME }}
-          >
-            <Zap className="w-4 h-4" style={{ color: '#111' }} aria-hidden="true" />
-          </span>
-          <span className="text-white" style={{ fontWeight: 800, fontSize: '1.125rem', letterSpacing: '-0.02em' }}>
-            KINETIC<span style={{ color: LIME }}>HUB</span>
-          </span>
+          <img
+            src={kineticHubLogo}
+            alt="KineticHub logo"
+            className="w-25 h-25 rounded-lg object-contain"
+          />
         </Link>
 
         {/* Desktop nav links */}
