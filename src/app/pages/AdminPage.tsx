@@ -6,10 +6,11 @@ import {
   Edit3, Trash2, Eye, Bell,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { adminMembers, adminBookings, fitnessClasses } from '../data/mockData';
+import type { FitnessClass } from '../data/mockData';
+import { adminMembers, adminBookings } from '../data/mockData';
 import { toast } from 'sonner';
 
-type AdminTab = 'overview' | 'classes' | 'members' | 'bookings'| 'notices';
+type AdminTab = 'overview' | 'classes' | 'members' | 'bookings' | 'notices';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
 
@@ -45,7 +46,15 @@ export function AdminPage() {
   const [members, setMembers] = useState(adminMembers);
   const [bookings, setBookings] = useState(adminBookings);
   const [showAddClass, setShowAddClass] = useState(false);
+  const [classes, setClasses] = useState<FitnessClass[]>([]);
   const [newClassName, setNewClassName] = useState('');
+  const [newClassInstructor, setNewClassInstructor] = useState('');
+  const [newClassDuration, setNewClassDuration] = useState(45);
+  const [newClassCapacity, setNewClassCapacity] = useState(20);
+  const [newClassDescription, setNewClassDescription] = useState('');
+  const [newClassTags, setNewClassTags] = useState('');
+  const [editingClassId, setEditingClassId] = useState<number | null>(null);
+  const [editingClassData, setEditingClassData] = useState<Partial<FitnessClass>>({});
   const [notices, setNotices] = useState<AdminNotice[]>([]);
   const [noticesLoading, setNoticesLoading] = useState(false);
   const [showAddNotice, setShowAddNotice] = useState(false);
@@ -81,6 +90,183 @@ export function AdminPage() {
       prev.map((b) => (b.id === id ? { ...b, status: 'Cancelled' } : b))
     );
     toast.success('Booking cancelled.');
+  };
+
+  const getImageUrl = (tags = '') => {
+    const t = tags.toLowerCase();
+    if (t.includes('yoga')) return 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+    if (t.includes('hiit') || t.includes('cardio')) return 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+    if (t.includes('cycling')) return 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+    if (t.includes('pilates')) return 'https://images.unsplash.com/photo-1734873477108-6837b02f2b9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+    if (t.includes('boxing')) return 'https://images.unsplash.com/photo-1729673516991-b0bce1f60d27?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+    return 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+  };
+
+  const getIntensity = (tags = '') => {
+    const t = tags.toLowerCase();
+    if (t.includes('high')) return 'High';
+    if (t.includes('low')) return 'Low';
+    return 'Medium';
+  };
+
+  const normalizeClass = (c: any): FitnessClass => ({
+    id: c.class_id,
+    name: c.title,
+    category: c.tags ? c.tags.split(',')[0].trim().toLowerCase() : 'all',
+    instructor: `${c.first_name || ''} ${c.last_name || ''}`.trim() || c.instructor || 'TBD',
+    duration: parseInt(c.duration_mins || '0', 10) || 0,
+    intensity: getIntensity(c.tags),
+    description: c.description || '',
+    imageUrl: getImageUrl(c.tags || ''),
+    sessions: [],
+    tags: c.tags ? c.tags.split(',').map((t: string) => t.trim()) : [],
+  });
+
+  const fetchClasses = async () => {
+    try {
+      const [classResp, sessionResp] = await Promise.all([
+        fetch(`${API_BASE}/classes.php`),
+        fetch(`${API_BASE}/sessions.php`),
+      ]);
+
+      const classData = await classResp.json();
+      const sessionData = await sessionResp.json();
+
+      if (!classData.success) throw new Error(classData.error || 'Failed to fetch classes');
+      if (!sessionData.success) throw new Error(sessionData.error || 'Failed to fetch sessions');
+
+      const sessionMap: Record<string, any[]> = {};
+      sessionData.data.forEach((s: any) => {
+        if (!sessionMap[s.title]) sessionMap[s.title] = [];
+        sessionMap[s.title].push(s);
+      });
+
+      setClasses(classData.data.map((c: any) => {
+        const base = normalizeClass(c);
+        const classSessions = sessionMap[c.title] || [];
+        base.sessions = classSessions.map((s: any) => ({
+          id: s.session_id,
+          day: new Date(s.session_date).toLocaleDateString('en-GB', { weekday: 'long' }),
+          time: s.start_time?.substring(0, 5) || '',
+          bookedCount: s.spots_booked || 0,
+          maxCapacity: s.max_capacity || base.duration,
+          fullDate: s.session_date,
+        }));
+        return base;
+      }));
+
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error fetching classes';
+      toast.error(message);
+    }
+  };
+
+  const resetNewClassForm = () => {
+    setNewClassName('');
+    setNewClassInstructor('');
+    setNewClassDuration(45);
+    setNewClassCapacity(20);
+    setNewClassDescription('');
+    setNewClassTags('');
+  };
+
+  const handleCreateClass = async () => {
+    if (!newClassName.trim() || !newClassDuration || !newClassCapacity) {
+      toast.error('Please fill class name, duration and capacity.');
+      return;
+    }
+
+    try {
+      const payload = {
+        title: newClassName.trim(),
+        duration_mins: newClassDuration,
+        max_capacity: newClassCapacity,
+        description: newClassDescription.trim(),
+        tags: newClassTags.trim(),
+      };
+
+      const response = await fetch(`${API_BASE}/classes.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to create class');
+      }
+
+      toast.success('Class created successfully.');
+      setShowAddClass(false);
+      resetNewClassForm();
+      await fetchClasses();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to create class';
+      toast.error(message);
+    }
+  };
+
+  const openEditClass = (cls: FitnessClass) => {
+    setEditingClassId(cls.id);
+    setEditingClassData({ ...cls });
+  };
+
+  const handleUpdateClass = async () => {
+    if (!editingClassId || !editingClassData) {
+      toast.error('No class is selected for editing.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/classes.php`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          class_id: editingClassId,
+          title: editingClassData.name,
+          duration_mins: editingClassData.duration,
+          max_capacity: editingClassData.sessions?.[0]?.maxCapacity || newClassCapacity,
+          description: editingClassData.description,
+          tags: (editingClassData.tags || []).join(','),
+        }),
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to update class.');
+      }
+
+      toast.success('Class updated successfully.');
+      setEditingClassId(null);
+      setEditingClassData({});
+      await fetchClasses();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to update class.';
+      toast.error(message);
+    }
+  };
+
+  const handleDeleteClass = async (classId: number) => {
+    if (!window.confirm('Delete this class? This action cannot be undone.')) return;
+
+    try {
+      const response = await fetch(`${API_BASE}/classes.php`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ class_id: classId }),
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to delete class.');
+      }
+
+      toast.success('Class deleted.');
+      setClasses((prev) => prev.filter((c) => c.id !== classId));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to delete class.';
+      toast.error(message);
+    }
   };
 
   const fetchNotices = async () => {
@@ -176,6 +362,10 @@ export function AdminPage() {
     if (tab === 'notices') {
       void fetchNotices();
     }
+
+    if (tab === 'classes') {
+      void fetchClasses();
+    }
   }, [tab]);
 
   const filteredMembers = members.filter(
@@ -194,7 +384,7 @@ export function AdminPage() {
   const totalMembers = members.filter(m => m.role === 'member').length;
   const activeMembers = members.filter(m => m.status === 'Active' && m.role === 'member').length;
   const confirmedBookings = bookings.filter(b => b.status === 'Confirmed').length;
-  const totalClasses = fitnessClasses.length;
+  const totalClasses = classes.length;
 
   const navItems: { id: AdminTab; label: string; icon: typeof LayoutDashboard }[] = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -231,9 +421,8 @@ export function AdminPage() {
                   <button
                     key={id}
                     onClick={() => setTab(id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors mb-0.5 ${
-                      tab === id ? 'bg-orange-50 text-orange-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                    }`}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors mb-0.5 ${tab === id ? 'bg-orange-50 text-orange-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                      }`}
                     style={{ fontWeight: tab === id ? 600 : 400 }}
                     aria-current={tab === id ? 'page' : undefined}
                   >
@@ -379,28 +568,160 @@ export function AdminPage() {
                         <input
                           id="new-class-instructor"
                           type="text"
+                          value={newClassInstructor}
+                          onChange={(e) => setNewClassInstructor(e.target.value)}
                           placeholder="Instructor name"
                           className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="new-class-duration" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Duration (minutes)</label>
+                        <input
+                          id="new-class-duration"
+                          type="number"
+                          value={newClassDuration}
+                          onChange={(e) => setNewClassDuration(Number(e.target.value))}
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="new-class-capacity" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Capacity</label>
+                        <input
+                          id="new-class-capacity"
+                          type="number"
+                          min={1}
+                          value={newClassCapacity}
+                          onChange={(e) => setNewClassCapacity(Number(e.target.value))}
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label htmlFor="new-class-tags" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Tags (comma separated)</label>
+                        <input
+                          id="new-class-tags"
+                          type="text"
+                          value={newClassTags}
+                          onChange={(e) => setNewClassTags(e.target.value)}
+                          placeholder="e.g. Yoga, Low, Flexibility"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label htmlFor="new-class-description" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Description</label>
+                        <textarea
+                          id="new-class-description"
+                          value={newClassDescription}
+                          onChange={(e) => setNewClassDescription(e.target.value)}
+                          placeholder="Describe the class"
+                          rows={3}
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
                         />
                       </div>
                     </div>
                     <div className="flex gap-3">
                       <button
-                        onClick={() => {
-                          if (newClassName.trim()) {
-                            toast.success(`Class "${newClassName}" added.`);
-                            setNewClassName('');
-                            setShowAddClass(false);
-                          } else {
-                            toast.error('Please enter a class name.');
-                          }
-                        }}
+                        onClick={handleCreateClass}
                         className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors"
                         style={{ fontWeight: 600 }}
                       >
                         Save Class
                       </button>
-                      <button onClick={() => setShowAddClass(false)} className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors" style={{ fontWeight: 500 }}>
+                      <button
+                        onClick={() => setShowAddClass(false)}
+                        className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors"
+                        style={{ fontWeight: 500 }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {editingClassId && (
+                  <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-5" role="region" aria-label="Edit class form">
+                    <h2 className="text-slate-900 mb-4" style={{ fontWeight: 600 }}>Edit Class</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label htmlFor="edit-class-name" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Class Name</label>
+                        <input
+                          id="edit-class-name"
+                          type="text"
+                          value={editingClassData.name || ''}
+                          onChange={(e) => setEditingClassData((prev) => ({ ...prev, name: e.target.value }))}
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="edit-class-instructor" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Instructor</label>
+                        <input
+                          id="edit-class-instructor"
+                          type="text"
+                          value={editingClassData.instructor || ''}
+                          onChange={(e) => setEditingClassData((prev) => ({ ...prev, instructor: e.target.value }))}
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="edit-class-duration" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Duration (minutes)</label>
+                        <input
+                          id="edit-class-duration"
+                          type="number"
+                          value={editingClassData.duration || 0}
+                          onChange={(e) => setEditingClassData((prev) => ({ ...prev, duration: Number(e.target.value) }))}
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="edit-class-capacity" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Capacity</label>
+                        <input
+                          id="edit-class-capacity"
+                          type="number"
+                          min={1}
+                          value={editingClassData.sessions?.[0]?.maxCapacity || 20}
+                          onChange={(e) => setEditingClassData((prev) => ({
+                            ...prev,
+                            sessions: prev.sessions?.map((s) => ({ ...s, maxCapacity: Number(e.target.value) })) || [],
+                          }))}
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label htmlFor="edit-class-tags" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Tags</label>
+                        <input
+                          id="edit-class-tags"
+                          type="text"
+                          value={(editingClassData.tags || []).join(', ')}
+                          onChange={(e) => setEditingClassData((prev) => ({ ...prev, tags: e.target.value.split(',').map((t) => t.trim()) }))}
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label htmlFor="edit-class-description" className="block text-slate-700 text-sm mb-1" style={{ fontWeight: 500 }}>Description</label>
+                        <textarea
+                          id="edit-class-description"
+                          value={editingClassData.description || ''}
+                          onChange={(e) => setEditingClassData((prev) => ({ ...prev, description: e.target.value }))}
+                          rows={3}
+                          className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleUpdateClass}
+                        className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors"
+                        style={{ fontWeight: 600 }}
+                      >
+                        Update Class
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingClassId(null);
+                          setEditingClassData({});
+                        }}
+                        className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors"
+                        style={{ fontWeight: 500 }}
+                      >
                         Cancel
                       </button>
                     </div>
@@ -408,7 +729,7 @@ export function AdminPage() {
                 )}
 
                 <div className="grid grid-cols-1 gap-4" role="list" aria-label="Class list">
-                  {fitnessClasses.map((cls) => {
+                  {classes.map((cls) => {
                     const totalBooked = cls.sessions.reduce((sum, s) => sum + s.bookedCount, 0);
                     const totalCap = cls.sessions.reduce((sum, s) => sum + s.maxCapacity, 0);
                     const pct = totalCap > 0 ? Math.round((totalBooked / totalCap) * 100) : 0;
@@ -433,14 +754,14 @@ export function AdminPage() {
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <button
-                            onClick={() => toast.info(`Editing ${cls.name}…`)}
+                            onClick={() => openEditClass(cls)}
                             className="p-2 text-slate-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
                             aria-label={`Edit ${cls.name}`}
                           >
                             <Edit3 className="w-4 h-4" aria-hidden="true" />
                           </button>
                           <button
-                            onClick={() => toast.success(`${cls.name} removed.`)}
+                            onClick={() => handleDeleteClass(cls.id)}
                             className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                             aria-label={`Delete ${cls.name}`}
                           >
@@ -518,11 +839,10 @@ export function AdminPage() {
                                 {member.role !== 'admin' && (
                                   <button
                                     onClick={() => toggleMemberStatus(member.id)}
-                                    className={`p-1.5 rounded-lg transition-colors ${
-                                      member.status === 'Active'
+                                    className={`p-1.5 rounded-lg transition-colors ${member.status === 'Active'
                                         ? 'text-slate-400 hover:text-red-500 hover:bg-red-50'
                                         : 'text-slate-400 hover:text-green-500 hover:bg-green-50'
-                                    }`}
+                                      }`}
                                     aria-label={member.status === 'Active' ? `Suspend ${member.name}` : `Reactivate ${member.name}`}
                                   >
                                     {member.status === 'Active' ? (
