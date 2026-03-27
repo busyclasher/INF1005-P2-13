@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import type { FitnessClass } from '../data/mockData';
-import { adminMembers, adminBookings } from '../data/mockData';
+import { adminBookings } from '../data/mockData';
 import { toast } from 'sonner';
 
 type AdminTab = 'overview' | 'classes' | 'members' | 'bookings' | 'notices';
@@ -43,7 +43,8 @@ export function AdminPage() {
   const [tab, setTab] = useState<AdminTab>('overview');
   const [memberSearch, setMemberSearch] = useState('');
   const [bookingSearch, setBookingSearch] = useState('');
-  const [members, setMembers] = useState(adminMembers);
+  const [members, setMembers] = useState<any[]>([]);
+  const [membersLoading, setMembersLoading] = useState(true);
   const [bookings, setBookings] = useState(adminBookings);
   const [showAddClass, setShowAddClass] = useState(false);
   const [classes, setClasses] = useState<FitnessClass[]>([]);
@@ -289,6 +290,25 @@ export function AdminPage() {
     }
   };
 
+  const fetchMembers = async () => {
+  setMembersLoading(true);
+  try {
+    const response = await fetch(`${API_BASE}/members.php`);
+    const result = await response.json();
+    
+    if (result.success) {
+      setMembers(result.data);
+    } else {
+      toast.error('Failed to fetch members');
+    }
+  } catch (error) {
+    console.error('Error fetching members:', error);
+    toast.error('Network error fetching members');
+  } finally {
+    setMembersLoading(false);
+  }
+};
+
   const handleCreateNotice = async () => {
     if (!noticeTitle.trim() || !noticeContent.trim() || !noticeAuthorName.trim()) {
       toast.error('Please enter a title, content, and author name.');
@@ -366,6 +386,9 @@ export function AdminPage() {
     if (tab === 'classes') {
       void fetchClasses();
     }
+    if (tab === 'members'){
+      void fetchMembers();
+    }
   }, [tab]);
 
   const filteredMembers = members.filter(
@@ -381,7 +404,7 @@ export function AdminPage() {
   );
 
   // Stats
-  const totalMembers = members.filter(m => m.role === 'member').length;
+  const totalMembers = members.length;
   const activeMembers = members.filter(m => m.status === 'Active' && m.role === 'member').length;
   const confirmedBookings = bookings.filter(b => b.status === 'Confirmed').length;
   const totalClasses = classes.length;
@@ -779,7 +802,7 @@ export function AdminPage() {
             {tab === 'members' && (
               <section aria-labelledby="admin-members-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="admin-members-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>Manage Members</h1>
+                  <h1 id="admin-members-heading" className="text-slate-900 font-bold text-2xl">Manage Members</h1>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" aria-hidden="true" />
                     <input
@@ -792,51 +815,55 @@ export function AdminPage() {
                     />
                   </div>
                 </div>
-                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full min-w-[700px]" role="table" aria-label="Members table">
-                      <thead className="bg-slate-50 border-b border-slate-200">
-                        <tr>
-                          {['Name', 'Email', 'Plan', 'Joined', 'Bookings', 'Status', 'Actions'].map(h => (
-                            <th key={h} scope="col" className="text-left text-xs text-slate-500 px-4 py-3" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                              {h}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {filteredMembers.map((member) => (
-                          <tr key={member.id} className="hover:bg-slate-50 transition-colors">
-                            <td className="px-4 py-3.5">
-                              <div className="flex items-center gap-2.5">
-                                <span className="w-7 h-7 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center text-xs shrink-0" style={{ fontWeight: 700 }}>
-                                  {member.name ? member.name.split(' ').map(n => n[0]).join('').slice(0, 2) : ''}
-                                </span>
-                                <div>
-                                  <p className="text-slate-800 text-sm" style={{ fontWeight: 500 }}>{member.name}</p>
-                                  {member.role === 'admin' && <span className="text-xs text-orange-500">Admin</span>}
+                
+                {membersLoading ? (
+                  <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+                    <p className="text-slate-500">Loading members...</p>
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[700px]" role="table" aria-label="Members table">
+                        <thead className="bg-slate-50 border-b border-slate-200">
+                          <tr>
+                            {['Name', 'Email', 'Phone', 'Plan', 'Joined', 'Status', 'Actions'].map(h => (
+                              <th key={h} scope="col" className="text-left text-xs text-slate-500 px-4 py-3 font-semibold uppercase tracking-wide">
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {filteredMembers.map((member) => (
+                            <tr key={member.id} className="hover:bg-slate-50 transition-colors">
+                              <td className="px-4 py-3.5">
+                                <div className="flex items-center gap-2.5">
+                                  <span className="w-7 h-7 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center text-xs shrink-0 font-bold">
+                                    {member.name ? member.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2) : ''}
+                                  </span>
+                                  <div>
+                                    <p className="text-slate-800 text-sm font-medium">{member.name}</p>
+                                  </div>
                                 </div>
-                              </div>
-                            </td>
-                            <td className="px-4 py-3.5 text-slate-500 text-sm">{member.email}</td>
-                            <td className="px-4 py-3.5 text-slate-600 text-sm">{member.membershipTier}</td>
-                            <td className="px-4 py-3.5 text-slate-500 text-sm">{member.joinDate}</td>
-                            <td className="px-4 py-3.5 text-slate-600 text-sm text-center">{member.bookingsCount}</td>
-                            <td className="px-4 py-3.5">
-                              <span className={`px-2.5 py-0.5 rounded-full text-xs ${statusColour[member.status]}`} style={{ fontWeight: 500 }}>
-                                {member.status}
-                              </span>
-                            </td>
-                            <td className="px-4 py-3.5">
-                              <div className="flex items-center gap-1">
-                                <button
-                                  onClick={() => toast.info(`Viewing ${member.name}'s profile`)}
-                                  className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                                  aria-label={`View ${member.name}`}
-                                >
-                                  <Eye className="w-3.5 h-3.5" aria-hidden="true" />
-                                </button>
-                                {member.role !== 'admin' && (
+                              </td>
+                              <td className="px-4 py-3.5 text-slate-500 text-sm">{member.email}</td>
+                              <td className="px-4 py-3.5 text-slate-500 text-sm">{member.phone || '—'}</td>
+                              <td className="px-4 py-3.5 text-slate-600 text-sm">{member.membershipTier}</td>
+                              <td className="px-4 py-3.5 text-slate-500 text-sm">{member.joinDate}</td>
+                              <td className="px-4 py-3.5">
+                                <span className={`px-2.5 py-0.5 rounded-full text-xs ${statusColour[member.status]}`} style={{ fontWeight: 500 }}>
+                                  {member.status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3.5">
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => toast.info(`Viewing ${member.name}'s profile`)}
+                                    className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                                    aria-label={`View ${member.name}`}
+                                  >
+                                    <Eye className="w-3.5 h-3.5" aria-hidden="true" />
+                                  </button>
                                   <button
                                     onClick={() => toggleMemberStatus(member.id)}
                                     className={`p-1.5 rounded-lg transition-colors ${member.status === 'Active'
@@ -851,20 +878,20 @@ export function AdminPage() {
                                       <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
                                     )}
                                   </button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  {filteredMembers.length === 0 && (
-                    <div className="p-10 text-center">
-                      <p className="text-slate-400 text-sm">No members match your search.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
-                  )}
-                </div>
+                    {filteredMembers.length === 0 && (
+                      <div className="p-10 text-center">
+                        <p className="text-slate-400 text-sm">No members match your search.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </section>
             )}
 

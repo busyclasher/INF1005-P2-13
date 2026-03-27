@@ -22,13 +22,41 @@ if ($conn->connect_error) {
     die(json_encode(['success' => false, 'error' => 'Database connection failed']));
 }
 
-// Get all members (non-admin users)
-$stmt = $conn->prepare("SELECT user_id, first_name, last_name, email_address, phone_number, role, created_at FROM users WHERE role = 'member' ORDER BY created_at DESC");
+// Get all members with their membership information
+// LEFT JOIN to get the earliest membership start date as the join date
+$stmt = $conn->prepare("
+    SELECT 
+        u.user_id, 
+        u.first_name, 
+        u.last_name, 
+        u.email_address, 
+        u.phone_number, 
+        u.role,
+        m.start_date as join_date,
+        mp.plan_name as membership_tier,
+        mp.price as membership_price
+    FROM users u
+    LEFT JOIN memberships m ON u.user_id = m.user_id
+    LEFT JOIN membership_plans mp ON m.plan_id = mp.plan_id
+    WHERE u.role = 'member'
+    ORDER BY m.start_date DESC
+");
 $stmt->execute();
 $result = $stmt->get_result();
 
 $members = [];
 while ($row = $result->fetch_assoc()) {
+    // Count bookings for this user
+    $bookingCount = 0;
+    $bookingsStmt = $conn->prepare("SELECT COUNT(*) as count FROM bookings WHERE user_id = ?");
+    $bookingsStmt->bind_param("i", $row['user_id']);
+    $bookingsStmt->execute();
+    $bookingsResult = $bookingsStmt->get_result();
+    if ($bookingRow = $bookingsResult->fetch_assoc()) {
+        $bookingCount = $bookingRow['count'];
+    }
+    $bookingsStmt->close();
+    
     $members[] = [
         'id' => $row['user_id'],
         'name' => $row['first_name'] . ' ' . $row['last_name'],
@@ -37,10 +65,10 @@ while ($row = $result->fetch_assoc()) {
         'email' => $row['email_address'],
         'phone' => $row['phone_number'] ?? '',
         'role' => $row['role'],
-        'joinDate' => date('d M Y', strtotime($row['created_at'])),
+        'joinDate' => $row['join_date'] ? date('d M Y', strtotime($row['join_date'])) : 'Not joined',
         'status' => 'Active', // You can add a status column if needed
-        'membershipTier' => 'Basic', // You can fetch this from a memberships table
-        'bookingsCount' => 0 // You can calculate this from bookings table
+        'membershipTier' => $row['membership_tier'] ?? 'No Plan',
+        'bookingsCount' => $bookingCount
     ];
 }
 
