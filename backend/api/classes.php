@@ -64,11 +64,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $stmt = $conn->prepare(
-            "INSERT INTO classes (title, duration_mins, max_capacity, description, tags, instructor_id)
-             VALUES (?, ?, ?, ?, ?, ?)"
-        );
-        $stmt->bind_param('siissi', $title, $duration, $max_capacity, $description, $tags, $instructor_id);
+        if ($instructor_id !== null) {
+            $stmt = $conn->prepare(
+                "INSERT INTO classes (title, duration_mins, max_capacity, description, tags, instructor_id)
+                 VALUES (?, ?, ?, ?, ?, ?)"
+            );
+            $stmt->bind_param('siissi', $title, $duration, $max_capacity, $description, $tags, $instructor_id);
+        } else {
+            $stmt = $conn->prepare(
+                "INSERT INTO classes (title, duration_mins, max_capacity, description, tags)
+                 VALUES (?, ?, ?, ?, ?)"
+            );
+            $stmt->bind_param('siiss', $title, $duration, $max_capacity, $description, $tags);
+        }
+
         $stmt->execute();
 
         $newId = $conn->insert_id;
@@ -84,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]]);
     } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(['success' => false, 'error' => 'Failed to create class.']);
+        echo json_encode(['success' => false, 'error' => 'Failed to create class.', 'dbError' => $conn->error]);
     }
     exit();
 }
@@ -102,7 +111,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $max_capacity = isset($input['max_capacity']) ? intval($input['max_capacity']) : null;
     $description = isset($input['description']) ? sanitizeInput($input['description']) : null;
     $tags = isset($input['tags']) ? sanitizeInput($input['tags']) : null;
-    $instructor_id = array_key_exists('instructor_id', $input) ? intval($input['instructor_id']) : null;
+    $instructor_id = null;
+    if (array_key_exists('instructor_id', $input)) {
+        if ($input['instructor_id'] === null || $input['instructor_id'] === '') {
+            $instructor_id = null;
+        } else {
+            $instructor_id = intval($input['instructor_id']);
+        }
+    }
 
     $fields = [];
     $params = [];
@@ -113,7 +129,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     if ($max_capacity !== null) { $fields[] = 'max_capacity = ?'; $params[] = $max_capacity; $types .= 'i'; }
     if ($description !== null) { $fields[] = 'description = ?'; $params[] = $description; $types .= 's'; }
     if ($tags !== null) { $fields[] = 'tags = ?'; $params[] = $tags; $types .= 's'; }
-    if ($instructor_id !== null) { $fields[] = 'instructor_id = ?'; $params[] = $instructor_id; $types .= 'i'; }
+    if (array_key_exists('instructor_id', $input)) {
+        if ($instructor_id === null) {
+            $fields[] = 'instructor_id = NULL';
+        } else {
+            $fields[] = 'instructor_id = ?';
+            $params[] = $instructor_id;
+            $types .= 'i';
+        }
+    }
 
     if (count($fields) === 0) {
         http_response_code(400);
