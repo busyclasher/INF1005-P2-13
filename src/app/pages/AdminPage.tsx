@@ -74,15 +74,63 @@ export function AdminPage() {
     navigate('/');
   };
 
-  const toggleMemberStatus = (id: string) => {
-    setMembers((prev) =>
-      prev.map((m) =>
-        m.id === id ? { ...m, status: m.status === 'Active' ? 'Suspended' : 'Active' } : m
-      )
-    );
+  const handleDeleteUser = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+
+    try {
+      const response = await fetch(`${API_BASE}/delete_account.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: id }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setMembers((prev) => prev.filter((m) => m.id !== id));
+        toast.success("User deleted successfully");
+      } else {
+        toast.error(result.error || "Failed to delete user");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Network error");
+    }
+  };
+
+  const toggleMemberRole = async (id: string) => {
     const member = members.find((m) => m.id === id);
-    if (member) {
-      toast.success(`${member.name} ${member.status === 'Active' ? 'suspended' : 'reactivated'}.`);
+    if (!member) return;
+
+    const newRole = member.role === 'admin' ? 'member' : 'admin';
+
+    try {
+      const response = await fetch(`${API_BASE}/members.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: id,
+          role: newRole,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // update UI
+        setMembers((prev) =>
+          prev.map((m) =>
+            m.id === id ? { ...m, role: newRole } : m
+          )
+        );
+
+        toast.success(`${member.name} is now ${newRole}`);
+      } else {
+        toast.error(result.error || 'Failed to update role');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Network error');
     }
   };
 
@@ -377,6 +425,12 @@ export function AdminPage() {
       setDeletingNoticeId(null);
     }
   };
+
+  useEffect(() => {
+    if (members.length === 0){
+      fetchMembers();
+    }
+  }, []);
 
   useEffect(() => {
     if (tab === 'notices') {
@@ -826,7 +880,7 @@ export function AdminPage() {
                       <table className="w-full min-w-[700px]" role="table" aria-label="Members table">
                         <thead className="bg-slate-50 border-b border-slate-200">
                           <tr>
-                            {['Name', 'Email', 'Phone', 'Plan', 'Joined', 'Status', 'Actions'].map(h => (
+                            {['Name', 'Email', 'Phone', 'Plan', 'Joined', 'Role', 'Actions'].map(h => (
                               <th key={h} scope="col" className="text-left text-xs text-slate-500 px-4 py-3 font-semibold uppercase tracking-wide">
                                 {h}
                               </th>
@@ -851,33 +905,45 @@ export function AdminPage() {
                               <td className="px-4 py-3.5 text-slate-600 text-sm">{member.membershipTier}</td>
                               <td className="px-4 py-3.5 text-slate-500 text-sm">{member.joinDate}</td>
                               <td className="px-4 py-3.5">
-                                <span className={`px-2.5 py-0.5 rounded-full text-xs ${statusColour[member.status]}`} style={{ fontWeight: 500 }}>
-                                  {member.status}
+                                <span
+                                  className={`px-2.5 py-0.5 rounded-full text-xs ${
+                                    member.role === 'admin'
+                                      ? 'bg-purple-100 text-purple-700'
+                                      : 'bg-blue-100 text-blue-700'
+                                  }`}
+                                  style={{ fontWeight: 500 }}
+                                >
+                                  {member.role}
                                 </span>
                               </td>
                               <td className="px-4 py-3.5">
                                 <div className="flex items-center gap-1">
                                   <button
-                                    onClick={() => toast.info(`Viewing ${member.name}'s profile`)}
+                                    onClick={() => handleDeleteUser(member.id)}
                                     className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                                     aria-label={`View ${member.name}`}
                                   >
-                                    <Eye className="w-3.5 h-3.5" aria-hidden="true" />
+                                    <XCircle className="w-3.5 h-3.5" aria-hidden="true" />
                                   </button>
                                   <button
-                                    onClick={() => toggleMemberStatus(member.id)}
-                                    className={`p-1.5 rounded-lg transition-colors ${member.status === 'Active'
-                                        ? 'text-slate-400 hover:text-red-500 hover:bg-red-50'
-                                        : 'text-slate-400 hover:text-green-500 hover:bg-green-50'
+                                      onClick={() => toggleMemberRole(member.id)} // ✅ CHANGED
+                                      className={`p-1.5 rounded-lg transition-colors ${
+                                        member.role === 'admin'
+                                          ? 'text-slate-400 hover:text-yellow-600 hover:bg-yellow-50'
+                                          : 'text-slate-400 hover:text-green-500 hover:bg-green-50'
                                       }`}
-                                    aria-label={member.status === 'Active' ? `Suspend ${member.name}` : `Reactivate ${member.name}`}
-                                  >
-                                    {member.status === 'Active' ? (
-                                      <XCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                                    ) : (
-                                      <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
-                                    )}
-                                  </button>
+                                      aria-label={
+                                        member.role === 'admin'
+                                          ? `Demote ${member.name} to member`
+                                          : `Promote ${member.name} to admin`
+                                      }
+                                    >
+                                      {member.role === 'admin' ? (
+                                        <Shield className="w-3.5 h-3.5" />
+                                      ) : (
+                                        <CheckCircle2 className="w-3.5 h-3.5" />
+                                      )}
+                                    </button>
                                 </div>
                               </td>
                             </tr>

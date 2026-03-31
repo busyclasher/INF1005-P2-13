@@ -22,6 +22,28 @@ if ($conn->connect_error) {
     die(json_encode(['success' => false, 'error' => 'Database connection failed']));
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    if (!isset($data['user_id']) || !isset($data['role'])) {
+        echo json_encode(['success' => false, 'error' => 'Missing parameters']);
+        exit();
+    }
+
+    $stmt = $conn->prepare("UPDATE users SET role = ? WHERE user_id = ?");
+    $stmt->bind_param("si", $data['role'], $data['user_id']);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Failed to update role']);
+    }
+
+    $stmt->close();
+    $conn->close();
+    exit();
+}
+
 // Get all members with their membership information
 // LEFT JOIN to get the earliest membership start date as the join date
 $stmt = $conn->prepare("
@@ -38,7 +60,7 @@ $stmt = $conn->prepare("
     FROM users u
     LEFT JOIN memberships m ON u.user_id = m.user_id
     LEFT JOIN membership_plans mp ON m.plan_id = mp.plan_id
-    WHERE u.role = 'member'
+    WHERE u.role IN ('member', 'admin')
     ORDER BY m.start_date DESC
 ");
 $stmt->execute();
@@ -66,7 +88,7 @@ while ($row = $result->fetch_assoc()) {
         'phone' => $row['phone_number'] ?? '',
         'role' => $row['role'],
         'joinDate' => $row['join_date'] ? date('d M Y', strtotime($row['join_date'])) : 'Not joined',
-        'status' => 'Active', // You can add a status column if needed
+        'status' => 'Active',
         'membershipTier' => $row['membership_tier'] ?? 'No Plan',
         'bookingsCount' => $bookingCount
     ];

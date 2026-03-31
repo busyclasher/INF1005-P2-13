@@ -116,33 +116,33 @@ export function RegisterPage() {
   };
 
   const handleRegister = async () => {
-
-    try {
-      const response = await fetch(`${API_BASE}/register.php`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName: form.firstName,
-          lastName: form.lastName,
-          phone_number: form.phone,
-          email: form.email,
-          password: form.password
-        })
-      });
-      const result = await response.json();
-      if (!result.success) {
-        console.error("Server error: ", result.error);
-        setErrors((errs) => ({ ...errs, submit: result.error || 'Registration failed.' }));
-        setSuccess(false);
-        return false;
-      }
-      return true;
-    } catch (error) {
-      setErrors((errs) => ({ ...errs, submit: 'Error while submitting to backend: ' + error }));
+  try {
+    const response = await fetch(`${API_BASE}/register.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone_number: form.phone,
+        email: form.email,
+        password: form.password,
+        membershipTier: form.membershipTier
+      })
+    });
+    const result = await response.json();
+    if (!result.success) {
+      console.error("Server error: ", result.error);
+      setErrors((errs) => ({ ...errs, submit: result.error || 'Registration failed.' }));
       setSuccess(false);
       return false;
     }
+    return true;
+  } catch (error) {
+    setErrors((errs) => ({ ...errs, submit: 'Error while submitting to backend: ' + error }));
+    setSuccess(false);
+    return false;
   }
+}
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

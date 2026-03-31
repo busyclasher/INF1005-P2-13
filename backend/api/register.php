@@ -23,6 +23,17 @@ $lastName     = trim($data['lastName'] ?? '');
 $email        = trim($data['email'] ?? '');
 $phone_number = trim($data['phone_number'] ?? '');
 $password     = $data['password'] ?? '';
+$membershipTier = $data['membershipTier'] ?? 'Essential';
+
+$membershipTier = ucfirst(strtolower(trim($membershipTier)));
+
+$planIdMap = [
+    'Essential' => 1,   
+    'Standard' => 2,    
+    'Premium' => 3,      
+];
+
+$planId = $planIdMap[$membershipTier] ?? 1;
 
 // Check if email exists
 $checkStmt = $conn->prepare("SELECT user_id FROM users WHERE email_address = ?");
@@ -60,15 +71,32 @@ $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 $role         = 'member';
 
 try {
+    // Start transaction
+    $conn->begin_transaction();
+    
+    // Insert user
     $stmt = $conn->prepare('INSERT INTO users (first_name, last_name, email_address, phone_number, password_hash, role) VALUES (?, ?, ?, ?, ?, ?)');
     $stmt->bind_param('ssssss', $firstName, $lastName, $email, $phone_number, $passwordHash, $role);
-    //$stmt->execute();
-
-    //echo json_encode(['success' => true, 'message' => 'Registration successful.']);
-
+    
     if ($stmt->execute()) {
         // Get the new user's ID
         $userId = $stmt->insert_id;
+        
+        // ADDED: Insert membership record
+        $startDate = date('Y-m-d');
+        $endDate = date('Y-m-d', strtotime('+1 month')); // 1 month membership
+        
+        $membershipStmt = $conn->prepare('INSERT INTO memberships (user_id, plan_id, start_date, end_date, status) VALUES (?, ?, ?, ?, ?)');
+        $status = 'active';
+        $membershipStmt->bind_param('iisss', $userId, $planId, $startDate, $endDate, $status);
+        
+        if (!$membershipStmt->execute()) {
+            throw new Exception('Failed to create membership record');
+        }
+        $membershipStmt->close();
+        
+        // Commit transaction
+        $conn->commit();
         
         // Send welcome email
         $emailResult = sendWelcomeEmail($email, $firstName, $lastName);
@@ -88,24 +116,24 @@ try {
                 'user_id' => $userId
             ]);
         }
+    } else {
+        throw new Exception('Failed to create user');
     }
 
-    else {
-        http_response_code(500);
-        echo json_encode(['success' => false, 'error' => 'Registration failed. Please try again.']);
-    }
-
-} catch (mysqli_sql_exception $e) {
-    // Duplicate email (unique constraint violation)
+} catch (Exception $e) {
+    // Rollback transaction on error
+    $conn->rollback();
+    
     if ($e->getCode() === 1062) {
         http_response_code(409);
         echo json_encode(['success' => false, 'error' => 'An account with this email already exists.']);
     } else {
+        error_log("Registration error: " . $e->getMessage());
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => 'Registration failed. Please try again.']);
     }
 } finally {
-    $stmt->close();
+    if (isset($stmt)) $stmt->close();
     $conn->close();
 }
 ?>

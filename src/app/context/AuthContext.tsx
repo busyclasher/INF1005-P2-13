@@ -130,7 +130,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: data.user.email,
           role: data.user.role,
           phone: data.user.phone || '',
-          membershipTier: data.user.membershipTier || 'Basic',
+          membershipTier: data.user.membershipTier || 'Essential',
           joinDate: data.user.joinDate || new Date().toISOString()
         };
         setUser(userData);
