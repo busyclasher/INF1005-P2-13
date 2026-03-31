@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate, Link, Navigate } from 'react-router';
 import {
   LayoutDashboard, Calendar, User, CreditCard, LogOut, CheckCircle2,
@@ -43,6 +43,7 @@ export function DashboardPage() {
     phone: user?.phone || '',
   });
   const [profileErrors, setProfileErrors] = useState<{ name?: string }>({});
+  const profileNameRef = useRef<HTMLInputElement | null>(null);
 
   // Fetch initial data
   useEffect(() => {
@@ -123,6 +124,7 @@ export function DashboardPage() {
   const handleProfileSave = async () => {
   if (!profileForm.name.trim()) {
     setProfileErrors({ name: 'Name is required.' });
+    profileNameRef.current?.focus();
     return;
   }
   
@@ -374,18 +376,41 @@ export function DashboardPage() {
                 <div className="bg-white rounded-2xl border border-slate-200 p-6">
                   {editMode ? (
                     <div>
+                      {profileErrors.name && (
+                        <div
+                          className="rounded-xl p-4 mb-5 bg-red-50 border border-red-200"
+                          role="alert"
+                          aria-live="assertive"
+                        >
+                          <p className="text-red-800 text-sm font-semibold">Please fix the following:</p>
+                          <ul className="mt-2">
+                            <li>
+                              <button
+                                type="button"
+                                className="text-left text-sm text-red-700 hover:underline"
+                                onClick={() => profileNameRef.current?.focus()}
+                              >
+                                Full Name: {profileErrors.name}
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      )}
                       <div className="mb-4">
                         <label htmlFor="profile-name" className="block text-slate-700 text-sm mb-1.5 font-medium">Full Name</label>
                         <input
                           id="profile-name"
+                          ref={profileNameRef}
                           type="text"
                           value={profileForm.name}
                           onChange={(e) => setProfileForm(f => ({ ...f, name: e.target.value }))}
                           className={`w-full px-4 py-2.5 rounded-xl border text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400 ${
                             profileErrors.name ? 'border-red-400 bg-red-50' : 'border-slate-200 bg-slate-50'
                           }`}
+                          aria-invalid={!!profileErrors.name}
+                          aria-describedby={profileErrors.name ? 'profile-name-error' : undefined}
                         />
-                        {profileErrors.name && <p className="mt-1 text-red-600 text-xs" role="alert">{profileErrors.name}</p>}
+                        {profileErrors.name && <p id="profile-name-error" className="mt-1 text-red-600 text-xs" role="alert">{profileErrors.name}</p>}
                       </div>
                       <div className="mb-4">
                         <label htmlFor="profile-email" className="block text-slate-700 text-sm mb-1.5 font-medium">Email Address</label>

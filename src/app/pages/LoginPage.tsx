@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router';
 import { Eye, EyeOff, Zap, AlertCircle, LogIn } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -22,6 +22,8 @@ function validateEmail(email: string): boolean {
 export function LoginPage() {
   const { login, isAuthenticated, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -69,6 +71,8 @@ export function LoginPage() {
     if (emailErr || pwErr) {
       console.log("Validation failed");
       setErrors({ email: emailErr, password: pwErr });
+      if (emailErr) emailRef.current?.focus();
+      else if (pwErr) passwordRef.current?.focus();
       return;
     }
 
@@ -150,6 +154,42 @@ export function LoginPage() {
               </div>
             </div>
 
+            {/* Error summary (links focus to fields) */}
+            {(errors.email || errors.password) && (
+              <div
+                className="rounded-xl p-4 mb-5"
+                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+                role="alert"
+                aria-live="assertive"
+              >
+                <p className="text-red-400 text-sm" style={{ fontWeight: 600 }}>Please fix the following:</p>
+                <ul className="mt-2 space-y-1">
+                  {errors.email && (
+                    <li>
+                      <button
+                        type="button"
+                        className="text-left text-sm text-red-300 hover:underline"
+                        onClick={() => emailRef.current?.focus()}
+                      >
+                        Email: {errors.email}
+                      </button>
+                    </li>
+                  )}
+                  {errors.password && (
+                    <li>
+                      <button
+                        type="button"
+                        className="text-left text-sm text-red-300 hover:underline"
+                        onClick={() => passwordRef.current?.focus()}
+                      >
+                        Password: {errors.password}
+                      </button>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
+
             {/* General error */}
             {errors.general && (
               <div
@@ -170,6 +210,7 @@ export function LoginPage() {
                 </label>
                 <input
                   id="email"
+                  ref={emailRef}
                   type="email"
                   autoComplete="email"
                   value={email}
@@ -207,6 +248,7 @@ export function LoginPage() {
                 <div className="relative">
                   <input
                     id="password"
+                    ref={passwordRef}
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
                     value={password}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Eye, EyeOff, Zap, AlertCircle, CheckCircle2, UserPlus } from 'lucide-react';
 import { membershipTiers } from '../data/mockData';
@@ -76,6 +76,20 @@ export function RegisterPage() {
     agreeTerms: false,
     agreeMarketing: false,
   });
+
+  const refs = {
+    firstName: useRef<HTMLInputElement | null>(null),
+    lastName: useRef<HTMLInputElement | null>(null),
+    email: useRef<HTMLInputElement | null>(null),
+    phone: useRef<HTMLInputElement | null>(null),
+    password: useRef<HTMLInputElement | null>(null),
+    confirmPassword: useRef<HTMLInputElement | null>(null),
+    agreeTerms: useRef<HTMLInputElement | null>(null),
+  };
+
+  const focusField = (key: keyof typeof refs) => {
+    refs[key].current?.focus();
+  };
   
 
   const update = (key: keyof FormData, value: string | boolean) =>
@@ -93,6 +107,14 @@ export function RegisterPage() {
     if (!form.confirmPassword) errs.confirmPassword = 'Please confirm your password.';
     else if (form.password !== form.confirmPassword) errs.confirmPassword = 'Passwords do not match.';
     setErrors(errs);
+    if (Object.keys(errs).length > 0) {
+      if (errs.firstName) focusField('firstName');
+      else if (errs.lastName) focusField('lastName');
+      else if (errs.email) focusField('email');
+      else if (errs.phone) focusField('phone');
+      else if (errs.password) focusField('password');
+      else if (errs.confirmPassword) focusField('confirmPassword');
+    }
     return Object.keys(errs).length === 0;
   };
 
@@ -101,6 +123,9 @@ export function RegisterPage() {
     if (!form.membershipTier) errs.membershipTier = 'Please select a membership plan.';
     if (!form.agreeTerms) errs.agreeTerms = 'You must agree to the terms and conditions.';
     setErrors(errs);
+    if (Object.keys(errs).length > 0) {
+      if (errs.agreeTerms) focusField('agreeTerms');
+    }
     return Object.keys(errs).length === 0;
   };
 
@@ -257,6 +282,52 @@ export function RegisterPage() {
               </div>
             )}
 
+            {/* Error summary (focuses field on click) */}
+            {Object.entries(errors).some(([k, v]) => k !== 'submit' && !!v) && (
+              <div
+                className="rounded-xl p-4 mb-5"
+                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+                role="alert"
+                aria-live="assertive"
+              >
+                <p className="text-red-400 text-sm" style={{ fontWeight: 600 }}>Please fix the following:</p>
+                <ul className="mt-2 space-y-1">
+                  {step === 0 && (
+                    <>
+                      {errors.firstName && (
+                        <li><button type="button" className="text-left text-sm text-red-300 hover:underline" onClick={() => focusField('firstName')}>First name: {errors.firstName}</button></li>
+                      )}
+                      {errors.lastName && (
+                        <li><button type="button" className="text-left text-sm text-red-300 hover:underline" onClick={() => focusField('lastName')}>Last name: {errors.lastName}</button></li>
+                      )}
+                      {errors.email && (
+                        <li><button type="button" className="text-left text-sm text-red-300 hover:underline" onClick={() => focusField('email')}>Email: {errors.email}</button></li>
+                      )}
+                      {errors.phone && (
+                        <li><button type="button" className="text-left text-sm text-red-300 hover:underline" onClick={() => focusField('phone')}>Phone: {errors.phone}</button></li>
+                      )}
+                      {errors.password && (
+                        <li><button type="button" className="text-left text-sm text-red-300 hover:underline" onClick={() => focusField('password')}>Password: {errors.password}</button></li>
+                      )}
+                      {errors.confirmPassword && (
+                        <li><button type="button" className="text-left text-sm text-red-300 hover:underline" onClick={() => focusField('confirmPassword')}>Confirm password: {errors.confirmPassword}</button></li>
+                      )}
+                    </>
+                  )}
+                  {step === 1 && (
+                    <>
+                      {errors.membershipTier && (
+                        <li><span className="text-sm text-red-300">Plan: {errors.membershipTier}</span></li>
+                      )}
+                      {errors.agreeTerms && (
+                        <li><button type="button" className="text-left text-sm text-red-300 hover:underline" onClick={() => focusField('agreeTerms')}>Terms: {errors.agreeTerms}</button></li>
+                      )}
+                    </>
+                  )}
+                </ul>
+              </div>
+            )}
+
             {/* Step 0: Account details */}
             {step === 0 && (
               <div>
@@ -268,6 +339,7 @@ export function RegisterPage() {
                       </label>
                       <input
                         id={field}
+                        ref={refs[field]}
                         type="text"
                         autoComplete={field === 'firstName' ? 'given-name' : 'family-name'}
                         value={form[field]}
@@ -293,6 +365,7 @@ export function RegisterPage() {
                   </label>
                   <input
                     id="email"
+                    ref={refs.email}
                     type="email"
                     autoComplete="email"
                     value={form.email}
@@ -313,14 +386,18 @@ export function RegisterPage() {
                   </label>
                   <input
                     id="phone"
+                    ref={refs.phone}
                     type="tel"
                     autoComplete="tel"
                     value={form.phone}
                     onChange={(e) => update('phone', e.target.value)}
                     placeholder="+44 7700 900000"
                     className={inputBase}
-                    style={{ background: '#222', borderColor: '#333' }}
+                    style={fieldStyle(!!errors.phone)}
+                    aria-invalid={!!errors.phone}
+                    aria-describedby={errors.phone ? 'phone-error' : undefined}
                   />
+                  {errors.phone && <p id="phone-error" className="mt-1 text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.phone}</p>}
                 </div>
 
                 <div className="mb-4">
@@ -328,6 +405,7 @@ export function RegisterPage() {
                   <div className="relative">
                     <input
                       id="password"
+                      ref={refs.password}
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       value={form.password}
@@ -336,6 +414,7 @@ export function RegisterPage() {
                       className={inputBase + ' pr-11'}
                       style={fieldStyle(!!errors.password)}
                       aria-invalid={!!errors.password}
+                      aria-describedby={errors.password ? 'password-error' : undefined}
                       required
                     />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -357,7 +436,7 @@ export function RegisterPage() {
                       </p>
                     </div>
                   )}
-                  {errors.password && <p className="mt-1 text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.password}</p>}
+                  {errors.password && <p id="password-error" className="mt-1 text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.password}</p>}
                 </div>
 
                 <div className="mb-2">
@@ -365,6 +444,7 @@ export function RegisterPage() {
                   <div className="relative">
                     <input
                       id="confirmPassword"
+                      ref={refs.confirmPassword}
                       type={showConfirm ? 'text' : 'password'}
                       autoComplete="new-password"
                       value={form.confirmPassword}
@@ -373,6 +453,7 @@ export function RegisterPage() {
                       className={inputBase + ' pr-11'}
                       style={fieldStyle(!!errors.confirmPassword)}
                       aria-invalid={!!errors.confirmPassword}
+                      aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
                       required
                     />
                     <button type="button" onClick={() => setShowConfirm(!showConfirm)}
@@ -382,7 +463,7 @@ export function RegisterPage() {
                       {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
-                  {errors.confirmPassword && <p className="mt-1 text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.confirmPassword}</p>}
+                  {errors.confirmPassword && <p id="confirmPassword-error" className="mt-1 text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.confirmPassword}</p>}
                 </div>
               </div>
             )}
@@ -433,6 +514,7 @@ export function RegisterPage() {
                   <label className="flex items-start gap-3 cursor-pointer">
                     <input
                       type="checkbox"
+                      ref={refs.agreeTerms}
                       checked={form.agreeTerms}
                       onChange={(e) => update('agreeTerms', e.target.checked)}
                       style={{ accentColor: LIME }}

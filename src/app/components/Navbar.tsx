@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router';
+import { Link, useMatch, useNavigate } from 'react-router';
 import { Menu, X, ChevronDown, LayoutDashboard, Settings, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import kineticHubLogo from '../../../assets/Kinetic-Hub.png';
@@ -30,9 +30,25 @@ export function Navbar() {
     ? user.firstName 
     : user?.email?.split('@')[0] || 'User';
   
-  const userFullName = user?.firstName && user?.lastName
-    ? `${user.firstName} ${user.lastName}`
-    : user?.email?.split('@')[0] || 'User';
+  function TopNavItem({ to, label, onNavigate }: { to: string; label: string; onNavigate?: () => void }) {
+    const match = useMatch({ path: to, end: true });
+    const isActive = !!match;
+    return (
+      <Link
+        to={to}
+        onClick={onNavigate}
+        aria-current={isActive ? 'page' : undefined}
+        className={`px-4 py-2 rounded-lg transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111] ${
+          isActive
+            ? 'text-white bg-white/10'
+            : 'text-white/60 hover:text-white hover:bg-white/5'
+        }`}
+        style={{ fontWeight: 500 }}
+      >
+        {label}
+      </Link>
+    );
+  }
 
   const handleLogout = () => {
     logout();
@@ -96,21 +112,11 @@ export function Navbar() {
         {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-1" role="list">
           {navLinks.map((link) => (
-            <NavLink
+            <TopNavItem
               key={link.to}
               to={link.to}
-              role="listitem"
-              className={({ isActive }) =>
-                `px-4 py-2 rounded-lg transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111] ${
-                  isActive
-                    ? 'text-white bg-white/10'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
-                }`
-              }
-              style={{ fontWeight: 500 }}
-            >
-              {link.label}
-            </NavLink>
+              label={link.label}
+            />
           ))}
         </div>
 
@@ -144,7 +150,6 @@ export function Navbar() {
                   ref={dropdownMenuRef}
                   className="absolute right-0 mt-2 w-52 rounded-xl shadow-2xl border py-1 z-50"
                   style={{ background: '#1a1a1a', borderColor: '#2a2a2a' }}
-                  role="menu"
                   aria-label="Account options"
                 >
                   <div className="px-4 py-2 border-b" style={{ borderColor: '#2a2a2a' }}>
@@ -157,7 +162,6 @@ export function Navbar() {
                       to="/admin"
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
                       onClick={() => setDropdownOpen(false)}
-                      role="menuitem"
                     >
                       <Shield className="w-4 h-4 text-white/30" aria-hidden="true" />
                       Admin Panel
@@ -168,7 +172,6 @@ export function Navbar() {
                       to="/dashboard"
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
                       onClick={() => setDropdownOpen(false)}
-                      role="menuitem"
                     >
                       <LayoutDashboard className="w-4 h-4 text-white/30" aria-hidden="true" />
                       My Dashboard
@@ -178,7 +181,6 @@ export function Navbar() {
                     to={user.role === 'admin' ? '/admin' : '/dashboard'}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
                     onClick={() => { setDropdownOpen(false); }}
-                    role="menuitem"
                   >
                     <Settings className="w-4 h-4 text-white/30" aria-hidden="true" />
                     Settings
@@ -187,7 +189,6 @@ export function Navbar() {
                     <button
                       onClick={handleLogout}
                       className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
-                      role="menuitem"
                     >
                       <LogOut className="w-4 h-4" aria-hidden="true" />
                       Sign out
@@ -239,19 +240,12 @@ export function Navbar() {
         >
           <div className="flex flex-col gap-1">
             {navLinks.map((link) => (
-              <NavLink
+              <TopNavItem
                 key={link.to}
                 to={link.to}
-                className={({ isActive }) =>
-                  `px-4 py-3 rounded-lg text-sm transition-colors ${
-                    isActive ? 'text-white bg-white/10' : 'text-white/60 hover:text-white hover:bg-white/5'
-                  }`
-                }
-                style={{ fontWeight: 500 }}
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
-              </NavLink>
+                label={link.label}
+                onNavigate={() => setMobileOpen(false)}
+              />
             ))}
             <div className="border-t pt-3 mt-2 flex flex-col gap-2" style={{ borderColor: '#2a2a2a' }}>
               {isAuthenticated && user ? (
