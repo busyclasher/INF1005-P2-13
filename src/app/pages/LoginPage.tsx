@@ -142,7 +142,6 @@ export function LoginPage() {
               className="rounded-xl p-4 mb-6"
               style={{ background: 'rgba(200,244,0,0.06)', border: `1px solid rgba(200,244,0,0.15)` }}
               role="note"
-              aria-label="Demo credentials"
             >
               <p className="text-sm" style={{ color: LIME, fontWeight: 600 }}>Demo Credentials</p>
               <div className="mt-1.5 space-y-1 text-xs" style={{ color: 'rgba(200,244,0,0.7)' }}>
@@ -189,7 +188,7 @@ export function LoginPage() {
                   required
                 />
                 {errors.email && (
-                  <p className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
+                  <p id="email-error" className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
                     <AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.email}
                   </p>
                 )}
@@ -228,7 +227,7 @@ export function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded-md"
                     style={{ color: 'rgba(255,255,255,0.3)' }}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
@@ -236,7 +235,7 @@ export function LoginPage() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
+                  <p id="password-error" className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
                     <AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.password}
                   </p>
                 )}

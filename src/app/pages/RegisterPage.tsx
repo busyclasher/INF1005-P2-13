@@ -31,6 +31,7 @@ interface FormErrors {
   confirmPassword?: string;
   membershipTier?: string;
   agreeTerms?: string;
+  submit?: string;
 }
 
 function validateEmail(e: string) {
@@ -174,7 +175,7 @@ export function RegisterPage() {
           >
             <CheckCircle2 className="w-8 h-8" style={{ color: LIME }} aria-hidden="true" />
           </div>
-          <h2 className="text-white mb-2" style={{ fontWeight: 700, fontSize: '1.375rem' }}>Account created!</h2>
+          <h1 className="text-white mb-2" style={{ fontWeight: 700, fontSize: '1.375rem' }}>Account created!</h1>
           <p className="text-sm mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Welcome to KineticHub, {form.firstName}!</p>
           <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>Redirecting you to login…</p>
         </div>
@@ -244,6 +245,18 @@ export function RegisterPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} noValidate className="px-8 py-6" aria-label="Registration form">
+            {errors.submit && (
+              <div
+                className="flex items-start gap-2.5 rounded-xl p-4 mb-5"
+                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+                role="alert"
+                aria-live="assertive"
+              >
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
+                <p className="text-red-400 text-sm">{errors.submit}</p>
+              </div>
+            )}
+
             {/* Step 0: Account details */}
             {step === 0 && (
               <div>
@@ -288,9 +301,10 @@ export function RegisterPage() {
                     className={inputBase}
                     style={fieldStyle(!!errors.email)}
                     aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? 'email-error' : undefined}
                     required
                   />
-                  {errors.email && <p className="mt-1 text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.email}</p>}
+                  {errors.email && <p id="email-error" className="mt-1 text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.email}</p>}
                 </div>
 
                 <div className="mb-4">
@@ -325,7 +339,7 @@ export function RegisterPage() {
                       required
                     />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded-md"
                       style={{ color: 'rgba(255,255,255,0.3)' }}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}>
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -362,7 +376,7 @@ export function RegisterPage() {
                       required
                     />
                     <button type="button" onClick={() => setShowConfirm(!showConfirm)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded-md"
                       style={{ color: 'rgba(255,255,255,0.3)' }}
                       aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'}>
                       {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

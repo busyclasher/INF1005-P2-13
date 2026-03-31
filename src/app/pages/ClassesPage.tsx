@@ -294,7 +294,7 @@ export function ClassesPage() {
              {filtered.length === 0 ? (
                  <div className="text-center py-20" role="status" aria-live="polite">
                  <Filter className="w-12 h-12 mx-auto mb-4" style={{ color: 'rgba(255,255,255,0.15)' }} aria-hidden="true" />
-                 <h3 className="text-white mb-2" style={{ fontWeight: 600 }}>No classes found</h3>
+                 <h2 className="text-white mb-2" style={{ fontWeight: 600 }}>No classes found</h2>
                  <p className="text-sm mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Try adjusting your search or filters.</p>
                  <button onClick={clearFilters} className="text-sm hover:opacity-80 transition-opacity" style={{ color: '#C8F400', fontWeight: 500 }}>
                      Clear all filters
