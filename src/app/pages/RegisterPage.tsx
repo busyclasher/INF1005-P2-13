@@ -192,7 +192,7 @@ export function RegisterPage() {
         <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           {/* Header */}
           <div className="px-8 py-7 text-center" style={{ borderBottom: `1px solid ${BORDER}` }}>
-            <Link to="/" className="inline-flex items-center justify-center gap-2 mb-4" aria-label="KineticHub home">
+            <Link to="/" className="inline-flex items-center justify-center gap-2 mb-4">
               <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: LIME }}>
                 <Zap className="w-4 h-4" style={{ color: '#111' }} aria-hidden="true" />
               </span>
@@ -205,7 +205,7 @@ export function RegisterPage() {
           </div>
 
           {/* Stepper */}
-          <div className="px-8 pt-6 pb-0" aria-label="Registration steps">
+          <div className="px-8 pt-6 pb-0">
             <ol className="flex items-center gap-0" role="list">
               {steps.map((s, i) => (
                 <li key={s} className="flex items-center flex-1">
@@ -244,7 +244,7 @@ export function RegisterPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} noValidate className="px-8 py-6" aria-label="Registration form">
+          <form onSubmit={handleSubmit} noValidate className="px-8 py-6">
             {errors.submit && (
               <div
                 className="flex items-start gap-2.5 rounded-xl p-4 mb-5"

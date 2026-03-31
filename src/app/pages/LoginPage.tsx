@@ -123,7 +123,7 @@ export function LoginPage() {
         <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           {/* Header */}
           <div className="px-8 py-8 text-center" style={{ borderBottom: `1px solid ${BORDER}` }}>
-            <Link to="/" className="inline-flex items-center justify-center gap-2 mb-5" aria-label="KineticHub home">
+            <Link to="/" className="inline-flex items-center justify-center gap-2 mb-5">
               <span className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: LIME }}>
                 <Zap className="w-5 h-5" style={{ color: '#111' }} aria-hidden="true" />
               </span>

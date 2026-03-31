@@ -175,7 +175,8 @@ export function DashboardPage() {
   ];
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-slate-50" aria-label="Member dashboard">
+    <main className="min-h-[calc(100vh-4rem)] bg-slate-50" aria-labelledby="dashboard-page-heading">
+      <h1 id="dashboard-page-heading" className="sr-only">Member dashboard</h1>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar */}
@@ -235,9 +236,9 @@ export function DashboardPage() {
                 <>
                 {tab === 'overview' && (
               <section aria-labelledby="overview-heading">
-                <h1 id="overview-heading" className="text-slate-900 mb-6 font-bold text-2xl">
+                <h2 id="overview-heading" className="text-slate-900 mb-6 font-bold text-2xl">
                   Welcome back, {user?.firstName || 'Member'}! 👋
-                </h1>
+                </h2>
 
                 {/* Status Alert - Fulfills requirement of success/error messages */}
                 {currentTier?.status === 'active' && (
@@ -305,7 +306,7 @@ export function DashboardPage() {
             {tab === 'bookings' && (
               <section aria-labelledby="bookings-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="bookings-heading" className="text-slate-900 font-bold text-2xl">My Bookings</h1>
+                  <h2 id="bookings-heading" className="text-slate-900 font-bold text-2xl">My Bookings</h2>
                   <Link to="/classes" className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-medium">
                     Book a Class
                   </Link>
@@ -363,7 +364,7 @@ export function DashboardPage() {
             {tab === 'profile' && (
               <section aria-labelledby="profile-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="profile-heading" className="text-slate-900 font-bold text-2xl">My Profile</h1>
+                  <h2 id="profile-heading" className="text-slate-900 font-bold text-2xl">My Profile</h2>
                   {!editMode && (
                     <button onClick={() =>{setEditMode(true);}} className="px-4 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium">
                       Edit Profile
@@ -469,7 +470,7 @@ export function DashboardPage() {
 
             {tab === 'membership' && (
               <section aria-labelledby="membership-dash-heading">
-                <h1 id="membership-dash-heading" className="text-slate-900 mb-6 font-bold text-2xl">My Membership</h1>
+                <h2 id="membership-dash-heading" className="text-slate-900 mb-6 font-bold text-2xl">My Membership</h2>
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
                   {currentTier ? (
                     <>

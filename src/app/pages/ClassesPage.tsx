@@ -273,8 +273,9 @@ export function ClassesPage() {
       </section>
 
       {/* Results */}
-      <section style={{ background: '#111111' }} className="py-10 min-h-[50vh]" aria-label="Class listings">
+      <section style={{ background: '#111111' }} className="py-10 min-h-[50vh]" aria-labelledby="class-listings-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 id="class-listings-heading" className="sr-only">Class listings</h2>
             {loading ? (
                 <div className="text-center py-20 text-white/50">Loading timetable from backend...</div>
             ) : (
@@ -329,7 +330,7 @@ export function ClassesPage() {
 
                          <div className="flex-1 p-5">
                          <div className="flex items-start justify-between gap-2 mb-1">
-                             <h2 className="text-white" style={{ fontWeight: 700, fontSize: '1.125rem' }}>{cls.name}</h2>
+                             <h3 className="text-white" style={{ fontWeight: 700, fontSize: '1.125rem' }}>{cls.name}</h3>
                              <span className="shrink-0 text-xs px-2 py-0.5 rounded-full capitalize" style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.5)' }}>
                              {cls.category}
                              </span>
