@@ -191,7 +191,7 @@ export function ClassesPage() {
           <h1 id="classes-page-heading" className="text-white mb-3" style={{ fontWeight: 900, fontSize: 'clamp(2rem, 5vw, 3rem)', letterSpacing: '-0.03em' }}>
             Group Fitness Classes
           </h1>
-          <p className="max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.45)' }}>
+          <p className="max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.7)' }}>
             Six expertly crafted class formats, multiple sessions per week. Filter by category, intensity, or day to find your perfect slot.
           </p>
         </div>
@@ -280,12 +280,12 @@ export function ClassesPage() {
             ) : (
              <>
              <div className="flex items-center justify-between mb-6">
-                 <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                 <p className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
                  <span className="text-white" style={{ fontWeight: 600 }}>{filtered.length}</span>{' '}
                  {filtered.length === 1 ? 'class' : 'classes'} found
                  </p>
                  {!isAuthenticated && (
-                 <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                 <p className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
                      <Link to="/login" className="hover:opacity-80 transition-opacity" style={{ color: '#C8F400', fontWeight: 500 }}>Log in</Link>{' '}to book classes
                  </p>
                  )}
@@ -295,7 +295,7 @@ export function ClassesPage() {
                  <div className="text-center py-20" role="status" aria-live="polite">
                  <Filter className="w-12 h-12 mx-auto mb-4" style={{ color: 'rgba(255,255,255,0.15)' }} aria-hidden="true" />
                  <h3 className="text-white mb-2" style={{ fontWeight: 600 }}>No classes found</h3>
-                 <p className="text-sm mb-4" style={{ color: 'rgba(255,255,255,0.4)' }}>Try adjusting your search or filters.</p>
+                 <p className="text-sm mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Try adjusting your search or filters.</p>
                  <button onClick={clearFilters} className="text-sm hover:opacity-80 transition-opacity" style={{ color: '#C8F400', fontWeight: 500 }}>
                      Clear all filters
                  </button>
@@ -334,11 +334,11 @@ export function ClassesPage() {
                              {cls.category}
                              </span>
                          </div>
-                         <p className="text-sm mb-2" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                        <p className="text-sm mb-2" style={{ color: 'rgba(255,255,255,0.7)' }}>
                              with <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.65)' }}>{cls.instructor}</span>
                          </p>
 
-                         <div className="flex items-center gap-4 text-xs mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                        <div className="flex items-center gap-4 text-xs mb-3" style={{ color: 'rgba(255,255,255,0.7)' }}>
                              <span className="flex items-center gap-1">
                              <Clock className="w-3.5 h-3.5" aria-hidden="true" /> {cls.duration} min
                              </span>
@@ -350,8 +350,8 @@ export function ClassesPage() {
                          <p className="text-sm leading-relaxed mb-4 line-clamp-2" style={{ color: 'rgba(255,255,255,0.5)' }}>{cls.description}</p>
 
                          <div className="flex flex-wrap gap-1.5 mb-4">
-                             {cls.tags.map((tag: string) => (
-                             <span key={tag} className="px-2 py-0.5 text-xs rounded-full" style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.45)' }}>
+                            {cls.tags.map((tag: string) => (
+                            <span key={tag} className="px-2 py-0.5 text-xs rounded-full" style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.75)' }}>
                                  {tag}
                              </span>
                              ))}
@@ -386,7 +386,7 @@ export function ClassesPage() {
                                              {session.day} ({new Date(session.fullDate).toLocaleDateString()})
                                          </span>
                                          </div>
-                                         <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{session.time} · {avail.label}</p>
+                                        <p className="text-xs" style={{ color: 'rgba(255,255,255,0.75)' }}>{session.time} · {avail.label}</p>
                                      </div>
                                      {isAuthenticated ? (
                                          <button

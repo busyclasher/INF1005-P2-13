@@ -37,7 +37,7 @@ type AdminNotice = {
 
 export function AdminPage() {
   console.log("Admin page: ");
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, getAuthHeaders } = useAuth();
   console.log("admin user data", user);
   const navigate = useNavigate();
   const [tab, setTab] = useState<AdminTab>('overview');
@@ -188,7 +188,7 @@ export function AdminPage() {
 
       const response = await fetch(`${API_BASE}/classes.php`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify(payload),
       });
       const result = await response.json();
@@ -221,7 +221,7 @@ export function AdminPage() {
     try {
       const response = await fetch(`${API_BASE}/classes.php`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify({
           class_id: editingClassId,
           title: editingClassData.name,
@@ -253,7 +253,7 @@ export function AdminPage() {
     try {
       const response = await fetch(`${API_BASE}/classes.php`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify({ class_id: classId }),
       });
       const result = await response.json();
@@ -293,7 +293,11 @@ export function AdminPage() {
   const fetchMembers = async () => {
   setMembersLoading(true);
   try {
-    const response = await fetch(`${API_BASE}/members.php`);
+    const response = await fetch(`${API_BASE}/members.php`, {
+      headers: {
+        ...getAuthHeaders(),
+      },
+    });
     const result = await response.json();
     
     if (result.success) {
@@ -322,6 +326,7 @@ export function AdminPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({
           title: noticeTitle.trim(),
@@ -358,6 +363,7 @@ export function AdminPage() {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({ id }),
       });

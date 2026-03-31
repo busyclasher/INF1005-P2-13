@@ -162,8 +162,8 @@ export function HomePage() {
               </div>
               <div>
                 <p className="text-black" style={{ fontWeight: 800, fontSize: '1.75rem', lineHeight: 1 }}>1,200+</p>
-                <p className="text-black/50 text-sm mt-0.5">satisfied members</p>
-                <p className="text-black/40 text-xs mt-2 leading-relaxed">
+                <p className="text-slate-700 text-sm mt-0.5">satisfied members</p>
+                <p className="text-slate-600 text-xs mt-2 leading-relaxed">
                   They arrive with different goals, yet all find the support and motivation they need.
                 </p>
               </div>
@@ -186,8 +186,8 @@ export function HomePage() {
                 "Your muscles grow while you rest. Make 7–9 hours your secret weapon for maximum progress."
               </p>
               <div className="flex items-center justify-between">
-                <p className="text-white/40 text-sm">Singapore</p>
-                <p className="text-white/40 text-sm">Nov. 2025</p>
+                <p className="text-white/70 text-sm">Singapore</p>
+                <p className="text-white/70 text-sm">Nov. 2025</p>
               </div>
             </div>
 
@@ -437,10 +437,10 @@ export function HomePage() {
                   </div>
                   <div className="p-5">
                     <h3 className="text-white mb-1" style={{ fontWeight: 700, fontSize: '1.125rem' }}>{cls.name}</h3>
-                    <p className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>with {cls.instructor} · {cls.duration} min</p>
+                    <p className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.7)' }}>with {cls.instructor} · {cls.duration} min</p>
                     <p className="text-sm leading-relaxed mb-4 line-clamp-2" style={{ color: 'rgba(255,255,255,0.55)' }}>{cls.description}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                      <span className="text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
                         {availableSessions}/{totalSessions} sessions available
                       </span>
                       <Link
@@ -482,7 +482,7 @@ export function HomePage() {
               >
                 <span className="text-3xl mb-4 block" aria-hidden="true">{b.icon}</span>
                 <h3 className="text-white mb-2" style={{ fontWeight: 700 }}>{b.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>{b.desc}</p>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>{b.desc}</p>
               </div>
             ))}
           </div>

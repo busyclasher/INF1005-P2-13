@@ -5,7 +5,7 @@ ini_set('log_errors', 1);
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'db.php';
+require_once __DIR__ . '/jwt.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -52,6 +53,19 @@ try {
         exit();
     }
 
+    $secret = $_ENV['JWT_SECRET'] ?? null;
+    if (!$secret || !is_string($secret) || strlen($secret) < 16) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Server auth is not configured (JWT_SECRET missing).']);
+        exit();
+    }
+
+    $token = jwt_encode([
+        'sub' => (int)$user['user_id'],
+        'role' => $user['role'],
+        'email' => $user['email_address'],
+    ], $secret, 60 * 60 * 8); // 8 hours
+
     echo json_encode([
         'success' => true,
         'user' => [
@@ -61,7 +75,8 @@ try {
             'email'     => $user['email_address'],
             'role'      => $user['role'],
             'phone'     => $user['phone_number'] ?? '',
-        ]
+        ],
+        'token' => $token
     ]);
 
 } catch (Exception $e) {

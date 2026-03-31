@@ -193,7 +193,7 @@ export function AboutPage() {
                   </div>
                   <div>
                     <p className="text-slate-900 text-sm" style={{ fontWeight: 600 }}>Address</p>
-                    <p className="text-slate-500 text-sm">14 Kinetic Way, Shoreditch<br />London, EC2A 4BX</p>
+                    <p className="text-slate-500 text-sm">123 Fitness Street<br />Singapore 123456</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -238,8 +238,8 @@ export function AboutPage() {
             <div className="bg-slate-200 rounded-2xl overflow-hidden min-h-[320px] flex items-center justify-center" aria-label="Map showing studio location">
               <div className="text-center p-8">
                 <MapPin className="w-12 h-12 text-slate-400 mx-auto mb-3" aria-hidden="true" />
-                <p className="text-slate-600 text-sm" style={{ fontWeight: 500 }}>14 Kinetic Way, Shoreditch</p>
-                <p className="text-slate-400 text-xs mt-1">London EC2A 4BX</p>
+                <p className="text-slate-600 text-sm" style={{ fontWeight: 500 }}>123 Fitness Street</p>
+                <p className="text-slate-400 text-xs mt-1">Singapore 123456</p>
                 <a
                   href="https://maps.google.com"
                   target="_blank"

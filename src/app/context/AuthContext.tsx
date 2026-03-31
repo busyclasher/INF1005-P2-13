@@ -13,12 +13,14 @@ interface User {
 // In AuthContext.tsx
 interface AuthContextType {
   user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   loading: boolean;
   updateProfile: (data: { firstName: string; lastName: string; phone?: string }) => Promise<{ success: boolean; error?: string }>;
   deleteAccount: () => Promise<{ success: boolean; error?: string}>;
+  getAuthHeaders: () => Record<string, string>;
 }
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
@@ -28,6 +30,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Check for existing session on load
@@ -36,8 +39,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
+    }
     setLoading(false);
   }, []);
+
+  const getAuthHeaders = (): Record<string, string> => {
+    if (!token) return {};
+    return { Authorization: `Bearer ${token}` };
+  };
 
   const deleteAccount = async (): Promise<{ success: boolean; error?: string}> => {
     if (!user) {
@@ -56,7 +68,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (result.success) {
       // Clear user data from state and localStorage
       setUser(null);
+      setToken(null);
       localStorage.removeItem('user');
+      localStorage.removeItem('token');
       return { success: true };
     } 
       else {
@@ -135,6 +149,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
+        const newToken: string | undefined = data.token;
+        if (newToken) {
+          setToken(newToken);
+          localStorage.setItem('token', newToken);
+        }
         return { success: true };
       } else {
         return { success: false, error: data.error || 'Invalid Credentials'};
@@ -147,18 +166,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setUser(null);
+    setToken(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   };
 
   return (
     <AuthContext.Provider value={{
       user,
+      token,
       isAuthenticated: !!user,
       login,
       logout,
       loading,
       updateProfile,
       deleteAccount,
+      getAuthHeaders,
     }}>
       {children}
     </AuthContext.Provider>

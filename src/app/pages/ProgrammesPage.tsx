@@ -188,7 +188,11 @@ export function ProgrammesPage() {
       {/* CTA */}
       <section className="bg-slate-900 py-16" aria-labelledby="programmes-cta">
         <div className="max-w-2xl mx-auto px-4 text-center">
-          <h2 id="programmes-cta" className="text-white mb-3" style={{ fontWeight: 800, fontSize: '2rem', letterSpacing: '-0.02em' }}>
+          <h2
+            id="programmes-cta"
+            className="text-white mb-3 mx-auto max-w-[22ch]"
+            style={{ fontWeight: 800, fontSize: '2rem', letterSpacing: '-0.02em', textWrap: 'balance' as any }}
+          >
             Not sure which programme is right for you?
           </h2>
           <p className="text-slate-400 mb-8">
