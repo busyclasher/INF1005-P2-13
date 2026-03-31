@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router';
 import { Eye, EyeOff, Zap, AlertCircle, LogIn } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -22,6 +22,8 @@ function validateEmail(email: string): boolean {
 export function LoginPage() {
   const { login, isAuthenticated, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -69,6 +71,8 @@ export function LoginPage() {
     if (emailErr || pwErr) {
       console.log("Validation failed");
       setErrors({ email: emailErr, password: pwErr });
+      if (emailErr) emailRef.current?.focus();
+      else if (pwErr) passwordRef.current?.focus();
       return;
     }
 
@@ -123,7 +127,7 @@ export function LoginPage() {
         <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           {/* Header */}
           <div className="px-8 py-8 text-center" style={{ borderBottom: `1px solid ${BORDER}` }}>
-            <Link to="/" className="inline-flex items-center justify-center gap-2 mb-5" aria-label="KineticHub home">
+            <Link to="/" className="inline-flex items-center justify-center gap-2 mb-5">
               <span className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: LIME }}>
                 <Zap className="w-5 h-5" style={{ color: '#111' }} aria-hidden="true" />
               </span>
@@ -142,7 +146,6 @@ export function LoginPage() {
               className="rounded-xl p-4 mb-6"
               style={{ background: 'rgba(200,244,0,0.06)', border: `1px solid rgba(200,244,0,0.15)` }}
               role="note"
-              aria-label="Demo credentials"
             >
               <p className="text-sm" style={{ color: LIME, fontWeight: 600 }}>Demo Credentials</p>
               <div className="mt-1.5 space-y-1 text-xs" style={{ color: 'rgba(200,244,0,0.7)' }}>
@@ -150,6 +153,42 @@ export function LoginPage() {
                 <p><span style={{ fontWeight: 500 }}>Admin:</span> admin@kinetikhub.com / Admin@1234</p>
               </div>
             </div>
+
+            {/* Error summary (links focus to fields) */}
+            {(errors.email || errors.password) && (
+              <div
+                className="rounded-xl p-4 mb-5"
+                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+                role="alert"
+                aria-live="assertive"
+              >
+                <p className="text-red-400 text-sm" style={{ fontWeight: 600 }}>Please fix the following:</p>
+                <ul className="mt-2 space-y-1">
+                  {errors.email && (
+                    <li>
+                      <button
+                        type="button"
+                        className="text-left text-sm text-red-300 hover:underline"
+                        onClick={() => emailRef.current?.focus()}
+                      >
+                        Email: {errors.email}
+                      </button>
+                    </li>
+                  )}
+                  {errors.password && (
+                    <li>
+                      <button
+                        type="button"
+                        className="text-left text-sm text-red-300 hover:underline"
+                        onClick={() => passwordRef.current?.focus()}
+                      >
+                        Password: {errors.password}
+                      </button>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
 
             {/* General error */}
             {errors.general && (
@@ -171,6 +210,7 @@ export function LoginPage() {
                 </label>
                 <input
                   id="email"
+                  ref={emailRef}
                   type="email"
                   autoComplete="email"
                   value={email}
@@ -189,7 +229,7 @@ export function LoginPage() {
                   required
                 />
                 {errors.email && (
-                  <p className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
+                  <p id="email-error" className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
                     <AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.email}
                   </p>
                 )}
@@ -208,6 +248,7 @@ export function LoginPage() {
                 <div className="relative">
                   <input
                     id="password"
+                    ref={passwordRef}
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
                     value={password}
@@ -228,7 +269,7 @@ export function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded-md"
                     style={{ color: 'rgba(255,255,255,0.3)' }}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
@@ -236,7 +277,7 @@ export function LoginPage() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
+                  <p id="password-error" className="mt-1.5 text-red-400 text-xs flex items-center gap-1" role="alert">
                     <AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.password}
                   </p>
                 )}

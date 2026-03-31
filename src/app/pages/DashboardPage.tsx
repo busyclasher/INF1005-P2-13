@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate, Link, Navigate } from 'react-router';
 import {
   LayoutDashboard, Calendar, User, CreditCard, LogOut, CheckCircle2,
@@ -43,6 +43,7 @@ export function DashboardPage() {
     phone: user?.phone || '',
   });
   const [profileErrors, setProfileErrors] = useState<{ name?: string }>({});
+  const profileNameRef = useRef<HTMLInputElement | null>(null);
 
   // Fetch initial data
   useEffect(() => {
@@ -123,6 +124,7 @@ export function DashboardPage() {
   const handleProfileSave = async () => {
   if (!profileForm.name.trim()) {
     setProfileErrors({ name: 'Name is required.' });
+    profileNameRef.current?.focus();
     return;
   }
   
@@ -175,7 +177,8 @@ export function DashboardPage() {
   ];
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-slate-50" aria-label="Member dashboard">
+    <main className="min-h-[calc(100vh-4rem)] bg-slate-50" aria-labelledby="dashboard-page-heading">
+      <h1 id="dashboard-page-heading" className="sr-only">Member dashboard</h1>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar */}
@@ -235,9 +238,9 @@ export function DashboardPage() {
                 <>
                 {tab === 'overview' && (
               <section aria-labelledby="overview-heading">
-                <h1 id="overview-heading" className="text-slate-900 mb-6 font-bold text-2xl">
+                <h2 id="overview-heading" className="text-slate-900 mb-6 font-bold text-2xl">
                   Welcome back, {user?.firstName || 'Member'}! 👋
-                </h1>
+                </h2>
 
                 {/* Status Alert - Fulfills requirement of success/error messages */}
                 {currentTier?.status === 'active' && (
@@ -305,7 +308,7 @@ export function DashboardPage() {
             {tab === 'bookings' && (
               <section aria-labelledby="bookings-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="bookings-heading" className="text-slate-900 font-bold text-2xl">My Bookings</h1>
+                  <h2 id="bookings-heading" className="text-slate-900 font-bold text-2xl">My Bookings</h2>
                   <Link to="/classes" className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-medium">
                     Book a Class
                   </Link>
@@ -363,7 +366,7 @@ export function DashboardPage() {
             {tab === 'profile' && (
               <section aria-labelledby="profile-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="profile-heading" className="text-slate-900 font-bold text-2xl">My Profile</h1>
+                  <h2 id="profile-heading" className="text-slate-900 font-bold text-2xl">My Profile</h2>
                   {!editMode && (
                     <button onClick={() =>{setEditMode(true);}} className="px-4 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium">
                       Edit Profile
@@ -373,18 +376,41 @@ export function DashboardPage() {
                 <div className="bg-white rounded-2xl border border-slate-200 p-6">
                   {editMode ? (
                     <div>
+                      {profileErrors.name && (
+                        <div
+                          className="rounded-xl p-4 mb-5 bg-red-50 border border-red-200"
+                          role="alert"
+                          aria-live="assertive"
+                        >
+                          <p className="text-red-800 text-sm font-semibold">Please fix the following:</p>
+                          <ul className="mt-2">
+                            <li>
+                              <button
+                                type="button"
+                                className="text-left text-sm text-red-700 hover:underline"
+                                onClick={() => profileNameRef.current?.focus()}
+                              >
+                                Full Name: {profileErrors.name}
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      )}
                       <div className="mb-4">
                         <label htmlFor="profile-name" className="block text-slate-700 text-sm mb-1.5 font-medium">Full Name</label>
                         <input
                           id="profile-name"
+                          ref={profileNameRef}
                           type="text"
                           value={profileForm.name}
                           onChange={(e) => setProfileForm(f => ({ ...f, name: e.target.value }))}
                           className={`w-full px-4 py-2.5 rounded-xl border text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400 ${
                             profileErrors.name ? 'border-red-400 bg-red-50' : 'border-slate-200 bg-slate-50'
                           }`}
+                          aria-invalid={!!profileErrors.name}
+                          aria-describedby={profileErrors.name ? 'profile-name-error' : undefined}
                         />
-                        {profileErrors.name && <p className="mt-1 text-red-600 text-xs" role="alert">{profileErrors.name}</p>}
+                        {profileErrors.name && <p id="profile-name-error" className="mt-1 text-red-600 text-xs" role="alert">{profileErrors.name}</p>}
                       </div>
                       <div className="mb-4">
                         <label htmlFor="profile-email" className="block text-slate-700 text-sm mb-1.5 font-medium">Email Address</label>
@@ -469,7 +495,7 @@ export function DashboardPage() {
 
             {tab === 'membership' && (
               <section aria-labelledby="membership-dash-heading">
-                <h1 id="membership-dash-heading" className="text-slate-900 mb-6 font-bold text-2xl">My Membership</h1>
+                <h2 id="membership-dash-heading" className="text-slate-900 mb-6 font-bold text-2xl">My Membership</h2>
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
                   {currentTier ? (
                     <>

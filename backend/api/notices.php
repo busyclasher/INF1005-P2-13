@@ -6,7 +6,7 @@ ini_set('log_errors', 1);
 // CORS headers for local development
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
 
 // Handle preflight OPTIONS request
@@ -15,7 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once '../db_config.php';
+require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth.php';
 
 // Initialize response
 $response = ['success' => false, 'data' => null, 'error' => null];
@@ -55,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 // POST: Create new notice
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_admin();
     $input = json_decode(file_get_contents('php://input'), true);
     
     // Validate input
@@ -107,6 +109,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // DELETE: Delete notice by ID
 elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    require_admin();
     $input = json_decode(file_get_contents('php://input'), true);
     
     if (empty($input['id'])) {

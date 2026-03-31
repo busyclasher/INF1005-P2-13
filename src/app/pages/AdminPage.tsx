@@ -37,7 +37,7 @@ type AdminNotice = {
 
 export function AdminPage() {
   console.log("Admin page: ");
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, getAuthHeaders } = useAuth();
   console.log("admin user data", user);
   const navigate = useNavigate();
   const [tab, setTab] = useState<AdminTab>('overview');
@@ -236,7 +236,7 @@ export function AdminPage() {
 
       const response = await fetch(`${API_BASE}/classes.php`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify(payload),
       });
       const result = await response.json();
@@ -269,7 +269,7 @@ export function AdminPage() {
     try {
       const response = await fetch(`${API_BASE}/classes.php`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify({
           class_id: editingClassId,
           title: editingClassData.name,
@@ -301,7 +301,7 @@ export function AdminPage() {
     try {
       const response = await fetch(`${API_BASE}/classes.php`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify({ class_id: classId }),
       });
       const result = await response.json();
@@ -341,7 +341,11 @@ export function AdminPage() {
   const fetchMembers = async () => {
   setMembersLoading(true);
   try {
-    const response = await fetch(`${API_BASE}/members.php`);
+    const response = await fetch(`${API_BASE}/members.php`, {
+      headers: {
+        ...getAuthHeaders(),
+      },
+    });
     const result = await response.json();
     
     if (result.success) {
@@ -370,6 +374,7 @@ export function AdminPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({
           title: noticeTitle.trim(),
@@ -406,6 +411,7 @@ export function AdminPage() {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({ id }),
       });
@@ -472,7 +478,8 @@ export function AdminPage() {
   ];
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-slate-50" aria-label="Admin panel">
+    <main className="min-h-[calc(100vh-4rem)] bg-slate-50" aria-labelledby="admin-page-heading">
+      <h1 id="admin-page-heading" className="sr-only">Admin panel</h1>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar */}
@@ -526,9 +533,9 @@ export function AdminPage() {
             {/* ── OVERVIEW ── */}
             {tab === 'overview' && (
               <section aria-labelledby="admin-overview-heading">
-                <h1 id="admin-overview-heading" className="text-slate-900 mb-6" style={{ fontWeight: 700, fontSize: '1.5rem' }}>
+                <h2 id="admin-overview-heading" className="text-slate-900 mb-6" style={{ fontWeight: 700, fontSize: '1.5rem' }}>
                   Admin Dashboard
-                </h1>
+                </h2>
 
                 {/* KPIs */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -614,7 +621,7 @@ export function AdminPage() {
             {tab === 'classes' && (
               <section aria-labelledby="admin-classes-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="admin-classes-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>Manage Classes</h1>
+                  <h2 id="admin-classes-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>Manage Classes</h2>
                   <button
                     onClick={() => setShowAddClass(!showAddClass)}
                     className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors"
@@ -856,7 +863,7 @@ export function AdminPage() {
             {tab === 'members' && (
               <section aria-labelledby="admin-members-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="admin-members-heading" className="text-slate-900 font-bold text-2xl">Manage Members</h1>
+                  <h2 id="admin-members-heading" className="text-slate-900 font-bold text-2xl">Manage Members</h2>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" aria-hidden="true" />
                     <input
@@ -965,7 +972,7 @@ export function AdminPage() {
             {tab === 'bookings' && (
               <section aria-labelledby="admin-bookings-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="admin-bookings-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>Manage Bookings</h1>
+                  <h2 id="admin-bookings-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>Manage Bookings</h2>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" aria-hidden="true" />
                     <input
@@ -1049,7 +1056,7 @@ export function AdminPage() {
             {tab === 'notices' && (
               <section aria-labelledby="admin-notices-heading">
                 <div className="flex items-center justify-between mb-6">
-                  <h1 id="admin-notices-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>Manage Notices</h1>
+                  <h2 id="admin-notices-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>Manage Notices</h2>
                   <button
                     onClick={() => setShowAddNotice(!showAddNotice)}
                     className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors"
