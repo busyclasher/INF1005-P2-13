@@ -1,0 +1,59 @@
+{
+  "info": {
+    "_postman_id": "b8a2a0aa-6cb4-4a3d-b2a5-9b9db94f3a0d",
+    "name": "KineticHub API Smoke Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "apiBase",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET classes",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{apiBase}}/classes.php",
+          "host": ["{{apiBase}}"],
+          "path": ["classes.php"]
+        }
+      }
+    },
+    {
+      "name": "GET sessions",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{apiBase}}/sessions.php",
+          "host": ["{{apiBase}}"],
+          "path": ["sessions.php"]
+        }
+      }
+    },
+    {
+      "name": "GET membership_plans",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{apiBase}}/membership_plans.php",
+          "host": ["{{apiBase}}"],
+          "path": ["membership_plans.php"]
+        }
+      }
+    }
+  ]
+}
+
