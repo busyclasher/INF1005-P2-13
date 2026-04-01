@@ -20,7 +20,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 $firstName    = trim($data['firstName'] ?? '');
 $lastName     = trim($data['lastName'] ?? '');
-$email        = trim($data['email'] ?? '');
+$email        = strtolower(trim($data['email'] ?? ''));
 $phone_number = trim($data['phone_number'] ?? '');
 $password     = $data['password'] ?? '';
 $membershipTier = $data['membershipTier'] ?? 'Essential';
@@ -34,20 +34,6 @@ $planIdMap = [
 ];
 
 $planId = $planIdMap[$membershipTier] ?? 1;
-
-// Check if email exists
-$checkStmt = $conn->prepare("SELECT user_id FROM users WHERE email_address = ?");
-$checkStmt->bind_param("s", $email);
-$checkStmt->execute();
-$checkStmt->store_result();
-
-if ($checkStmt->num_rows > 0) {
-    echo json_encode(['success' => false, 'error' => 'Email already registered']);
-    $checkStmt->close();
-    $conn->close();
-    exit;
-}
-$checkStmt->close();
 
 if (empty($firstName) || empty($lastName) || empty($email) || empty($password)) {
     http_response_code(400);
@@ -67,6 +53,20 @@ if (strlen($password) < 8) {
     exit();
 }
 
+// Check if email exists after validation using normalized comparison
+$checkStmt = $conn->prepare("SELECT user_id FROM users WHERE LOWER(TRIM(email_address)) = ? LIMIT 1");
+$checkStmt->bind_param("s", $email);
+$checkStmt->execute();
+$checkStmt->store_result();
+
+if ($checkStmt->num_rows > 0) {
+    echo json_encode(['success' => false, 'error' => 'Email already registered']);
+    $checkStmt->close();
+    $conn->close();
+    exit;
+}
+$checkStmt->close();
+
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 $role         = 'member';
 
@@ -75,7 +75,7 @@ try {
     $conn->begin_transaction();
     
     // Insert user
-    $stmt = $conn->prepare('INSERT INTO users (first_name, last_name, email_address, phone_number, password_hash, role) VALUES (?, ?, ?, ?, ?, ?)');
+    $stmt = $conn->prepare('INSERT INTO users (first_name, last_name, email_address, phone_number, password_hash, role) VALUES (?, ?, ?, NULLIF(?, \'\'), ?, ?)');
     $stmt->bind_param('ssssss', $firstName, $lastName, $email, $phone_number, $passwordHash, $role);
     
     if ($stmt->execute()) {

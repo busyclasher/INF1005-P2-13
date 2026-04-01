@@ -2,7 +2,7 @@
 // bookings.php
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once 'db.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/booking_email.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -87,19 +88,60 @@ if ($method === 'POST') {
         $insertStmt = $conn->prepare("INSERT INTO bookings (session_id, user_id) VALUES (?, ?)");
         $insertStmt->bind_param("ii", $sessionId, $userId);
         $insertStmt->execute();
+        if ($insertStmt->affected_rows !== 1) {
+            throw new Exception("Failed to create booking record.");
+        }
 
         // 4. Update the spots_booked count
         $updateStmt = $conn->prepare("UPDATE sessions SET spots_booked = spots_booked + 1 WHERE session_id = ?");
         $updateStmt->bind_param("i", $sessionId);
         $updateStmt->execute();
+        if ($updateStmt->affected_rows !== 1) {
+            throw new Exception("Failed to update session capacity.");
+        }
 
         // Commit transaction if everything succeeded
         $conn->commit();
 
+        // Send booking confirmation email
+        $userStmt = $conn->prepare("SELECT first_name, last_name, email_address FROM users WHERE user_id = ?");
+        $userStmt->bind_param("i", $userId);
+        $userStmt->execute();
+        $userRow = $userStmt->get_result()->fetch_assoc();
+        $userStmt->close();
+
+        $classStmt = $conn->prepare("
+            SELECT c.title, s.session_date, s.start_time, c.duration_mins
+            FROM sessions s
+            JOIN classes c ON s.class_id = c.class_id
+            WHERE s.session_id = ?
+        ");
+        $classStmt->bind_param("i", $sessionId);
+        $classStmt->execute();
+        $classRow = $classStmt->get_result()->fetch_assoc();
+        $classStmt->close();
+
+        $emailResult = ['success' => false, 'error' => 'Email skipped.'];
+        if ($userRow && $classRow) {
+            $emailResult = sendBookingConfirmationEmail(
+                $userRow['email_address'],
+                $userRow['first_name'],
+                $userRow['last_name'],
+                $classRow['title'],
+                $classRow['session_date'],
+                $classRow['start_time'],
+                $classRow['duration_mins']
+            );
+        } else {
+            $emailResult = ['success' => false, 'error' => 'Booking saved, but user/class details were not found for email.'];
+        }
+
         echo json_encode([
             'success' => true, 
             'message' => 'Booking confirmed successfully!',
-            'booking_id' => $insertStmt->insert_id
+            'booking_id' => $insertStmt->insert_id,
+            'email_sent' => $emailResult['success'],
+            'email_error' => $emailResult['success'] ? null : ($emailResult['error'] ?? 'Unknown email error')
         ]);
         
     } catch (Exception $e) {
