@@ -11,6 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'db.php';
+require_once 'auth.php';
+
 
 function sanitizeInput($data) {
     if (is_string($data)) {
@@ -20,6 +22,7 @@ function sanitizeInput($data) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $payload = require_auth();
     try {
         // Fetch future sessions, joining with class and instructor data
         $stmt = $conn->prepare("

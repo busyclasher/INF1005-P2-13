@@ -80,7 +80,9 @@ export function AdminPage() {
     try {
       const response = await fetch(`${API_BASE}/delete_account.php`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+         },
         body: JSON.stringify({ user_id: id }),
       });
 
@@ -107,7 +109,9 @@ export function AdminPage() {
     try {
       const response = await fetch(`${API_BASE}/members.php`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+         },
         body: JSON.stringify({
           user_id: id,
           role: newRole,
@@ -174,8 +178,8 @@ export function AdminPage() {
   const fetchClasses = async () => {
     try {
       const [classResp, sessionResp] = await Promise.all([
-        fetch(`${API_BASE}/classes.php`),
-        fetch(`${API_BASE}/sessions.php`),
+        fetch(`${API_BASE}/classes.php`, {headers: {...getAuthHeaders()}}),
+        fetch(`${API_BASE}/sessions.php`, {headers: {...getAuthHeaders()}}),
       ]);
 
       const classData = await classResp.json();
@@ -322,7 +326,7 @@ export function AdminPage() {
     setNoticesLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE}/notices.php`);
+      const response = await fetch(`${API_BASE}/notices.php`, {headers: {...getAuthHeaders()}});
       const result: { success: boolean; data?: AdminNotice[]; error?: string } = await response.json();
 
       if (!response.ok || !result.success) {
@@ -341,6 +345,9 @@ export function AdminPage() {
   const fetchMembers = async () => {
   setMembersLoading(true);
   try {
+    const headers = getAuthHeaders();
+    console.log("Auth headers being sent:", headers); // ADD THIS DEBUG
+    console.log("Token from localStorage:", localStorage.getItem('token'));
     const response = await fetch(`${API_BASE}/members.php`, {
       headers: {
         ...getAuthHeaders(),
@@ -351,6 +358,7 @@ export function AdminPage() {
     if (result.success) {
       setMembers(result.data);
     } else {
+      console.error("Members fetch error:", result);
       toast.error('Failed to fetch members');
     }
   } catch (error) {

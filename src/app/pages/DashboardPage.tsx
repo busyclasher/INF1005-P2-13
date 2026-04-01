@@ -21,7 +21,7 @@ const statusColour: Record<string, string> = {
 
 export function DashboardPage() {
   console.log("API_BASE", API_BASE);
-  const { user, logout, isAuthenticated, updateProfile, deleteAccount } = useAuth();
+  const { user, logout, isAuthenticated, updateProfile, deleteAccount, getAuthHeaders, token } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>('overview');
   const [editMode, setEditMode] = useState(false);
@@ -61,7 +61,7 @@ export function DashboardPage() {
       setLoadingContent(true);
       try {
         // Fetch bookings
-        const bookingsRes = await fetch(`${API_BASE}/bookings.php?user_id=${user.id}`);
+        const bookingsRes = await fetch(`${API_BASE}/bookings.php?user_id=${user.id}`, {headers: {...getAuthHeaders(), 'Content-Type': 'application/json'}});
         const bookingsData = await bookingsRes.json();
         if (bookingsData.success) {
           // Format the bookings
@@ -77,7 +77,7 @@ export function DashboardPage() {
         }
 
         // Fetch membership
-        const memRes = await fetch(`${API_BASE}/memberships.php?user_id=${user.id}`);
+        const memRes = await fetch(`${API_BASE}/memberships.php?user_id=${user.id}`, {headers: {...getAuthHeaders(), 'Content-Type': 'application/json'}});
         const memData = await memRes.json();
         if (memData.success && memData.data) {
           setCurrentTier(memData.data);
@@ -91,7 +91,7 @@ export function DashboardPage() {
     };
 
     fetchDashboardData();
-  }, [user]);
+  }, [user, getAuthHeaders, logout, navigate]);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
@@ -106,7 +106,7 @@ export function DashboardPage() {
     try {
       const res = await fetch(`${API_BASE}/bookings.php`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {...getAuthHeaders() , 'Content-Type': 'application/json' },
         body: JSON.stringify({ booking_id: bookingId, user_id: user.id })
       });
       const data = await res.json();

@@ -47,8 +47,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const getAuthHeaders = (): Record<string, string> => {
-    if (!token) return {};
-    return { Authorization: `Bearer ${token}` };
+    const storedToken = localStorage.getItem('token');
+    if (!storedToken) return {};
+    return { Authorization: `Bearer ${storedToken}` };
   };
 
   const deleteAccount = async (): Promise<{ success: boolean; error?: string}> => {
@@ -59,7 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await fetch(`${API_BASE}/delete_account.php`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {...getAuthHeaders() , 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: user.id })
       });
 
@@ -93,7 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await fetch(`${API_BASE}/update_profile.php`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {...getAuthHeaders() , 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: user.id,
           firstName: data.firstName,
