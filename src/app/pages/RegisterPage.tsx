@@ -185,6 +185,8 @@ export function RegisterPage() {
   const pwStrength = passwordStrength(form.password);
   const selectedTier = membershipTiers.find((t) => t.id === form.membershipTier);
 
+  const describedBy = (hintId: string, errorId?: string) => (errorId ? `${hintId} ${errorId}` : hintId);
+
   const fieldStyle = (hasError: boolean) => ({
     background: '#222',
     borderColor: hasError ? 'rgba(239,68,68,0.5)' : '#333',
@@ -348,6 +350,7 @@ export function RegisterPage() {
                         style={fieldStyle(!!errors[field])}
                         aria-invalid={!!errors[field]}
                         aria-describedby={errors[field] ? `${field}-error` : undefined}
+                        aria-errormessage={errors[field] ? `${field}-error` : undefined}
                         required
                       />
                       {errors[field] && (
@@ -363,6 +366,9 @@ export function RegisterPage() {
                   <label htmlFor="email" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
                     Email address
                   </label>
+                  <p id="register-email-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    We’ll use this email for login and account updates.
+                  </p>
                   <input
                     id="email"
                     ref={refs.email}
@@ -374,7 +380,8 @@ export function RegisterPage() {
                     className={inputBase}
                     style={fieldStyle(!!errors.email)}
                     aria-invalid={!!errors.email}
-                    aria-describedby={errors.email ? 'email-error' : undefined}
+                    aria-describedby={describedBy('register-email-hint', errors.email ? 'email-error' : undefined)}
+                    aria-errormessage={errors.email ? 'email-error' : undefined}
                     required
                   />
                   {errors.email && <p id="email-error" className="mt-1 text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.email}</p>}
@@ -384,6 +391,9 @@ export function RegisterPage() {
                   <label htmlFor="phone" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
                     Phone number <span style={{ color: 'rgba(255,255,255,0.3)' }}>(optional)</span>
                   </label>
+                  <p id="register-phone-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    Include country code if applicable (e.g. +65).
+                  </p>
                   <input
                     id="phone"
                     ref={refs.phone}
@@ -395,13 +405,17 @@ export function RegisterPage() {
                     className={inputBase}
                     style={fieldStyle(!!errors.phone)}
                     aria-invalid={!!errors.phone}
-                    aria-describedby={errors.phone ? 'phone-error' : undefined}
+                    aria-describedby={describedBy('register-phone-hint', errors.phone ? 'phone-error' : undefined)}
+                    aria-errormessage={errors.phone ? 'phone-error' : undefined}
                   />
                   {errors.phone && <p id="phone-error" className="mt-1 text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.phone}</p>}
                 </div>
 
                 <div className="mb-4">
                   <label htmlFor="password" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>Password</label>
+                  <p id="register-password-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    Minimum 8 characters. For a stronger password, include an uppercase letter, a number, and a symbol.
+                  </p>
                   <div className="relative">
                     <input
                       id="password"
@@ -414,7 +428,8 @@ export function RegisterPage() {
                       className={inputBase + ' pr-11'}
                       style={fieldStyle(!!errors.password)}
                       aria-invalid={!!errors.password}
-                      aria-describedby={errors.password ? 'password-error' : undefined}
+                      aria-describedby={describedBy('register-password-hint', errors.password ? 'password-error' : undefined)}
+                      aria-errormessage={errors.password ? 'password-error' : undefined}
                       required
                     />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -441,6 +456,9 @@ export function RegisterPage() {
 
                 <div className="mb-2">
                   <label htmlFor="confirmPassword" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>Confirm password</label>
+                  <p id="register-confirmPassword-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    Re-enter the same password to confirm.
+                  </p>
                   <div className="relative">
                     <input
                       id="confirmPassword"
@@ -453,7 +471,8 @@ export function RegisterPage() {
                       className={inputBase + ' pr-11'}
                       style={fieldStyle(!!errors.confirmPassword)}
                       aria-invalid={!!errors.confirmPassword}
-                      aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
+                      aria-describedby={describedBy('register-confirmPassword-hint', errors.confirmPassword ? 'confirmPassword-error' : undefined)}
+                      aria-errormessage={errors.confirmPassword ? 'confirmPassword-error' : undefined}
                       required
                     />
                     <button type="button" onClick={() => setShowConfirm(!showConfirm)}
@@ -472,7 +491,16 @@ export function RegisterPage() {
             {step === 1 && (
               <div>
                 <p className="text-sm mb-4" style={{ color: 'rgba(255,255,255,0.5)' }}>Select the plan that best fits your goals. You can always upgrade later.</p>
-                <div className="space-y-3 mb-5" role="radiogroup" aria-label="Select membership plan">
+                <p id="register-membershipTier-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  Choose one plan to continue.
+                </p>
+                <div
+                  className="space-y-3 mb-5"
+                  role="radiogroup"
+                  aria-label="Select membership plan"
+                  aria-describedby={describedBy('register-membershipTier-hint', errors.membershipTier ? 'membershipTier-error' : undefined)}
+                  aria-errormessage={errors.membershipTier ? 'membershipTier-error' : undefined}
+                >
                   {membershipTiers.slice(0, 3).map((tier) => (
                     <label
                       key={tier.id}
@@ -508,7 +536,7 @@ export function RegisterPage() {
                     </label>
                   ))}
                 </div>
-                {errors.membershipTier && <p className="text-red-400 text-xs flex items-center gap-1 mb-3" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.membershipTier}</p>}
+                {errors.membershipTier && <p id="membershipTier-error" className="text-red-400 text-xs flex items-center gap-1 mb-3" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.membershipTier}</p>}
 
                 <div className="space-y-3">
                   <label className="flex items-start gap-3 cursor-pointer">
@@ -520,16 +548,20 @@ export function RegisterPage() {
                       style={{ accentColor: LIME }}
                       className="mt-0.5"
                       aria-required="true"
-                      aria-describedby={errors.agreeTerms ? 'terms-error' : undefined}
+                      aria-describedby={describedBy('terms-hint', errors.agreeTerms ? 'terms-error' : undefined)}
+                      aria-errormessage={errors.agreeTerms ? 'terms-error' : undefined}
                     />
                     <span className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
                       I agree to the{' '}
-                      <a href="#" className="hover:underline" style={{ color: LIME }}>Terms & Conditions</a>{' '}
+                      <Link to="/terms" className="hover:underline" style={{ color: LIME }}>Terms & Conditions</Link>{' '}
                       and{' '}
-                      <a href="#" className="hover:underline" style={{ color: LIME }}>Privacy Policy</a>
+                      <Link to="/privacy" className="hover:underline" style={{ color: LIME }}>Privacy Policy</Link>
                       <span className="text-red-400 ml-0.5">*</span>
                     </span>
                   </label>
+                  <p id="terms-hint" className="text-xs -mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                    Required to create your account.
+                  </p>
                   {errors.agreeTerms && <p id="terms-error" className="text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.agreeTerms}</p>}
 
                   <label className="flex items-start gap-3 cursor-pointer">

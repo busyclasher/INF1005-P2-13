@@ -239,7 +239,7 @@ export function DashboardPage() {
                 {tab === 'overview' && (
               <section aria-labelledby="overview-heading">
                 <h2 id="overview-heading" className="text-slate-900 mb-6 font-bold text-2xl">
-                  Welcome back, {user?.firstName || 'Member'}! 👋
+                  Welcome back, {user?.firstName || 'Member'}! <span aria-hidden="true">👋</span>
                 </h2>
 
                 {/* Status Alert - Fulfills requirement of success/error messages */}
@@ -398,6 +398,9 @@ export function DashboardPage() {
                       )}
                       <div className="mb-4">
                         <label htmlFor="profile-name" className="block text-slate-700 text-sm mb-1.5 font-medium">Full Name</label>
+                        <p id="profile-name-hint" className="text-xs mb-2 text-slate-500">
+                          Enter your first and last name.
+                        </p>
                         <input
                           id="profile-name"
                           ref={profileNameRef}
@@ -408,7 +411,8 @@ export function DashboardPage() {
                             profileErrors.name ? 'border-red-400 bg-red-50' : 'border-slate-200 bg-slate-50'
                           }`}
                           aria-invalid={!!profileErrors.name}
-                          aria-describedby={profileErrors.name ? 'profile-name-error' : undefined}
+                          aria-describedby={profileErrors.name ? 'profile-name-hint profile-name-error' : 'profile-name-hint'}
+                          aria-errormessage={profileErrors.name ? 'profile-name-error' : undefined}
                         />
                         {profileErrors.name && <p id="profile-name-error" className="mt-1 text-red-600 text-xs" role="alert">{profileErrors.name}</p>}
                       </div>

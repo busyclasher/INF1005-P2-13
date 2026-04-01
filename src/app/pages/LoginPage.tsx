@@ -109,6 +109,8 @@ export function LoginPage() {
         : 'focus:ring-[#C8F400]/30 focus:border-[#C8F400]/50'
     }`;
 
+  const describedBy = (hintId: string, errorId?: string) => (errorId ? `${hintId} ${errorId}` : hintId);
+
   if (authLoading) {
     return (
       <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center" style={{ background: DARK }}>
@@ -208,6 +210,9 @@ export function LoginPage() {
                 <label htmlFor="email" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
                   Email address
                 </label>
+                <p id="email-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  Use the email address you registered with.
+                </p>
                 <input
                   id="email"
                   ref={emailRef}
@@ -224,8 +229,9 @@ export function LoginPage() {
                   placeholder="you@example.com"
                   className={inputClass(!!errors.email)}
                   style={{ background: '#222', borderColor: errors.email ? undefined : '#333' }}
-                  aria-describedby={errors.email ? 'email-error' : undefined}
+                  aria-describedby={describedBy('email-hint', errors.email ? 'email-error' : undefined)}
                   aria-invalid={!!errors.email}
+                  aria-errormessage={errors.email ? 'email-error' : undefined}
                   required
                 />
                 {errors.email && (
@@ -241,10 +247,13 @@ export function LoginPage() {
                   <label htmlFor="password" className="text-sm" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
                     Password
                   </label>
-                  <a href="#" className="text-xs transition-colors hover:opacity-80" style={{ color: LIME }}>
+                  <Link to="/forgot-password" className="text-xs transition-colors hover:opacity-80" style={{ color: LIME }}>
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
+                <p id="password-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  Minimum 6 characters.
+                </p>
                 <div className="relative">
                   <input
                     id="password"
@@ -262,8 +271,9 @@ export function LoginPage() {
                     placeholder="Enter your password"
                     className={inputClass(!!errors.password) + ' pr-11'}
                     style={{ background: '#222', borderColor: errors.password ? undefined : '#333' }}
-                    aria-describedby={errors.password ? 'password-error' : undefined}
+                    aria-describedby={describedBy('password-hint', errors.password ? 'password-error' : undefined)}
                     aria-invalid={!!errors.password}
+                    aria-errormessage={errors.password ? 'password-error' : undefined}
                     required
                   />
                   <button
