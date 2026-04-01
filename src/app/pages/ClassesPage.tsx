@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
 
 type Category = 'all' | 'yoga' | 'hiit' | 'cycling' | 'pilates' | 'boxing' | 'barre';
@@ -65,8 +66,8 @@ export function ClassesPage() {
         try {
             const headers = getAuthHeaders();
             const [clsRes, sessRes] = await Promise.all([
-                fetch(`${API_BASE}/classes.php`, { headers }),
-                fetch(`${API_BASE}/sessions.php`, { headers })
+                fetch(`${API_BASE}/classes.php`, {headers: getAuthHeaders()}),
+                fetch(`${API_BASE}/sessions.php`, {headers: getAuthHeaders()})
             ]);
             
             const clsData = await clsRes.json();
@@ -153,7 +154,9 @@ export function ClassesPage() {
     try {
         const res = await fetch(`${API_BASE}/bookings.php`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+            headers: { 'Content-Type': 'application/json' ,
+              ...getAuthHeaders(),
+            },
             body: JSON.stringify({ session_id: sessionId, user_id: user.id })
         });
         const data = await res.json();
