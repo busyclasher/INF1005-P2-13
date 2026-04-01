@@ -110,7 +110,7 @@ function sendWelcomeEmail($toEmail, $firstName, $lastName) {
                     <p>Your first class is <span class="highlight">COMPLETELY FREE</span>! Use this opportunity to experience our state-of-the-art facilities and world-class trainers.</p>
                     
                     <center>
-                        <a href="http://35.212.166.173/dashboard" class="button">Go to Your Dashboard</a>
+                        <a href="http://35.212.166.173/" class="button">Go to KineticHub</a>
                     </center>
                     
                     <p style="margin-top: 30px;">If you have any questions, feel free to reply to this email or contact our support team. We\'re here to help!</p>
@@ -137,7 +137,7 @@ function sendWelcomeEmail($toEmail, $firstName, $lastName) {
                          "- Explore our programmes - Structured training pathways\n" .
                          "- Track your progress - Monitor your achievements\n\n" .
                          "Your first class is COMPLETELY FREE!\n\n" .
-                         "Visit your dashboard: http://35.212.166.173/dashboard\n\n" .
+                         "Visit your dashboard: http://35.212.166.173/\n\n" .
                          "Train hard, train smart,\n" .
                          "The KineticHub Team";
         

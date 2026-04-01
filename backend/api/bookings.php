@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'db.php';
+require_once __DIR__ . '/auth.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -24,7 +25,14 @@ function sanitizeInput($data) {
 
 if ($method === 'POST') {
     // CREATE: Make a booking
+    $payload = require_auth();
     $input = json_decode(file_get_contents('php://input'), true);
+    if ($input['user_id'] != $payload['sub']) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+        exit();
+    }
+    
 
     if (!$input || !isset($input['session_id']) || !isset($input['user_id'])) {
         echo json_encode(['success' => false, 'error' => 'session_id and user_id are required.']);
@@ -101,7 +109,14 @@ if ($method === 'POST') {
     }
 } elseif ($method === 'GET') {
     // READ: Get bookings for a user
+    $payload = require_auth();
     $userId = filter_input(INPUT_GET, 'user_id', FILTER_VALIDATE_INT);
+
+    if ($userId != $payload['sub']) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Unauthorized to view other users bookings']);
+        exit();
+    }
     
     if (!$userId) {
         echo json_encode(['success' => false, 'error' => 'user_id is required.']);
@@ -134,7 +149,14 @@ if ($method === 'POST') {
     }
 } elseif ($method === 'DELETE') {
     // DELETE: Cancel a booking
+    $payload = require_auth();
     $input = json_decode(file_get_contents('php://input'), true);
+
+    if ($input['user_id'] != $payload['sub']) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+        exit();
+    }
 
     if (!$input || !isset($input['booking_id']) || !isset($input['user_id'])) {
         echo json_encode(['success' => false, 'error' => 'booking_id and user_id are required.']);

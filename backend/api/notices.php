@@ -23,6 +23,7 @@ $response = ['success' => false, 'data' => null, 'error' => null];
 
 // GET: Fetch all notices or single notice by ID
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $payload = require_auth();
     if (isset($_GET['id'])) {
         // Fetch single notice by ID
         $id = intval($_GET['id']);
