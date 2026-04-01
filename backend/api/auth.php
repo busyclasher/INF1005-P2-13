@@ -42,6 +42,27 @@ function require_auth(): array {
     return $payload;
 }
 
+function get_optional_auth_payload(): ?array {
+    $secret = auth_get_secret();
+    if (!$secret) {
+        return null;
+    }
+
+    $token = get_auth_bearer_token();
+    if (!$token) {
+        return null;
+    }
+
+    $payload = jwt_decode($token, $secret);
+    if (!$payload) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Invalid or expired token.']);
+        exit();
+    }
+
+    return $payload;
+}
+
 function require_admin(): array {
     $payload = require_auth();
     if (($payload['role'] ?? null) !== 'admin') {

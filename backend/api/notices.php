@@ -23,12 +23,19 @@ $response = ['success' => false, 'data' => null, 'error' => null];
 
 // GET: Fetch all notices or single notice by ID
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $payload = require_auth();
+    $payload = get_optional_auth_payload();
+    $isAdmin = ($payload['role'] ?? null) === 'admin';
+
     if (isset($_GET['id'])) {
         // Fetch single notice by ID
         $id = intval($_GET['id']);
-        $stmt = $conn->prepare('SELECT id, title, content, author_name, created_at, is_published FROM notices WHERE id = ?');
-        $stmt->bind_param('i', $id);
+        if ($isAdmin) {
+            $stmt = $conn->prepare('SELECT id, title, content, author_name, created_at, is_published FROM notices WHERE id = ?');
+            $stmt->bind_param('i', $id);
+        } else {
+            $stmt = $conn->prepare('SELECT id, title, content, author_name, created_at, is_published FROM notices WHERE id = ? AND is_published = 1');
+            $stmt->bind_param('i', $id);
+        }
         $stmt->execute();
         $result = $stmt->get_result();
         
@@ -41,8 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
         $stmt->close();
     } else {
-        // Fetch all notices (published only, ordered by newest first)
-        $query = 'SELECT id, title, content, author_name, created_at, is_published FROM notices WHERE is_published = 1 ORDER BY created_at DESC';
+        // Public reads return only published notices; admins can inspect all notices.
+        $query = $isAdmin
+            ? 'SELECT id, title, content, author_name, created_at, is_published FROM notices ORDER BY created_at DESC'
+            : 'SELECT id, title, content, author_name, created_at, is_published FROM notices WHERE is_published = 1 ORDER BY created_at DESC';
         $result = $conn->query($query);
         
         if ($result) {

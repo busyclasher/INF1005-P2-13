@@ -16,7 +16,7 @@ const DARK = '#111111';
 const CARD_DARK = '#1a1a1a';
 const CARD_MID = '#222222';
 
-const API_BASE = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env?.VITE_API_BASE_URL || 'http://35.212.166.173/INF1005-P2-13/backend/api';
+const API_BASE = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env?.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
 
 const HERO_ATHLETE = battleRopesImg;
 const ZONE_POWER = ptDeadliftImg;
