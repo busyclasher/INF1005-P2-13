@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import {
   ArrowRight, ArrowUpRight, ChevronRight, CheckCircle2,
@@ -15,6 +15,8 @@ const LIME = '#C8F400';
 const DARK = '#111111';
 const CARD_DARK = '#1a1a1a';
 const CARD_MID = '#222222';
+
+const API_BASE = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env?.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
 
 const HERO_ATHLETE = battleRopesImg;
 const ZONE_POWER = ptDeadliftImg;
@@ -55,13 +57,84 @@ const benefits = [
   { icon: '🤝', title: 'Vibrant Community', desc: 'Join a welcoming, diverse community of like-minded individuals working towards a healthier, more active life.' },
 ];
 
+type HomeNotice = {
+  id: number;
+  title: string;
+  content: string;
+  author_name: string;
+  created_at: string;
+};
+
 export function HomePage() {
   const featuredClasses = fitnessClasses.slice(0, 3);
   const pricingTiers = membershipTiers.slice(0, 3);
   const [activeZone, setActiveZone] = useState(0);
+  const [latestNotice, setLatestNotice] = useState<HomeNotice | null>(null);
+  const scrollingNotice = latestNotice
+    ? `Latest Notice: ${latestNotice.title} - ${latestNotice.content}`
+    : '';
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchNotices = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/notices.php`);
+        const result: { success: boolean; data?: HomeNotice[]; error?: string } = await response.json();
+
+        if (!response.ok || !result.success || !result.data?.length) {
+          return;
+        }
+
+        if (isMounted) {
+          setLatestNotice(result.data[0]);
+        }
+      } catch {
+        // Fail silently by design.
+      }
+    };
+
+    fetchNotices();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <main style={{ background: DARK }}>
+      <style>{`
+        @keyframes home-notice-scroll {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
+        }
+      `}</style>
+
+      {latestNotice && (
+        <section
+          aria-label="Latest notice"
+          style={{ background: CARD_DARK, borderTop: '1px solid rgba(200,244,0,0.18)', borderBottom: '1px solid rgba(200,244,0,0.18)' }}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-4 overflow-hidden py-3">
+              <span
+                className="shrink-0 px-3 py-1 rounded-full text-xs uppercase"
+                style={{ background: 'rgba(200,244,0,0.12)', color: LIME, fontWeight: 700, letterSpacing: '0.08em' }}
+              >
+                Latest Notice
+              </span>
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <div
+                  className="whitespace-nowrap"
+                  style={{ color: 'rgba(255,255,255,0.82)', animation: 'home-notice-scroll 22s linear infinite' }}
+                >
+                  {scrollingNotice} &nbsp; • &nbsp; {scrollingNotice}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Hero ── */}
       <section
