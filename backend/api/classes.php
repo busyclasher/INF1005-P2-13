@@ -23,7 +23,8 @@ function sanitizeInput($data) {
 $input = json_decode(file_get_contents('php://input'), true);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $payload = require_auth();
+    // Browsing classes should be public; protect writes with admin-only checks below.
+    $payload = get_optional_auth_payload();
     try {
         $stmt = $conn->prepare(
             "SELECT c.class_id, c.title, c.duration_mins, c.max_capacity, c.description, c.tags, c.instructor_id,

@@ -373,9 +373,9 @@ export function ClassesPage() {
                              Available Sessions
                              </p>
                              <div className="flex flex-wrap gap-2" role="list" aria-label={`Sessions for ${cls.name}`}>
-                             {cls.sessions
-                                 .filter((s: any) => day === 'all' || s.day === day)
-                                 .map((session: any) => {
+                            {cls.sessions
+                                .filter((s: any) => day === 'all' || s.day === day)
+                                .map((session: any) => {
                                  const avail = getAvailabilityStatus(session.bookedCount, session.maxCapacity);
                                  const isFull = avail.spotsLeft === 0;
                                  const dotColor = avail.colour === 'green' ? '#22c55e' : avail.colour === 'amber' ? '#f59e0b' : '#ef4444';
@@ -425,6 +425,15 @@ export function ClassesPage() {
                                      </div>
                                  );
                                  })}
+                            {cls.sessions.filter((s: any) => day === 'all' || s.day === day).length === 0 && (
+                              <div
+                                className="px-3 py-2 rounded-lg w-full text-xs"
+                                style={{ background: '#222', border: '1px solid #333', color: 'rgba(255,255,255,0.55)' }}
+                                role="listitem"
+                              >
+                                No upcoming sessions scheduled.
+                              </div>
+                            )}
                              </div>
                          </div>
                          </div>

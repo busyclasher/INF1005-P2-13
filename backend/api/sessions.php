@@ -2,7 +2,7 @@
 // sessions.php
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -22,7 +22,8 @@ function sanitizeInput($data) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $payload = require_auth();
+    // Browsing sessions should be public; booking is protected in bookings.php.
+    $payload = get_optional_auth_payload();
     try {
         // Fetch future sessions, joining with class and instructor data
         $stmt = $conn->prepare("
