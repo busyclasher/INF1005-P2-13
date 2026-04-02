@@ -57,45 +57,35 @@ export function LoginPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("handleSubmit triggered", { email, password });
     e.preventDefault();
     
-    console.log("Validating fields...");
     setTouched({ email: true, password: true });
 
     const emailErr = validateField('email', email);
     const pwErr = validateField('password', password);
     
-    console.log("Validation results:", { emailErr, pwErr });
     
     if (emailErr || pwErr) {
-      console.log("Validation failed");
       setErrors({ email: emailErr, password: pwErr });
       if (emailErr) emailRef.current?.focus();
       else if (pwErr) passwordRef.current?.focus();
       return;
     }
 
-    console.log("Validation passed, attempting login...");
     setLoading(true);
     setErrors({});
 
     try {
-      console.log("Calling login from AuthContext...");
-      // Use the login function from AuthContext instead of direct fetch
       const result = await login(email, password);
       
-      console.log("Login result:", result);
       
       if (result.success) {
         console.log("Login successful! Redirecting...");
         // Navigation will happen automatically via the redirect check above
       } else {
-        console.log("Login failed:", result.error);
         setErrors({ general: result.error || 'Login failed. Please check your credentials.' });
       }
     } catch (error) {
-      console.error("Login error:", error);
       setErrors({ general: 'Network error. Please try again.' });
     } finally {
       setLoading(false);
