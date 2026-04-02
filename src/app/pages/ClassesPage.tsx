@@ -382,11 +382,11 @@ export function ClassesPage() {
                                  return (
                                      <div
                                      key={session.id}
-                                     className="flex items-center gap-2 px-3 py-2 rounded-lg"
+                                     className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg w-full"
                                      style={{ background: '#222', border: '1px solid #333' }}
                                      role="listitem"
                                      >
-                                     <div>
+                                     <div className="min-w-0">
                                          <div className="flex items-center gap-1.5 mb-0.5">
                                          <span
                                              className="w-2 h-2 rounded-full"
@@ -401,9 +401,10 @@ export function ClassesPage() {
                                      </div>
                                      {isAuthenticated ? (
                                          <button
+                                         type="button"
                                          onClick={() => handleBook(session.id, cls.name, session.day, session.time)}
                                          disabled={isFull}
-                                         className="ml-1 px-2.5 py-1 text-xs rounded-full transition-all hover:opacity-90"
+                                         className="shrink-0 ml-1 px-2.5 py-1 text-xs rounded-full transition-all hover:opacity-90"
                                          style={
                                              isFull
                                              ? { background: '#2a2a2a', color: 'rgba(255,255,255,0.25)', cursor: 'not-allowed', fontWeight: 500 }
@@ -415,7 +416,7 @@ export function ClassesPage() {
                                      ) : (
                                          <Link
                                          to="/login"
-                                         className="ml-1 px-2.5 py-1 text-xs rounded-full transition-colors"
+                                         className="shrink-0 ml-1 px-2.5 py-1 text-xs rounded-full transition-colors"
                                          style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}
                                          >
                                          Log in
