@@ -6,9 +6,9 @@ import { PageHeader, PrimaryButton, SurfaceCard } from '../components/brand';
 type LevelFilter = 'all' | 'Beginner' | 'Intermediate' | 'Advanced';
 
 const levelColour: Record<string, string> = {
-  Beginner: 'bg-green-100 text-green-700',
-  Intermediate: 'bg-amber-100 text-amber-700',
-  Advanced: 'bg-red-100 text-red-700',
+  Beginner: 'bg-green-900/40 text-green-300',
+  Intermediate: 'bg-amber-900/40 text-amber-300',
+  Advanced: 'bg-red-900/40 text-red-300',
 };
 
 const levelBorder: Record<string, string> = {
@@ -59,10 +59,10 @@ export function ProgrammesPage() {
       </section>
 
       {/* Filter */}
-      <section className="bg-white border-b border-slate-200 py-4 sticky top-16 z-30" aria-label="Programme level filter">
+      <section className="bg-slate-900 border-b border-slate-800 py-4 sticky top-16 z-30" aria-label="Programme level filter">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-sm text-slate-500 mr-1">Filter by level:</span>
+            <span className="text-sm text-slate-400 mr-1">Filter by level:</span>
             {(['all', 'Beginner', 'Intermediate', 'Advanced'] as LevelFilter[]).map((lvl) => (
               <button
                 key={lvl}
@@ -70,7 +70,7 @@ export function ProgrammesPage() {
                 className={`px-4 py-1.5 rounded-full text-sm transition-colors ${
                   filter === lvl
                     ? 'bg-orange-500 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                 }`}
                 style={{ fontWeight: 500 }}
                 aria-pressed={filter === lvl}
@@ -84,16 +84,16 @@ export function ProgrammesPage() {
       </section>
 
       {/* Programme Cards */}
-      <section className="bg-slate-50 py-12" aria-label="Programme listings">
+      <section className="bg-slate-900 py-12" aria-label="Programme listings">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {filtered.map((prog) => (
               <SurfaceCard
                 key={prog.id}
                 as="article"
-                variant="light"
+                variant="dark"
                 padding="none"
-                className="overflow-hidden border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 group"
+                className="overflow-hidden border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 group"
                 aria-label={`${prog.name} programme`}
               >
                 <div className="relative h-56 overflow-hidden">
@@ -120,30 +120,30 @@ export function ProgrammesPage() {
                 <div className="p-6">
                   {/* Meta */}
                   <div className="flex items-center gap-4 mb-4">
-                    <span className="flex items-center gap-1.5 text-sm text-slate-500">
+                    <span className="flex items-center gap-1.5 text-sm text-slate-400">
                       <Clock className="w-4 h-4" aria-hidden="true" />
                       {prog.weeks} weeks
                     </span>
-                    <span className="flex items-center gap-1.5 text-sm text-slate-500">
+                    <span className="flex items-center gap-1.5 text-sm text-slate-400">
                       <BarChart2 className="w-4 h-4" aria-hidden="true" />
                       {prog.level}
                     </span>
-                    <span className="flex items-center gap-1.5 text-sm text-slate-500">
+                    <span className="flex items-center gap-1.5 text-sm text-slate-400">
                       <User className="w-4 h-4" aria-hidden="true" />
                       {prog.trainerName}
                     </span>
                   </div>
 
-                  <p className="text-slate-600 text-sm leading-relaxed mb-5">{prog.description}</p>
+                  <p className="text-slate-300 text-sm leading-relaxed mb-5">{prog.description}</p>
 
                   {/* Includes */}
                   <div className="mb-6">
-                    <p className="text-xs text-slate-500 mb-3" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <p className="text-xs text-slate-400 mb-3" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       What's Included
                     </p>
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {prog.includes.map((item) => (
-                        <li key={item} className="flex items-start gap-2 text-sm text-slate-600">
+                        <li key={item} className="flex items-start gap-2 text-sm text-slate-300">
                           <CheckCircle2 className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" aria-hidden="true" />
                           {item}
                         </li>
@@ -152,7 +152,7 @@ export function ProgrammesPage() {
                   </div>
 
                   {/* Trainer + Price + CTA */}
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-800">
                     <div className="flex items-center gap-3">
                       <img
                         src={prog.trainerImage}
@@ -161,15 +161,15 @@ export function ProgrammesPage() {
                         loading="lazy"
                       />
                       <div>
-                        <p className="text-sm text-slate-800" style={{ fontWeight: 600 }}>{prog.trainerName}</p>
-                        <p className="text-xs text-slate-400">Lead Trainer</p>
+                        <p className="text-sm text-slate-100" style={{ fontWeight: 600 }}>{prog.trainerName}</p>
+                        <p className="text-xs text-slate-300">Lead Trainer</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-slate-900 mb-0.5" style={{ fontWeight: 800, fontSize: '1.5rem' }}>£{prog.price}</p>
+                      <p className="text-slate-50 mb-0.5" style={{ fontWeight: 800, fontSize: '1.5rem' }}>£{prog.price}</p>
                       <PrimaryButton
                         to="/register"
-                        variant="marketing"
+                        variant="brand"
                         rounded="lg"
                         className="px-4 py-2 text-sm gap-1.5"
                         aria-label={`Enrol in ${prog.name}`}
@@ -200,7 +200,7 @@ export function ProgrammesPage() {
           </p>
           <PrimaryButton
             to="/register"
-            variant="marketing"
+            variant="brand"
             rounded="xl"
             className="px-8 py-3.5 gap-2"
           >

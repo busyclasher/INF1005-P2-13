@@ -28,15 +28,17 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-3" aria-label="Social media links">
               {[
-                { Icon: Instagram, label: 'Instagram' },
-                { Icon: Facebook, label: 'Facebook' },
-                { Icon: Twitter, label: 'Twitter / X' },
-                { Icon: Youtube, label: 'YouTube' },
-              ].map(({ Icon, label }) => (
+                { Icon: Instagram, label: 'Instagram', href: 'https://www.instagram.com' },
+                { Icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com' },
+                { Icon: Twitter, label: 'Twitter / X', href: 'https://x.com' },
+                { Icon: Youtube, label: 'YouTube', href: 'https://www.youtube.com' },
+              ].map(({ Icon, label, href }) => (
                 <a
                   key={label}
-                  href="#"
+                  href={href}
                   aria-label={label}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#1a1a1a] text-white/55 transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                 >
                   <Icon className="w-4 h-4" aria-hidden="true" />
@@ -133,14 +135,18 @@ export function Footer() {
             © {new Date().getFullYear()} KineticHub Ltd. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5">
-            {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item) => (
-              <a
-                key={item}
-                href="#"
+            {[
+              { to: '/privacy', label: 'Privacy Policy' },
+              { to: '/terms', label: 'Terms of Service' },
+              { to: '/privacy', label: 'Cookie Policy' },
+            ].map(({ to, label }) => (
+              <Link
+                key={label}
+                to={to}
                 className="text-xs text-white/50 transition-colors hover:text-white/85 focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
               >
-                {item}
-              </a>
+                {label}
+              </Link>
             ))}
           </div>
         </div>

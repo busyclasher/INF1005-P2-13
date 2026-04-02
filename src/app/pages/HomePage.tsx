@@ -65,14 +65,21 @@ type HomeNotice = {
   created_at: string;
 };
 
+const placeholderNotice: HomeNotice = {
+  id: -1,
+  title: 'Studio Updates',
+  content: 'New sessions are added regularly. Check back soon for the latest announcements.',
+  author_name: 'KineticHub',
+  created_at: '',
+};
+
 export function HomePage() {
   const featuredClasses = fitnessClasses.slice(0, 3);
   const pricingTiers = membershipTiers.slice(0, 3);
   const [activeZone, setActiveZone] = useState(0);
   const [latestNotice, setLatestNotice] = useState<HomeNotice | null>(null);
-  const scrollingNotice = latestNotice
-    ? `Latest Notice: ${latestNotice.title} - ${latestNotice.content}`
-    : '';
+  const tickerNotice = latestNotice ?? placeholderNotice;
+  const scrollingNotice = `Latest Notice: ${tickerNotice.title} - ${tickerNotice.content}`;
 
   useEffect(() => {
     let isMounted = true;
@@ -89,8 +96,9 @@ export function HomePage() {
         if (isMounted) {
           setLatestNotice(result.data[0]);
         }
-      } catch {
-        // Fail silently by design.
+      } catch (err) {
+        // If the backend URL/config is wrong, keep showing the placeholder instead of rendering nothing.
+        console.error('Failed to fetch notices for landing ticker:', err);
       }
     };
 
@@ -110,31 +118,29 @@ export function HomePage() {
         }
       `}</style>
 
-      {latestNotice && (
-        <section
-          aria-label="Latest notice"
-          style={{ background: CARD_DARK, borderTop: '1px solid rgba(200,244,0,0.18)', borderBottom: '1px solid rgba(200,244,0,0.18)' }}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-4 overflow-hidden py-3">
-              <span
-                className="shrink-0 px-3 py-1 rounded-full text-xs uppercase"
-                style={{ background: 'rgba(200,244,0,0.12)', color: LIME, fontWeight: 700, letterSpacing: '0.08em' }}
+      <section
+        aria-label="Latest notice"
+        style={{ background: CARD_DARK, borderTop: '1px solid rgba(200,244,0,0.18)', borderBottom: '1px solid rgba(200,244,0,0.18)' }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-4 overflow-hidden py-3">
+            <span
+              className="shrink-0 px-3 py-1 rounded-full text-xs uppercase"
+              style={{ background: 'rgba(200,244,0,0.12)', color: LIME, fontWeight: 700, letterSpacing: '0.08em' }}
+            >
+              Latest Notice
+            </span>
+            <div className="min-w-0 flex-1 overflow-hidden">
+              <div
+                className="whitespace-nowrap"
+                style={{ color: 'rgba(255,255,255,0.82)', animation: 'home-notice-scroll 22s linear infinite' }}
               >
-                Latest Notice
-              </span>
-              <div className="min-w-0 flex-1 overflow-hidden">
-                <div
-                  className="whitespace-nowrap"
-                  style={{ color: 'rgba(255,255,255,0.82)', animation: 'home-notice-scroll 22s linear infinite' }}
-                >
-                  {scrollingNotice} &nbsp; • &nbsp; {scrollingNotice}
-                </div>
+                {scrollingNotice} &nbsp; • &nbsp; {scrollingNotice}
               </div>
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* ── Hero ── */}
       <section
@@ -248,10 +254,18 @@ export function HomePage() {
               style={{ background: CARD_MID }}
             >
               <div className="flex items-center justify-between mb-3">
-                <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors">
+                <button
+                  type="button"
+                  aria-label="Previous testimonial"
+                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors"
+                >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors">
+                <button
+                  type="button"
+                  aria-label="Next testimonial"
+                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors"
+                >
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -330,9 +344,11 @@ export function HomePage() {
             <div className="relative">
               <div className="grid grid-cols-2 gap-4 h-96">
                 {zones.map((zone, i) => (
-                  <div
+                  <button
                     key={zone.label}
-                    className="relative rounded-2xl overflow-hidden cursor-pointer group"
+                    type="button"
+                    aria-label={zone.label}
+                    className="relative rounded-2xl overflow-hidden group text-left p-0 border-0 bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     onClick={() => setActiveZone(i)}
                     style={{ border: activeZone === i ? `2px solid ${LIME}` : '2px solid transparent' }}
                   >
@@ -365,12 +381,13 @@ export function HomePage() {
                         <ArrowUpRight className="w-3.5 h-3.5 text-white" />
                       </span>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
               {/* Navigation arrows */}
               <div className="flex items-center gap-3 mt-4 justify-end">
                 <button
+                  type="button"
                   onClick={() => setActiveZone(prev => (prev - 1 + zones.length) % zones.length)}
                   className="w-10 h-10 rounded-full border flex items-center justify-center transition-colors hover:bg-black/10"
                   style={{ borderColor: '#ccc' }}
@@ -379,6 +396,7 @@ export function HomePage() {
                   <ChevronLeft className="w-4 h-4 text-black" />
                 </button>
                 <button
+                  type="button"
                   onClick={() => setActiveZone(prev => (prev + 1) % zones.length)}
                   className="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
                   style={{ background: '#111' }}

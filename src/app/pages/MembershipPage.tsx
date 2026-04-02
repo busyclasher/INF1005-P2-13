@@ -20,8 +20,8 @@ const faqItems = [
   },
 ];
 
-const tierAccentColour = ['text-slate-600', 'text-orange-500', 'text-orange-600', 'text-amber-600'];
-const tierBorderColour = ['border-slate-200', 'border-orange-300', 'border-orange-400', 'border-amber-400'];
+const tierAccentColour = ['text-slate-100', 'text-orange-500', 'text-orange-600', 'text-amber-600'];
+const tierBorderColour = ['border-slate-800', 'border-orange-300', 'border-orange-400', 'border-amber-400'];
 
 const hardcodedFeatures = [
     { text: 'Access to gym equipment', included: true },
@@ -115,17 +115,17 @@ export function MembershipPage() {
       </section>
 
       {/* Pricing Cards */}
-      <section className="bg-slate-50 py-16" aria-label="Membership pricing">
+      <section className="bg-slate-900 py-16" aria-label="Membership pricing">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {loading ? (
-                <div className="text-center text-slate-500 py-12">Loading plans...</div>
+                <div className="text-center text-slate-400 py-12">Loading plans...</div>
             ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 justify-center">
             {plans.map((tier, index) => (
               <SurfaceCard
                 key={tier.plan_id}
                 as="article"
-                variant="light"
+                variant="dark"
                 padding="none"
                 className={cn(
                   'overflow-hidden flex flex-col border-2 shadow-sm',
@@ -141,10 +141,10 @@ export function MembershipPage() {
 
                   {/* Price */}
                   <div className="mb-6">
-                    <span className="text-slate-900" style={{ fontWeight: 800, fontSize: '2.5rem', lineHeight: 1 }}>
+                    <span className="text-white" style={{ fontWeight: 800, fontSize: '2.5rem', lineHeight: 1 }}>
                       £{tier.price}
                     </span>
-                    <span className="text-slate-500 text-sm">/mo</span>
+                    <span className="text-slate-400 text-sm">/mo</span>
                   </div>
 
                   {/* Features */}
@@ -155,9 +155,9 @@ export function MembershipPage() {
                             {f.included || index > 0 ? (
                             <CheckCircle2 className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" aria-hidden="true" />
                             ) : (
-                            <XCircle className="w-4 h-4 text-slate-300 shrink-0 mt-0.5" aria-hidden="true" />
+                            <XCircle className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" aria-hidden="true" />
                             )}
-                            <span className={`text-sm ${f.included || index > 0 ? 'text-slate-700' : 'text-slate-400'}`}>
+                            <span className={`text-sm ${f.included || index > 0 ? 'text-slate-200' : 'text-slate-500'}`}>
                             {f.text}
                             </span>
                         </li>
@@ -165,7 +165,7 @@ export function MembershipPage() {
                   </ul>
 
                   <PrimaryButton
-                    variant="dark"
+                    variant="brand"
                     rounded="xl"
                     className="w-full py-3"
                     onClick={() => handleSubscribe(tier.plan_id)}
@@ -181,20 +181,20 @@ export function MembershipPage() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-slate-50 py-16" aria-labelledby="faq-heading">
+      <section className="bg-slate-900 py-16" aria-labelledby="faq-heading">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 id="faq-heading" className="text-slate-900 text-center mb-8" style={{ fontWeight: 800, fontSize: '1.75rem', letterSpacing: '-0.02em' }}>
+          <h2 id="faq-heading" className="text-white text-center mb-8" style={{ fontWeight: 800, fontSize: '1.75rem', letterSpacing: '-0.02em' }}>
             Frequently Asked Questions
           </h2>
           <dl className="space-y-3">
             {faqItems.map((item, idx) => (
-              <SurfaceCard key={idx} variant="light" padding="none" className="overflow-hidden rounded-xl border-slate-200 shadow-sm">
+              <SurfaceCard key={idx} variant="dark" padding="none" className="overflow-hidden rounded-xl border-slate-800 shadow-sm">
                 <dt>
                   <button
                     onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                     className="w-full flex items-center justify-between px-5 py-4 text-left"
                   >
-                    <span className="text-slate-800 text-sm pr-4" style={{ fontWeight: 600 }}>{item.q}</span>
+                    <span className="text-slate-50 text-sm pr-4" style={{ fontWeight: 600 }}>{item.q}</span>
                     <Info
                       className={`w-4 h-4 shrink-0 transition-colors ${openFaq === idx ? 'text-orange-500' : 'text-slate-400'}`}
                     />
@@ -202,7 +202,7 @@ export function MembershipPage() {
                 </dt>
                 {openFaq === idx && (
                   <dd id={`faq-answer-${idx}`} className="px-5 pb-4">
-                    <p className="text-slate-500 text-sm leading-relaxed">{item.a}</p>
+                    <p className="text-slate-400 text-sm leading-relaxed">{item.a}</p>
                   </dd>
                 )}
               </SurfaceCard>

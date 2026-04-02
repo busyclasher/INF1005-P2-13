@@ -368,7 +368,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Lead Yoga & Mindfulness Instructor',
     specialities: ['Vinyasa Yoga', 'Yin Yoga', 'Breathwork', 'Meditation'],
     bio: 'With over 12 years of practice and 8 years of teaching, Maya brings a calming yet energising presence to every class. Certified in multiple yoga disciplines, she tailors each session to help students find their edge safely.',
-    imageUrl: 'https://images.unsplash.com/photo-1664673531303-c933ac4cee70?w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&q=80',
     experience: '8 years teaching',
   },
   {
@@ -386,7 +386,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Cycling & Cardio Specialist',
     specialities: ['Indoor Cycling', 'Cardio Training', 'Endurance', 'Group Fitness'],
     bio: 'Priya is a passionate indoor cycling instructor and certified personal trainer who believes movement should be joyful. Her energetic classes are known for their infectious playlists and motivational coaching style.',
-    imageUrl: 'https://images.unsplash.com/photo-1664673531303-c933ac4cee70?w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&q=80',
     experience: '6 years teaching',
   },
   {
@@ -395,7 +395,7 @@ export const teamMembers: TeamMember[] = [
     role: 'BoxFit & HIIT Coach',
     specialities: ['Boxing', 'Functional Fitness', 'HIIT', 'Sports Conditioning'],
     bio: 'A former semi-professional boxer, Marcus channels his competitive background into creating classes that are demanding yet inclusive. His BoxFit sessions have a cult following for good reason — they deliver results every time.',
-    imageUrl: 'https://images.unsplash.com/photo-1750698545009-679820502908?w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1729673516991-b0bce1f60d27?w=600&q=80',
     experience: '7 years coaching',
   },
 ];

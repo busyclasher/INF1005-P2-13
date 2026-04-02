@@ -110,15 +110,13 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav links */}
-        <div className="hidden md:flex items-center gap-1" role="list">
+        <ul className="hidden md:flex items-center gap-1 list-none p-0 m-0" role="list">
           {navLinks.map((link) => (
-            <TopNavItem
-              key={link.to}
-              to={link.to}
-              label={link.label}
-            />
+            <li key={link.to} role="listitem">
+              <TopNavItem to={link.to} label={link.label} />
+            </li>
           ))}
-        </div>
+        </ul>
 
         {/* Desktop auth */}
         <div className="hidden md:flex items-center gap-3">
