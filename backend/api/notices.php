@@ -3,11 +3,13 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-// CORS headers for local development
-header('Access-Control-Allow-Origin: *');
+require_once __DIR__ . '/cors.php';
+apply_cors_headers();
 header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
+require_once __DIR__ . '/security_headers.php';
+apply_api_security_headers();
 
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

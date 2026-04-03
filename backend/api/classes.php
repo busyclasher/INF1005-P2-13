@@ -1,9 +1,12 @@
 <?php
 // classes.php
-header("Access-Control-Allow-Origin: *");
+require_once __DIR__ . '/cors.php';
+apply_cors_headers();
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
+require_once __DIR__ . '/security_headers.php';
+apply_api_security_headers();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -97,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]]);
     } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(['success' => false, 'error' => 'Failed to create class.', 'dbError' => $conn->error]);
+        echo json_encode(['success' => false, 'error' => 'Failed to create class.']);
     }
     exit();
 }

@@ -192,3 +192,37 @@
 main[data-route-focus-root]:focus {
   outline: none;
 }
+
+/* Skip link: off-screen until keyboard focus */
+.skip-link {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+  text-decoration: none;
+  border-radius: var(--radius);
+}

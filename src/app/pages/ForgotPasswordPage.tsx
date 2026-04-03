@@ -43,7 +43,7 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4" style={{ background: DARK }}>
+    <main id="main-content" className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4" style={{ background: DARK }}>
       <div className="w-full max-w-md">
         <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="px-8 py-8 text-center" style={{ borderBottom: `1px solid ${BORDER}` }}>

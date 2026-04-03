@@ -13,7 +13,7 @@ const values = [
 
 export function AboutPage() {
   return (
-    <main>
+    <main id="main-content">
       {/* Hero */}
       <section
         className="relative py-24 bg-slate-900 flex items-center overflow-hidden"

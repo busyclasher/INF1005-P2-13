@@ -21,6 +21,8 @@ export function Navbar() {
   const dropdownButtonRef = useRef<HTMLButtonElement | null>(null);
   const firstMenuItemRef = useRef<HTMLAnchorElement | null>(null);
   const dropdownMenuRef = useRef<HTMLDivElement | null>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
     const userInitials = user?.firstName && user?.lastName 
     ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
@@ -62,9 +64,15 @@ export function Navbar() {
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
+      const hadMobile = mobileOpen;
+      const hadDropdown = dropdownOpen;
       setDropdownOpen(false);
       setMobileOpen(false);
-      dropdownButtonRef.current?.focus();
+      if (hadMobile) {
+        queueMicrotask(() => mobileMenuButtonRef.current?.focus());
+      } else if (hadDropdown) {
+        dropdownButtonRef.current?.focus();
+      }
     };
 
     const onPointerDown = (e: MouseEvent | PointerEvent) => {
@@ -89,6 +97,42 @@ export function Navbar() {
     // Move focus into the menu for keyboard users
     firstMenuItemRef.current?.focus();
   }, [dropdownOpen]);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const root = mobileMenuRef.current;
+    if (!root) return;
+
+    const getFocusables = () =>
+      Array.from(root.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')).filter(
+        (el) => el.offsetWidth > 0 || el.offsetHeight > 0,
+      );
+
+    const focusables = getFocusables();
+    focusables[0]?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const list = getFocusables();
+      const first = list[0];
+      const last = list[list.length - 1];
+      const trigger = mobileMenuButtonRef.current;
+      if (!first || !last || !trigger) return;
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          trigger.focus();
+        }
+      } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    root.addEventListener('keydown', onKeyDown);
+    return () => root.removeEventListener('keydown', onKeyDown);
+  }, [mobileOpen]);
 
   return (
     <header style={{ background: '#111111' }} className="sticky top-0 z-50 border-b border-white/5">
@@ -123,6 +167,7 @@ export function Navbar() {
           {isAuthenticated && user ? (
             <div className="relative">
               <button
+                type="button"
                 ref={dropdownButtonRef}
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 aria-expanded={dropdownOpen}
@@ -217,6 +262,8 @@ export function Navbar() {
 
         {/* Mobile hamburger */}
         <button
+          type="button"
+          ref={mobileMenuButtonRef}
           className="md:hidden p-2 rounded-lg text-white/70 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-expanded={mobileOpen}
@@ -269,7 +316,7 @@ export function Navbar() {
                       <LayoutDashboard className="w-4 h-4" aria-hidden="true" /> My Dashboard
                     </Link>
                   )}
-                  <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm text-red-400 hover:bg-red-500/10 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]">
+                  <button type="button" onClick={handleLogout} className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm text-red-400 hover:bg-red-500/10 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]">
                     <LogOut className="w-4 h-4" aria-hidden="true" /> Sign out
                   </button>
                 </>

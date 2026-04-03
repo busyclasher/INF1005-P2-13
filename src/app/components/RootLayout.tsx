@@ -42,7 +42,9 @@ export function RootLayout() {
   }, [pathname]);
 
   useLayoutEffect(() => {
-    const main = outletWrapperRef.current?.querySelector('main');
+    const main =
+      outletWrapperRef.current?.querySelector('#main-content') ??
+      outletWrapperRef.current?.querySelector('main');
     if (!(main instanceof HTMLElement)) return;
     main.setAttribute('tabindex', '-1');
     main.setAttribute('data-route-focus-root', '');
@@ -53,6 +55,9 @@ export function RootLayout() {
     <>
       <Toaster richColors position="top-right" />
       <div className="flex flex-col min-h-screen">
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <Navbar />
         <div ref={outletWrapperRef} className="flex-1">
           <Outlet />

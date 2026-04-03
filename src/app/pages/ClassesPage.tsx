@@ -191,7 +191,7 @@ export function ClassesPage() {
   };
 
   return (
-    <main style={{ background: '#111111' }}>
+    <main id="main-content" style={{ background: '#111111' }}>
       {/* Header */}
       <section style={{ background: '#111111' }} className="py-16 border-b border-white/5" aria-labelledby="classes-page-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

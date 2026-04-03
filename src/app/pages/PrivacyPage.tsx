@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 
 export function PrivacyPage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <main id="main-content" className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <h1 className="text-slate-900 text-3xl font-extrabold mb-4">Privacy Policy</h1>
       <p className="text-slate-600 mb-6">
         This is a placeholder Privacy Policy page for the project demo. Replace with your organisation’s official policy.

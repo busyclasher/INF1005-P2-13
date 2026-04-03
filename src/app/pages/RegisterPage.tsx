@@ -194,7 +194,7 @@ export function RegisterPage() {
 
   if (success) {
     return (
-      <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4" style={{ background: DARK }}>
+      <main id="main-content" className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4" style={{ background: DARK }}>
         <div className="text-center max-w-sm">
           <div
             className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -212,6 +212,7 @@ export function RegisterPage() {
 
   return (
     <main
+      id="main-content"
       className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-10 px-4"
       style={{ background: DARK }}
     >

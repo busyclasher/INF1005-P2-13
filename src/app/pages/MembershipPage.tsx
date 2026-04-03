@@ -102,7 +102,7 @@ export function MembershipPage() {
   };
 
   return (
-    <main>
+    <main id="main-content">
       <section className="bg-slate-900 py-16" aria-labelledby="membership-page-heading">
         <PageHeader
           titleId="membership-page-heading"

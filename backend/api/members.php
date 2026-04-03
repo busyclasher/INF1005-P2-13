@@ -3,10 +3,13 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-header("Access-Control-Allow-Origin: *");
+require_once __DIR__ . '/cors.php';
+apply_cors_headers();
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
+require_once __DIR__ . '/security_headers.php';
+apply_api_security_headers();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -27,8 +30,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+    $allowedRoles = ['member', 'admin'];
+    if (!in_array($data['role'], $allowedRoles, true)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Invalid role']);
+        exit();
+    }
+
+    $userId = filter_var($data['user_id'], FILTER_VALIDATE_INT);
+    if ($userId === false || $userId < 1) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Invalid user ID']);
+        exit();
+    }
+
+    $role = $data['role'];
     $stmt = $conn->prepare("UPDATE users SET role = ? WHERE user_id = ?");
-    $stmt->bind_param("si", $data['role'], $data['user_id']);
+    $stmt->bind_param("si", $role, $userId);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true]);

@@ -1,9 +1,12 @@
 <?php
 // bookings.php
-header("Access-Control-Allow-Origin: *");
+require_once __DIR__ . '/cors.php';
+apply_cors_headers();
 header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
+require_once __DIR__ . '/security_headers.php';
+apply_api_security_headers();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -144,10 +147,21 @@ if ($method === 'POST') {
             'email_error' => $emailResult['success'] ? null : ($emailResult['error'] ?? 'Unknown email error')
         ]);
         
-    } catch (Exception $e) {
-        // Rollback transaction on error
+    } catch (Throwable $e) {
         $conn->rollback();
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        $safe = [
+            'Session not found.',
+            'Sorry, this session is fully booked.',
+            'You have already booked this session.',
+            'Failed to create booking record.',
+            'Failed to update session capacity.',
+        ];
+        $error = api_public_error_from_exception(
+            $e,
+            $safe,
+            'Booking could not be completed. Please try again.'
+        );
+        echo json_encode(['success' => false, 'error' => $error]);
     }
 } elseif ($method === 'GET') {
     // READ: Get bookings for a user
@@ -242,9 +256,14 @@ if ($method === 'POST') {
         $conn->commit();
         echo json_encode(['success' => true, 'message' => 'Booking cancelled successfully.']);
 
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         $conn->rollback();
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        $error = api_public_error_from_exception(
+            $e,
+            ['Booking not found or you don\'t have permission to cancel it.'],
+            'We could not cancel this booking. Please try again.'
+        );
+        echo json_encode(['success' => false, 'error' => $error]);
     }
 } else {
     echo json_encode(['success' => false, 'error' => 'Invalid request method.']);

@@ -103,7 +103,7 @@ export function LoginPage() {
 
   if (authLoading) {
     return (
-      <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center" style={{ background: DARK }}>
+      <main id="main-content" className="min-h-[calc(100vh-4rem)] flex items-center justify-center" style={{ background: DARK }}>
         <div className="text-white">Loading...</div>
       </main>
     );
@@ -111,6 +111,7 @@ export function LoginPage() {
 
   return (
     <main
+      id="main-content"
       className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4"
       style={{ background: DARK }}
     >

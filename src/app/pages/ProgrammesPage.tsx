@@ -25,7 +25,7 @@ export function ProgrammesPage() {
   );
 
   return (
-    <main>
+    <main id="main-content">
       <section className="bg-slate-900 py-16" aria-labelledby="programmes-heading">
         <PageHeader
           titleId="programmes-heading"

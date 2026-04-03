@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { fitnessClasses, membershipTiers, testimonials } from '../data/mockData';
 import { PrimaryButton, SecondaryButton } from '../components/brand';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 const battleRopesImg = '/images/battle-ropes.png';
 const ptDeadliftImg = '/images/pt-deadlift.png';
 const diverseTrainingImg = '/images/diverse-training.png';
@@ -74,6 +75,7 @@ const placeholderNotice: HomeNotice = {
 };
 
 export function HomePage() {
+  const prefersReducedMotion = usePrefersReducedMotion();
   const featuredClasses = fitnessClasses.slice(0, 3);
   const pricingTiers = membershipTiers.slice(0, 3);
   const [activeZone, setActiveZone] = useState(0);
@@ -110,16 +112,19 @@ export function HomePage() {
   }, []);
 
   return (
-    <main style={{ background: DARK }}>
-      <style>{`
-        @keyframes home-notice-scroll {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
-        }
-      `}</style>
+    <main id="main-content" style={{ background: DARK }}>
+      {!prefersReducedMotion ? (
+        <style>{`
+          @keyframes home-notice-scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+          }
+        `}</style>
+      ) : null}
 
       <section
         aria-label="Latest notice"
+        aria-live={prefersReducedMotion ? 'polite' : undefined}
         style={{ background: CARD_DARK, borderTop: '1px solid rgba(200,244,0,0.18)', borderBottom: '1px solid rgba(200,244,0,0.18)' }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -131,12 +136,18 @@ export function HomePage() {
               Latest Notice
             </span>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <div
-                className="whitespace-nowrap"
-                style={{ color: '#e8e8e8', animation: 'home-notice-scroll 22s linear infinite' }}
-              >
-                {scrollingNotice} &nbsp; • &nbsp; {scrollingNotice}
-              </div>
+              {prefersReducedMotion ? (
+                <p className="text-sm leading-relaxed m-0" style={{ color: '#e8e8e8' }}>
+                  {scrollingNotice}
+                </p>
+              ) : (
+                <div
+                  className="whitespace-nowrap"
+                  style={{ color: '#e8e8e8', animation: 'home-notice-scroll 22s linear infinite' }}
+                >
+                  {scrollingNotice} &nbsp; • &nbsp; {scrollingNotice}
+                </div>
+              )}
             </div>
           </div>
         </div>

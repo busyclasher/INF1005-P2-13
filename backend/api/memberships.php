@@ -1,9 +1,12 @@
 <?php
 // memberships.php
-header("Access-Control-Allow-Origin: *");
+require_once __DIR__ . '/cors.php';
+apply_cors_headers();
 header("Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
+require_once __DIR__ . '/security_headers.php';
+apply_api_security_headers();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -73,9 +76,14 @@ if ($method === 'POST') {
         $conn->commit();
         echo json_encode(['success' => true, 'message' => 'Membership activated successfully!', 'membership_id' => $insertStmt->insert_id]);
 
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         $conn->rollback();
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        $error = api_public_error_from_exception(
+            $e,
+            ['You already have an active membership. Please update or cancel it.'],
+            'Membership could not be activated. Please try again.'
+        );
+        echo json_encode(['success' => false, 'error' => $error]);
     }
 
 } elseif ($method === 'PUT') {
@@ -139,9 +147,18 @@ if ($method === 'POST') {
 
         $conn->commit();
         echo json_encode(['success' => true, 'message' => 'Membership plan updated successfully!']);
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         $conn->rollback();
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        $error = api_public_error_from_exception(
+            $e,
+            [
+                'No active membership found to update.',
+                'You are already on this plan.',
+                'New plan is invalid or inactive.',
+            ],
+            'Membership could not be updated. Please try again.'
+        );
+        echo json_encode(['success' => false, 'error' => $error]);
     }
 
 } elseif ($method === 'GET') {

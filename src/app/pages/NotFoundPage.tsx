@@ -3,7 +3,7 @@ import { Zap, Home, Calendar, ArrowLeft } from 'lucide-react';
 
 export function NotFoundPage() {
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-slate-50 flex items-center justify-center px-4 py-16">
+    <main id="main-content" className="min-h-[calc(100vh-4rem)] bg-slate-50 flex items-center justify-center px-4 py-16">
       <div className="text-center max-w-md">
         <div className="mb-6 flex justify-center">
           <span className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center">
