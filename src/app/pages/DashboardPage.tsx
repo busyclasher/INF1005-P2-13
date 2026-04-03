@@ -320,7 +320,7 @@ export function DashboardPage() {
                   </div>
                 ) : (
                   <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-                    <table className="w-full" role="table">
+                    <table className="w-full" role="table" aria-label="Your upcoming bookings">
                       <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
                           {['Class', 'Day & Time', 'Booked On', 'Status', 'Action'].map((h) => (

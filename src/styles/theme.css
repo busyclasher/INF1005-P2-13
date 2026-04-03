@@ -187,3 +187,8 @@
     line-height: 1.5;
   }
 }
+
+/* Programmatic focus after client-side navigation — avoid a large ring around the whole <main> */
+main[data-route-focus-root]:focus {
+  outline: none;
+}
