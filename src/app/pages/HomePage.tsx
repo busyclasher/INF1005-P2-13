@@ -133,7 +133,7 @@ export function HomePage() {
             <div className="min-w-0 flex-1 overflow-hidden">
               <div
                 className="whitespace-nowrap"
-                style={{ color: 'rgba(255,255,255,0.82)', animation: 'home-notice-scroll 22s linear infinite' }}
+                style={{ color: '#e8e8e8', animation: 'home-notice-scroll 22s linear infinite' }}
               >
                 {scrollingNotice} &nbsp; • &nbsp; {scrollingNotice}
               </div>
@@ -172,7 +172,7 @@ export function HomePage() {
               Be <span style={{ color: LIME }}>confident.</span><br />
               Be kinetic.
             </h1>
-            <p className="mb-10 max-w-lg" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '1.125rem', lineHeight: 1.7 }}>
+            <p className="mb-10 max-w-lg" style={{ color: '#b3b3b3', fontSize: '1.125rem', lineHeight: 1.7 }}>
               A curated selection of group fitness classes, personalised training programmes, and an expert team committed to helping you achieve measurable, lasting results.
             </p>
             <div className="flex flex-wrap gap-4">
@@ -257,14 +257,14 @@ export function HomePage() {
                 <button
                   type="button"
                   aria-label="Previous testimonial"
-                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors"
+                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/65 hover:text-white hover:border-white/30 transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   type="button"
                   aria-label="Next testimonial"
-                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors"
+                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/65 hover:text-white hover:border-white/30 transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -528,10 +528,10 @@ export function HomePage() {
                   </div>
                   <div className="p-5">
                     <h3 className="text-white mb-1" style={{ fontWeight: 700, fontSize: '1.125rem' }}>{cls.name}</h3>
-                    <p className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.7)' }}>with {cls.instructor} · {cls.duration} min</p>
-                    <p className="text-sm leading-relaxed mb-4 line-clamp-2" style={{ color: 'rgba(255,255,255,0.55)' }}>{cls.description}</p>
+                    <p className="text-sm mb-3" style={{ color: '#d1d1d1' }}>with {cls.instructor} · {cls.duration} min</p>
+                    <p className="text-sm leading-relaxed mb-4 line-clamp-2" style={{ color: '#b3b3b3' }}>{cls.description}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                      <span className="text-xs" style={{ color: '#d1d1d1' }}>
                         {availableSessions}/{totalSessions} sessions available
                       </span>
                       <Link
@@ -560,7 +560,7 @@ export function HomePage() {
             <h2 id="benefits-heading" className="text-white mb-3" style={{ fontWeight: 900, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', letterSpacing: '-0.03em' }}>
               The KineticHub Difference
             </h2>
-            <p className="max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.45)' }}>
+            <p className="max-w-xl mx-auto" style={{ color: '#b3b3b3' }}>
               We're not just a gym. We're a community of coaches, athletes, and everyday people committed to helping you reach your full potential.
             </p>
           </div>
@@ -573,7 +573,7 @@ export function HomePage() {
               >
                 <span className="text-3xl mb-4 block" aria-hidden="true">{b.icon}</span>
                 <h3 className="text-white mb-2" style={{ fontWeight: 700 }}>{b.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>{b.desc}</p>
+                <p className="text-sm leading-relaxed" style={{ color: '#c4c4c4' }}>{b.desc}</p>
               </div>
             ))}
           </div>
@@ -618,12 +618,12 @@ export function HomePage() {
               <h2 id="pt-heading" className="text-white mb-4" style={{ fontWeight: 900, fontSize: 'clamp(1.5rem, 3.5vw, 2.25rem)', letterSpacing: '-0.03em' }}>
                 Your goals.<br />Our expertise.
               </h2>
-              <p className="mb-6 leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              <p className="mb-6 leading-relaxed" style={{ color: '#b3b3b3' }}>
                 Work one-to-one with one of our certified personal trainers. Get a fully customised programme, expert coaching, and the accountability to actually reach your goals.
               </p>
               <ul className="space-y-2 mb-8">
                 {['Bespoke training plans', 'Nutritional guidance', 'Regular progress reviews', 'Flexible scheduling'].map(item => (
-                  <li key={item} className="flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                  <li key={item} className="flex items-center gap-2 text-sm" style={{ color: '#c4c4c4' }}>
                     <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: LIME }} aria-hidden="true" />
                     {item}
                   </li>
@@ -659,7 +659,7 @@ export function HomePage() {
             <h2 id="membership-heading" className="text-white mb-3" style={{ fontWeight: 900, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', letterSpacing: '-0.03em' }}>
               Find your perfect plan
             </h2>
-            <p className="max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.45)' }}>
+            <p className="max-w-xl mx-auto" style={{ color: '#b3b3b3' }}>
               From first timers to dedicated athletes — there's a plan designed to match your lifestyle and ambitions.
             </p>
           </div>
@@ -689,24 +689,45 @@ export function HomePage() {
                 >
                   {tier.name}
                 </h3>
-                <p className="text-sm mb-4" style={{ color: tier.popular ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.4)' }}>
+                <p className="text-sm mb-4" style={{ color: tier.popular ? '#1a1a1a' : '#b3b3b3' }}>
                   {tier.description}
                 </p>
                 <div className="mb-4">
                   <span style={{ fontWeight: 900, fontSize: '2rem', color: tier.popular ? '#111' : '#fff' }}>
                     S${tier.monthlyPrice}
                   </span>
-                  <span className="text-sm" style={{ color: tier.popular ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.35)' }}>/month</span>
+                  <span className="text-sm" style={{ color: tier.popular ? '#1a1a1a' : '#b3b3b3' }}>/month</span>
                 </div>
                 <ul className="space-y-2 mb-6 flex-1">
                   {tier.features.slice(0, 4).map((f) => (
-                    <li key={f.text} className={`flex items-start gap-2 text-sm ${!f.included ? 'opacity-30' : ''}`}>
+                    <li key={f.text} className="flex items-start gap-2 text-sm">
                       <CheckCircle2
                         className="w-4 h-4 shrink-0 mt-0.5"
-                        style={{ color: tier.popular ? '#111' : LIME }}
+                        style={{
+                          color: tier.popular
+                            ? f.included
+                              ? '#111'
+                              : '#1a1a1a'
+                            : f.included
+                              ? LIME
+                              : '#737373',
+                        }}
                         aria-hidden="true"
                       />
-                      <span style={{ color: tier.popular ? '#111' : 'rgba(255,255,255,0.7)' }}>{f.text}</span>
+                      <span
+                        style={{
+                          color: tier.popular
+                            ? f.included
+                              ? '#111'
+                              : '#1a1a1a'
+                            : f.included
+                              ? '#e5e5e5'
+                              : '#9ca3af',
+                          textDecoration: f.included ? undefined : 'line-through',
+                        }}
+                      >
+                        {f.text}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -757,7 +778,7 @@ export function HomePage() {
                     <Star key={i} className="w-4 h-4 fill-amber-400" style={{ color: '#FBBF24' }} aria-hidden="true" />
                   ))}
                 </div>
-                <p className="text-sm leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.65)' }}>"{t.quote}"</p>
+                <p className="text-sm leading-relaxed mb-6" style={{ color: '#c4c4c4' }}>"{t.quote}"</p>
                 <footer className="flex items-center gap-3">
                   <span
                     className="w-9 h-9 rounded-full flex items-center justify-center text-xs"
@@ -767,7 +788,7 @@ export function HomePage() {
                   </span>
                   <div>
                     <cite className="text-white text-sm not-italic" style={{ fontWeight: 600 }}>{t.name}</cite>
-                    <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>{t.membershipTier} · Member since {t.memberSince}</p>
+                    <p className="text-xs" style={{ color: '#a3a3a3' }}>{t.membershipTier} · Member since {t.memberSince}</p>
                   </div>
                 </footer>
               </blockquote>
@@ -782,7 +803,7 @@ export function HomePage() {
           <h2 id="cta-heading" className="text-white mb-4" style={{ fontWeight: 900, fontSize: 'clamp(2rem, 5vw, 3.5rem)', letterSpacing: '-0.04em' }}>
             Ready to start your journey?
           </h2>
-          <p className="mb-10" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '1.125rem' }}>
+          <p className="mb-10" style={{ color: '#b3b3b3', fontSize: '1.125rem' }}>
             Join over 1,200 members transforming their lives at KineticHub. Your first class is on us.
           </p>
           <div className="flex flex-wrap justify-center gap-4">

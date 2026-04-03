@@ -203,8 +203,8 @@ export function RegisterPage() {
             <CheckCircle2 className="w-8 h-8" style={{ color: LIME }} aria-hidden="true" />
           </div>
           <h1 className="text-white mb-2" style={{ fontWeight: 700, fontSize: '1.375rem' }}>Account created!</h1>
-          <p className="text-sm mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Welcome to KineticHub, {form.firstName}!</p>
-          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>Redirecting you to login…</p>
+          <p className="text-sm mb-1" style={{ color: '#b3b3b3' }}>Welcome to KineticHub, {form.firstName}!</p>
+          <p className="text-xs" style={{ color: '#a3a3a3' }}>Redirecting you to login…</p>
         </div>
       </main>
     );
@@ -228,7 +228,7 @@ export function RegisterPage() {
               </span>
             </Link>
             <h1 className="text-white" style={{ fontWeight: 700, fontSize: '1.25rem' }}>Create your account</h1>
-            <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>Join 1,200+ members transforming their fitness</p>
+            <p className="text-sm mt-1" style={{ color: '#a3a3a3' }}>Join 1,200+ members transforming their fitness</p>
           </div>
 
           {/* Stepper */}
@@ -241,7 +241,7 @@ export function RegisterPage() {
                       className="w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
                       style={{
                         background: i < step ? '#22c55e' : i === step ? LIME : '#2a2a2a',
-                        color: i < step ? '#fff' : i === step ? '#111' : 'rgba(255,255,255,0.4)',
+                        color: i < step ? '#fff' : i === step ? '#111' : '#a3a3a3',
                         fontWeight: 700,
                       }}
                       aria-current={i === step ? 'step' : undefined}
@@ -251,7 +251,7 @@ export function RegisterPage() {
                     <span
                       className="text-xs mt-1 whitespace-nowrap"
                       style={{
-                        color: i === step ? LIME : 'rgba(255,255,255,0.3)',
+                        color: i === step ? LIME : '#a3a3a3',
                         fontWeight: i === step ? 600 : 400,
                       }}
                     >
@@ -336,7 +336,7 @@ export function RegisterPage() {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   {(['firstName', 'lastName'] as const).map((field) => (
                     <div key={field}>
-                      <label htmlFor={field} className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
+                      <label htmlFor={field} className="block text-sm mb-1.5" style={{ color: '#d4d4d4', fontWeight: 500 }}>
                         {field === 'firstName' ? 'First name' : 'Last name'}
                       </label>
                       <input
@@ -363,10 +363,10 @@ export function RegisterPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label htmlFor="email" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
+                  <label htmlFor="email" className="block text-sm mb-1.5" style={{ color: '#d4d4d4', fontWeight: 500 }}>
                     Email address
                   </label>
-                  <p id="register-email-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  <p id="register-email-hint" className="text-xs mb-2" style={{ color: '#a3a3a3' }}>
                     We’ll use this email for login and account updates.
                   </p>
                   <input
@@ -388,10 +388,10 @@ export function RegisterPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label htmlFor="phone" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
-                    Phone number <span style={{ color: 'rgba(255,255,255,0.3)' }}>(optional)</span>
+                  <label htmlFor="phone" className="block text-sm mb-1.5" style={{ color: '#d4d4d4', fontWeight: 500 }}>
+                    Phone number <span style={{ color: '#a3a3a3' }}>(optional)</span>
                   </label>
-                  <p id="register-phone-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  <p id="register-phone-hint" className="text-xs mb-2" style={{ color: '#a3a3a3' }}>
                     Include country code if applicable (e.g. +65).
                   </p>
                   <input
@@ -412,8 +412,8 @@ export function RegisterPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label htmlFor="password" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>Password</label>
-                  <p id="register-password-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  <label htmlFor="password" className="block text-sm mb-1.5" style={{ color: '#d4d4d4', fontWeight: 500 }}>Password</label>
+                  <p id="register-password-hint" className="text-xs mb-2" style={{ color: '#a3a3a3' }}>
                     Minimum 8 characters. For a stronger password, include an uppercase letter, a number, and a symbol.
                   </p>
                   <div className="relative">
@@ -434,7 +434,7 @@ export function RegisterPage() {
                     />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded-md"
-                      style={{ color: 'rgba(255,255,255,0.3)' }}
+                      style={{ color: '#a3a3a3' }}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}>
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -446,8 +446,8 @@ export function RegisterPage() {
                           <div key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${i < pwStrength.score ? pwStrength.colour : 'bg-white/10'}`} />
                         ))}
                       </div>
-                      <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                        Password strength: <span style={{ fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>{pwStrength.label}</span>
+                      <p className="text-xs" style={{ color: '#a3a3a3' }}>
+                        Password strength: <span style={{ fontWeight: 600, color: '#d4d4d4' }}>{pwStrength.label}</span>
                       </p>
                     </div>
                   )}
@@ -455,8 +455,8 @@ export function RegisterPage() {
                 </div>
 
                 <div className="mb-2">
-                  <label htmlFor="confirmPassword" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>Confirm password</label>
-                  <p id="register-confirmPassword-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  <label htmlFor="confirmPassword" className="block text-sm mb-1.5" style={{ color: '#d4d4d4', fontWeight: 500 }}>Confirm password</label>
+                  <p id="register-confirmPassword-hint" className="text-xs mb-2" style={{ color: '#a3a3a3' }}>
                     Re-enter the same password to confirm.
                   </p>
                   <div className="relative">
@@ -477,7 +477,7 @@ export function RegisterPage() {
                     />
                     <button type="button" onClick={() => setShowConfirm(!showConfirm)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded-md"
-                      style={{ color: 'rgba(255,255,255,0.3)' }}
+                      style={{ color: '#a3a3a3' }}
                       aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'}>
                       {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -490,8 +490,8 @@ export function RegisterPage() {
             {/* Step 1: Membership */}
             {step === 1 && (
               <div>
-                <p className="text-sm mb-4" style={{ color: 'rgba(255,255,255,0.5)' }}>Select the plan that best fits your goals. You can always upgrade later.</p>
-                <p id="register-membershipTier-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <p className="text-sm mb-4" style={{ color: '#b3b3b3' }}>Select the plan that best fits your goals. You can always upgrade later.</p>
+                <p id="register-membershipTier-hint" className="text-xs mb-2" style={{ color: '#a3a3a3' }}>
                   Choose one plan to continue.
                 </p>
                 <div
@@ -523,9 +523,9 @@ export function RegisterPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 flex-wrap">
                           <span className="text-white text-sm" style={{ fontWeight: 700 }}>{tier.name}</span>
-                          <span className="text-white text-sm" style={{ fontWeight: 700 }}>S${tier.monthlyPrice}<span style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>/mo</span></span>
+                          <span className="text-white text-sm" style={{ fontWeight: 700 }}>S${tier.monthlyPrice}<span style={{ color: '#a3a3a3', fontWeight: 400 }}>/mo</span></span>
                         </div>
-                        <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>{tier.description}</p>
+                        <p className="text-xs mt-0.5" style={{ color: '#a3a3a3' }}>{tier.description}</p>
                         {tier.popular && (
                           <span
                             className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-xs"
@@ -551,7 +551,7 @@ export function RegisterPage() {
                       aria-describedby={describedBy('terms-hint', errors.agreeTerms ? 'terms-error' : undefined)}
                       aria-errormessage={errors.agreeTerms ? 'terms-error' : undefined}
                     />
-                    <span className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                    <span className="text-xs leading-relaxed" style={{ color: '#b3b3b3' }}>
                       I agree to the{' '}
                       <Link to="/terms" className="hover:underline" style={{ color: LIME }}>Terms & Conditions</Link>{' '}
                       and{' '}
@@ -559,7 +559,7 @@ export function RegisterPage() {
                       <span className="text-red-400 ml-0.5">*</span>
                     </span>
                   </label>
-                  <p id="terms-hint" className="text-xs -mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                  <p id="terms-hint" className="text-xs -mt-1" style={{ color: '#a3a3a3' }}>
                     Required to create your account.
                   </p>
                   {errors.agreeTerms && <p id="terms-error" className="text-red-400 text-xs flex items-center gap-1" role="alert"><AlertCircle className="w-3 h-3" aria-hidden="true" /> {errors.agreeTerms}</p>}
@@ -572,7 +572,7 @@ export function RegisterPage() {
                       style={{ accentColor: LIME }}
                       className="mt-0.5"
                     />
-                    <span className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    <span className="text-xs leading-relaxed" style={{ color: '#a3a3a3' }}>
                       I'd like to receive news, offers, and updates from KineticHub. You can unsubscribe at any time.
                     </span>
                   </label>
@@ -584,7 +584,7 @@ export function RegisterPage() {
             {step === 2 && (
               <div>
                 <div className="rounded-xl p-5 mb-5" style={{ background: '#222', border: '1px solid #333' }}>
-                  <p className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>Review Your Details</p>
+                  <p className="text-sm mb-3" style={{ color: '#d4d4d4', fontWeight: 600 }}>Review Your Details</p>
                   <dl className="space-y-2">
                     {[
                       { label: 'Full Name', value: `${form.firstName} ${form.lastName}` },
@@ -593,7 +593,7 @@ export function RegisterPage() {
                       { label: 'Plan', value: selectedTier ? `${selectedTier.name} – £${selectedTier.monthlyPrice}/mo` : '—' },
                     ].map(({ label, value }) => (
                       <div key={label} className="flex justify-between gap-4">
-                        <dt className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>{label}</dt>
+                        <dt className="text-xs" style={{ color: '#a3a3a3' }}>{label}</dt>
                         <dd className="text-xs text-right text-white" style={{ fontWeight: 500 }}>{value}</dd>
                       </div>
                     ))}
@@ -618,7 +618,7 @@ export function RegisterPage() {
                   type="button"
                   onClick={() => setStep(step - 1)}
                   className="px-5 py-2.5 rounded-full text-sm transition-colors hover:bg-white/5"
-                  style={{ border: '1px solid #333', color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}
+                  style={{ border: '1px solid #333', color: '#b3b3b3', fontWeight: 500 }}
                 >
                   Back
                 </button>
@@ -656,7 +656,7 @@ export function RegisterPage() {
           </form>
 
           <div className="px-8 pb-6 text-center">
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
+            <p className="text-sm" style={{ color: '#a3a3a3' }}>
               Already have an account?{' '}
               <Link to="/login" className="transition-colors hover:opacity-80" style={{ color: LIME, fontWeight: 600 }}>Sign in</Link>
             </p>

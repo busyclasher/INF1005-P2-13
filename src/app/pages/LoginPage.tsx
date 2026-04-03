@@ -128,7 +128,7 @@ export function LoginPage() {
               </span>
             </Link>
             <h1 className="text-white" style={{ fontWeight: 700, fontSize: '1.375rem' }}>Welcome back</h1>
-            <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>Sign in to access your member dashboard</p>
+            <p className="text-sm mt-1" style={{ color: '#a3a3a3' }}>Sign in to access your member dashboard</p>
           </div>
 
           {/* Form */}
@@ -197,10 +197,10 @@ export function LoginPage() {
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="mb-5">
-                <label htmlFor="email" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
+                <label htmlFor="email" className="block text-sm mb-1.5" style={{ color: '#d4d4d4', fontWeight: 500 }}>
                   Email address
                 </label>
-                <p id="email-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <p id="email-hint" className="text-xs mb-2" style={{ color: '#a3a3a3' }}>
                   Use the email address you registered with.
                 </p>
                 <input
@@ -234,14 +234,14 @@ export function LoginPage() {
               {/* Password */}
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-1.5">
-                  <label htmlFor="password" className="text-sm" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
+                  <label htmlFor="password" className="text-sm" style={{ color: '#d4d4d4', fontWeight: 500 }}>
                     Password
                   </label>
                   <Link to="/forgot-password" className="text-xs transition-colors hover:opacity-80" style={{ color: LIME }}>
                     Forgot password?
                   </Link>
                 </div>
-                <p id="password-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <p id="password-hint" className="text-xs mb-2" style={{ color: '#a3a3a3' }}>
                   Minimum 6 characters.
                 </p>
                 <div className="relative">
@@ -270,7 +270,7 @@ export function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded-md"
-                    style={{ color: 'rgba(255,255,255,0.3)' }}
+                    style={{ color: '#a3a3a3' }}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -304,7 +304,7 @@ export function LoginPage() {
               </PrimaryButton>
             </form>
 
-            <p className="text-center text-sm mt-6" style={{ color: 'rgba(255,255,255,0.4)' }}>
+            <p className="text-center text-sm mt-6" style={{ color: '#a3a3a3' }}>
               Don't have an account?{' '}
               <Link to="/register" className="transition-colors hover:opacity-80" style={{ color: LIME, fontWeight: 600 }}>
                 Create one free

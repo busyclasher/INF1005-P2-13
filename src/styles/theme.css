@@ -13,7 +13,8 @@
   --secondary: #222222;
   --secondary-foreground: #ffffff;
   --muted: #1a1a1a;
-  --muted-foreground: rgba(255,255,255,0.5);
+  /* Solid gray ≥4.5:1 on #1a1a1a and #111 (replaces translucent white that blended to ~#767676) */
+  --muted-foreground: #a3a3a3;
   --accent: #222222;
   --accent-foreground: #ffffff;
   --destructive: #d4183d;
@@ -53,7 +54,8 @@
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
+  /* Brighter than 0.708 for ≥4.5:1 on dark surfaces */
+  --muted-foreground: oklch(0.78 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);

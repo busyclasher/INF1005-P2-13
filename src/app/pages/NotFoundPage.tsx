@@ -22,7 +22,7 @@ export function NotFoundPage() {
         <div className="flex flex-wrap justify-center gap-3">
           <Link
             to="/"
-            className="flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-colors"
+            className="flex items-center gap-2 px-6 py-3 bg-orange-800 hover:bg-orange-900 text-white rounded-xl transition-colors"
             style={{ fontWeight: 600 }}
           >
             <Home className="w-4 h-4" aria-hidden="true" /> Go Home

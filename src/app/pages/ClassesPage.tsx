@@ -22,7 +22,7 @@ const categoryOptions: { value: Category; label: string }[] = [
 ];
 
 const intensityOptions: { value: Intensity; label: string; colour: string }[] = [
-  { value: 'all', label: 'Any Intensity', colour: 'bg-white/10 text-white/60' },
+  { value: 'all', label: 'Any Intensity', colour: 'bg-white/10 text-white/80' },
   { value: 'Low', label: 'Low', colour: 'bg-green-900/40 text-green-400' },
   { value: 'Medium', label: 'Medium', colour: 'bg-amber-900/40 text-amber-400' },
   { value: 'High', label: 'High', colour: 'bg-red-900/40 text-red-400' },
@@ -201,7 +201,7 @@ export function ClassesPage() {
           <h1 id="classes-page-heading" className="text-white mb-3" style={{ fontWeight: 900, fontSize: 'clamp(2rem, 5vw, 3rem)', letterSpacing: '-0.03em' }}>
             Group Fitness Classes
           </h1>
-          <p className="max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.7)' }}>
+          <p className="max-w-xl mx-auto" style={{ color: '#d1d1d1' }}>
             Six expertly crafted class formats, multiple sessions per week. Filter by category, intensity, or day to find your perfect slot.
           </p>
         </div>
@@ -217,7 +217,7 @@ export function ClassesPage() {
           <div className="flex flex-col lg:flex-row gap-3">
              {/* Search */}
              <div className="relative flex-1 min-w-0">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} aria-hidden="true" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#737373' }} aria-hidden="true" />
               <input
                 type="search"
                 placeholder="Search classes, instructors, or tags…"
@@ -234,7 +234,7 @@ export function ClassesPage() {
                 value={category}
                 onChange={(e) => setCategory(e.target.value as Category)}
                 className="px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 cursor-pointer"
-                style={{ background: '#222', border: '1px solid #333', color: 'rgba(255,255,255,0.7)' }}
+                style={{ background: '#222', border: '1px solid #333', color: '#d1d1d1' }}
                 aria-label="Filter by category"
               >
                 {categoryOptions.map((o) => (
@@ -246,7 +246,7 @@ export function ClassesPage() {
                 value={intensity}
                 onChange={(e) => setIntensity(e.target.value as Intensity)}
                 className="px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 cursor-pointer"
-                style={{ background: '#222', border: '1px solid #333', color: 'rgba(255,255,255,0.7)' }}
+                style={{ background: '#222', border: '1px solid #333', color: '#d1d1d1' }}
                 aria-label="Filter by intensity"
               >
                 {intensityOptions.map((o) => (
@@ -258,7 +258,7 @@ export function ClassesPage() {
                 value={day}
                 onChange={(e) => setDay(e.target.value as Day)}
                 className="px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 cursor-pointer"
-                style={{ background: '#222', border: '1px solid #333', color: 'rgba(255,255,255,0.7)' }}
+                style={{ background: '#222', border: '1px solid #333', color: '#d1d1d1' }}
                 aria-label="Filter by day"
               >
                 {dayOptions.map((d) => (
@@ -287,16 +287,16 @@ export function ClassesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 id="class-listings-heading" className="sr-only">Class listings</h2>
             {loading ? (
-                <div className="text-center py-20 text-white/50">Loading timetable from backend...</div>
+                <div className="text-center py-20 text-white/70">Loading timetable from backend...</div>
             ) : (
              <>
              <div className="flex items-center justify-between mb-6">
-                 <p className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                 <p className="text-sm" style={{ color: '#d1d1d1' }}>
                  <span className="text-white" style={{ fontWeight: 600 }}>{filtered.length}</span>{' '}
                  {filtered.length === 1 ? 'class' : 'classes'} found
                  </p>
                  {!isAuthenticated && (
-                 <p className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                 <p className="text-sm" style={{ color: '#d1d1d1' }}>
                      <Link to="/login" className="hover:opacity-80 transition-opacity" style={{ color: '#C8F400', fontWeight: 500 }}>Log in</Link>{' '}to book classes
                  </p>
                  )}
@@ -304,9 +304,9 @@ export function ClassesPage() {
 
              {filtered.length === 0 ? (
                  <div className="text-center py-20" role="status" aria-live="polite">
-                 <Filter className="w-12 h-12 mx-auto mb-4" style={{ color: 'rgba(255,255,255,0.15)' }} aria-hidden="true" />
+                 <Filter className="w-12 h-12 mx-auto mb-4" style={{ color: '#525252' }} aria-hidden="true" />
                  <h2 className="text-white mb-2" style={{ fontWeight: 600 }}>No classes found</h2>
-                 <p className="text-sm mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Try adjusting your search or filters.</p>
+                 <p className="text-sm mb-4" style={{ color: '#d1d1d1' }}>Try adjusting your search or filters.</p>
                  <button onClick={clearFilters} className="text-sm hover:opacity-80 transition-opacity" style={{ color: '#C8F400', fontWeight: 500 }}>
                      Clear all filters
                  </button>
@@ -341,15 +341,15 @@ export function ClassesPage() {
                          <div className="flex-1 p-5">
                          <div className="flex items-start justify-between gap-2 mb-1">
                              <h3 className="text-white" style={{ fontWeight: 700, fontSize: '1.125rem' }}>{cls.name}</h3>
-                             <span className="shrink-0 text-xs px-2 py-0.5 rounded-full capitalize" style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.5)' }}>
+                             <span className="shrink-0 text-xs px-2 py-0.5 rounded-full capitalize" style={{ background: '#2a2a2a', color: '#b3b3b3' }}>
                              {cls.category}
                              </span>
                          </div>
-                        <p className="text-sm mb-2" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                             with <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.65)' }}>{cls.instructor}</span>
+                        <p className="text-sm mb-2" style={{ color: '#d1d1d1' }}>
+                             with <span style={{ fontWeight: 500, color: '#c4c4c4' }}>{cls.instructor}</span>
                          </p>
 
-                        <div className="flex items-center gap-4 text-xs mb-3" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                        <div className="flex items-center gap-4 text-xs mb-3" style={{ color: '#d1d1d1' }}>
                              <span className="flex items-center gap-1">
                              <Clock className="w-3.5 h-3.5" aria-hidden="true" /> {cls.duration} min
                              </span>
@@ -358,18 +358,18 @@ export function ClassesPage() {
                              </span>
                          </div>
 
-                         <p className="text-sm leading-relaxed mb-4 line-clamp-2" style={{ color: 'rgba(255,255,255,0.5)' }}>{cls.description}</p>
+                         <p className="text-sm leading-relaxed mb-4 line-clamp-2" style={{ color: '#b3b3b3' }}>{cls.description}</p>
 
                          <div className="flex flex-wrap gap-1.5 mb-4">
                             {cls.tags.map((tag: string) => (
-                            <span key={tag} className="px-2 py-0.5 text-xs rounded-full" style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.75)' }}>
+                            <span key={tag} className="px-2 py-0.5 text-xs rounded-full" style={{ background: '#2a2a2a', color: '#d1d1d1' }}>
                                  {tag}
                              </span>
                              ))}
                          </div>
 
                          <div>
-                             <p className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                             <p className="text-xs mb-2" style={{ color: '#a3a3a3', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                              Available Sessions
                              </p>
                              <div className="flex flex-wrap gap-2" role="list" aria-label={`Sessions for ${cls.name}`}>
@@ -397,7 +397,7 @@ export function ClassesPage() {
                                              {session.day} ({new Date(session.fullDate).toLocaleDateString()})
                                          </span>
                                          </div>
-                                        <p className="text-xs" style={{ color: 'rgba(255,255,255,0.75)' }}>{session.time} · {avail.label}</p>
+                                        <p className="text-xs" style={{ color: '#d1d1d1' }}>{session.time} · {avail.label}</p>
                                      </div>
                                      {isAuthenticated ? (
                                          <button
@@ -407,7 +407,7 @@ export function ClassesPage() {
                                          className="shrink-0 ml-1 px-2.5 py-1 text-xs rounded-full transition-all hover:opacity-90"
                                          style={
                                              isFull
-                                             ? { background: '#2a2a2a', color: 'rgba(255,255,255,0.25)', cursor: 'not-allowed', fontWeight: 500 }
+                                             ? { background: '#2a2a2a', color: '#737373', cursor: 'not-allowed', fontWeight: 500 }
                                              : { background: '#C8F400', color: '#111', fontWeight: 700 }
                                          }
                                          >
@@ -417,7 +417,7 @@ export function ClassesPage() {
                                          <Link
                                          to="/login"
                                          className="shrink-0 ml-1 px-2.5 py-1 text-xs rounded-full transition-colors"
-                                         style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}
+                                         style={{ background: '#2a2a2a', color: '#b3b3b3', fontWeight: 500 }}
                                          >
                                          Log in
                                          </Link>
@@ -428,7 +428,7 @@ export function ClassesPage() {
                             {cls.sessions.filter((s: any) => day === 'all' || s.day === day).length === 0 && (
                               <div
                                 className="px-3 py-2 rounded-lg w-full text-xs"
-                                style={{ background: '#222', border: '1px solid #333', color: 'rgba(255,255,255,0.55)' }}
+                                style={{ background: '#222', border: '1px solid #333', color: '#b3b3b3' }}
                                 role="listitem"
                               >
                                 No upcoming sessions scheduled.

@@ -47,7 +47,7 @@ export function ProgrammesPage() {
               { step: '03', title: 'Train & Transform', desc: 'Follow your structured plan with ongoing support and progress tracking.' },
             ].map((item) => (
               <div key={item.step} className="flex flex-col items-center">
-                <span className="w-10 h-10 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mb-3" style={{ fontWeight: 700 }}>
+                <span className="w-10 h-10 bg-orange-800 text-white rounded-full flex items-center justify-center text-sm mb-3" style={{ fontWeight: 700 }}>
                   {item.step}
                 </span>
                 <h3 className="text-slate-900 mb-1" style={{ fontWeight: 600 }}>{item.title}</h3>
@@ -62,14 +62,14 @@ export function ProgrammesPage() {
       <section className="bg-slate-900 border-b border-slate-800 py-4 sticky top-16 z-30" aria-label="Programme level filter">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-sm text-slate-400 mr-1">Filter by level:</span>
+            <span className="text-sm text-slate-300 mr-1">Filter by level:</span>
             {(['all', 'Beginner', 'Intermediate', 'Advanced'] as LevelFilter[]).map((lvl) => (
               <button
                 key={lvl}
                 onClick={() => setFilter(lvl)}
                 className={`px-4 py-1.5 rounded-full text-sm transition-colors ${
                   filter === lvl
-                    ? 'bg-orange-500 text-white'
+                    ? 'bg-orange-800 text-white'
                     : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                 }`}
                 style={{ fontWeight: 500 }}
@@ -120,15 +120,15 @@ export function ProgrammesPage() {
                 <div className="p-6">
                   {/* Meta */}
                   <div className="flex items-center gap-4 mb-4">
-                    <span className="flex items-center gap-1.5 text-sm text-slate-400">
+                    <span className="flex items-center gap-1.5 text-sm text-slate-300">
                       <Clock className="w-4 h-4" aria-hidden="true" />
                       {prog.weeks} weeks
                     </span>
-                    <span className="flex items-center gap-1.5 text-sm text-slate-400">
+                    <span className="flex items-center gap-1.5 text-sm text-slate-300">
                       <BarChart2 className="w-4 h-4" aria-hidden="true" />
                       {prog.level}
                     </span>
-                    <span className="flex items-center gap-1.5 text-sm text-slate-400">
+                    <span className="flex items-center gap-1.5 text-sm text-slate-300">
                       <User className="w-4 h-4" aria-hidden="true" />
                       {prog.trainerName}
                     </span>
@@ -138,7 +138,7 @@ export function ProgrammesPage() {
 
                   {/* Includes */}
                   <div className="mb-6">
-                    <p className="text-xs text-slate-400 mb-3" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <p className="text-xs text-slate-300 mb-3" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       What's Included
                     </p>
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -195,7 +195,7 @@ export function ProgrammesPage() {
           >
             Not sure which programme is right for you?
           </h2>
-          <p className="text-slate-400 mb-8">
+          <p className="text-slate-300 mb-8">
             Book a free 20-minute consultation with one of our trainers. We'll assess your goals and recommend the best pathway for you.
           </p>
           <PrimaryButton

@@ -22,7 +22,7 @@ const toneStyles = {
   dark: {
     eyebrow: 'text-orange-400',
     title: 'text-white',
-    subtitle: 'text-slate-400',
+    subtitle: 'text-slate-300',
   },
   light: {
     eyebrow: 'text-orange-500',

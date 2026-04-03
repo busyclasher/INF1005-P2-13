@@ -4,7 +4,7 @@ import { Zap, Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from 
 export function Footer() {
   return (
     <footer
-      className="bg-[#111111] text-white/60"
+      className="bg-[#111111] text-white/80"
       role="contentinfo"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8">
@@ -23,7 +23,7 @@ export function Footer() {
                 KINETIC<span className="text-primary">HUB</span>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed mb-5 text-white/55">
+            <p className="text-sm leading-relaxed mb-5 text-white/70">
               A boutique fitness studio dedicated to helping you move better, feel stronger, and live fully.
             </p>
             <div className="flex items-center gap-3" aria-label="Social media links">
@@ -39,7 +39,7 @@ export function Footer() {
                   aria-label={label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#1a1a1a] text-white/55 transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
+                  className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#1a1a1a] text-white/70 transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                 >
                   <Icon className="w-4 h-4" aria-hidden="true" />
                 </a>
@@ -62,7 +62,7 @@ export function Footer() {
                 <li key={to}>
                   <Link
                     to={to}
-                    className="text-sm text-white/60 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
+                    className="text-sm text-white/75 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                   >
                     {label}
                   </Link>
@@ -86,7 +86,7 @@ export function Footer() {
                 <li key={label}>
                   <Link
                     to={to}
-                    className="text-sm text-white/60 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
+                    className="text-sm text-white/75 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                   >
                     {label}
                   </Link>
@@ -103,7 +103,7 @@ export function Footer() {
             <address className="not-italic space-y-3">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-primary" aria-hidden="true" />
-                <span className="text-sm text-white/55">
+                <span className="text-sm text-white/70">
                   14 KineticHub Way, Tanjong Pagar<br />Singapore, 088741
                 </span>
               </div>
@@ -111,7 +111,7 @@ export function Footer() {
                 <Phone className="w-4 h-4 shrink-0 text-primary" aria-hidden="true" />
                 <a
                   href="tel:+6562345678"
-                  className="text-sm text-white/60 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
+                  className="text-sm text-white/75 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                 >
                   +65 6234 5678
                 </a>
@@ -120,7 +120,7 @@ export function Footer() {
                 <Mail className="w-4 h-4 shrink-0 text-primary" aria-hidden="true" />
                 <a
                   href="mailto:hello@kinetikhub.sg"
-                  className="text-sm text-white/60 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
+                  className="text-sm text-white/75 transition-colors hover:text-primary focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
                 >
                   hello@kinetikhub.sg
                 </a>
@@ -131,7 +131,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-[#1e1e1e] mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-white/50">
+          <p className="text-xs text-white/65">
             © {new Date().getFullYear()} KineticHub Ltd. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5">
@@ -143,7 +143,7 @@ export function Footer() {
               <Link
                 key={label}
                 to={to}
-                className="text-xs text-white/50 transition-colors hover:text-white/85 focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
+                className="text-xs text-white/65 transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
               >
                 {label}
               </Link>

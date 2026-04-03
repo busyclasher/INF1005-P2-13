@@ -48,7 +48,7 @@ export function ForgotPasswordPage() {
         <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="px-8 py-8 text-center" style={{ borderBottom: `1px solid ${BORDER}` }}>
             <h1 className="text-white" style={{ fontWeight: 700, fontSize: '1.375rem' }}>Reset your password</h1>
-            <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
+            <p className="text-sm mt-1" style={{ color: '#a3a3a3' }}>
               Enter your email and we’ll send reset instructions (demo flow).
             </p>
           </div>
@@ -76,7 +76,7 @@ export function ForgotPasswordPage() {
               <label htmlFor="reset-email" className="block text-sm mb-1.5" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
                 Email address
               </label>
-              <p id="reset-email-hint" className="text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <p id="reset-email-hint" className="text-xs mb-2" style={{ color: '#a3a3a3' }}>
                 We’ll send instructions to this address.
               </p>
               <input
@@ -110,7 +110,7 @@ export function ForgotPasswordPage() {
               </button>
             </form>
 
-            <p className="text-center text-sm mt-6" style={{ color: 'rgba(255,255,255,0.4)' }}>
+            <p className="text-center text-sm mt-6" style={{ color: '#a3a3a3' }}>
               Remembered it?{' '}
               <Link to="/login" className="transition-colors hover:opacity-80" style={{ color: LIME, fontWeight: 600 }}>
                 Back to sign in

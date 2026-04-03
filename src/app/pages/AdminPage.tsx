@@ -495,7 +495,7 @@ export function AdminPage() {
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
               <div className="bg-slate-900 p-5">
                 <div className="flex items-center gap-3">
-                  <span className="w-11 h-11 bg-orange-500 rounded-full flex items-center justify-center text-white" style={{ fontWeight: 700, fontSize: '1rem' }}>
+                  <span className="w-11 h-11 bg-orange-800 rounded-full flex items-center justify-center text-white" style={{ fontWeight: 700, fontSize: '1rem' }}>
                     {user?.firstName?.[0]}{user?.lastName?.[0]}
                   </span>
                   <div className="min-w-0">
@@ -615,7 +615,7 @@ export function AdminPage() {
                             <span className="text-slate-500 text-xs">{count} members ({pct}%)</span>
                           </div>
                           <div className="h-2 bg-slate-100 rounded-full overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${tier}: ${pct}%`}>
-                            <div className="h-full bg-orange-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                            <div className="h-full bg-orange-800 rounded-full transition-all" style={{ width: `${pct}%` }} />
                           </div>
                         </div>
                       );
@@ -632,7 +632,7 @@ export function AdminPage() {
                   <h2 id="admin-classes-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>Manage Classes</h2>
                   <button
                     onClick={() => setShowAddClass(!showAddClass)}
-                    className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-800 hover:bg-orange-900 text-white text-sm rounded-lg transition-colors"
                     style={{ fontWeight: 600 }}
                     aria-expanded={showAddClass}
                   >
@@ -713,7 +713,7 @@ export function AdminPage() {
                     <div className="flex gap-3">
                       <button
                         onClick={handleCreateClass}
-                        className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors"
+                        className="px-5 py-2.5 bg-orange-800 hover:bg-orange-900 text-white text-sm rounded-lg transition-colors"
                         style={{ fontWeight: 600 }}
                       >
                         Save Class
@@ -801,7 +801,7 @@ export function AdminPage() {
                     <div className="flex gap-3">
                       <button
                         onClick={handleUpdateClass}
-                        className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors"
+                        className="px-5 py-2.5 bg-orange-800 hover:bg-orange-900 text-white text-sm rounded-lg transition-colors"
                         style={{ fontWeight: 600 }}
                       >
                         Update Class
@@ -1067,7 +1067,7 @@ export function AdminPage() {
                   <h2 id="admin-notices-heading" className="text-slate-900" style={{ fontWeight: 700, fontSize: '1.5rem' }}>Manage Notices</h2>
                   <button
                     onClick={() => setShowAddNotice(!showAddNotice)}
-                    className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-800 hover:bg-orange-900 text-white text-sm rounded-lg transition-colors"
                     style={{ fontWeight: 600 }}
                     aria-expanded={showAddNotice}
                   >
@@ -1117,7 +1117,7 @@ export function AdminPage() {
                       <button
                         onClick={() => void handleCreateNotice()}
                         disabled={noticeSubmitting}
-                        className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white text-sm rounded-lg transition-colors"
+                        className="px-5 py-2.5 bg-orange-800 hover:bg-orange-900 disabled:bg-slate-600 disabled:text-white disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors"
                         style={{ fontWeight: 600 }}
                       >
                         {noticeSubmitting ? 'Saving...' : 'Save Notice'}

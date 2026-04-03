@@ -41,7 +41,7 @@ export function Navbar() {
         className={`px-4 py-2 rounded-lg transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111] ${
           isActive
             ? 'text-white bg-white/10'
-            : 'text-white/60 hover:text-white hover:bg-white/5'
+            : 'text-white/80 hover:text-white hover:bg-white/5'
         }`}
         style={{ fontWeight: 500 }}
       >
@@ -140,7 +140,7 @@ export function Navbar() {
                 {user.role === 'admin' && (
                   <span className="px-1.5 py-0.5 text-xs rounded" style={{ background: LIME, color: '#111', fontWeight: 600 }}>Admin</span>
                 )}
-                <ChevronDown className={`w-3.5 h-3.5 text-white/50 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                <ChevronDown className={`w-3.5 h-3.5 text-white/70 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
               </button>
 
               {dropdownOpen && (
@@ -151,7 +151,7 @@ export function Navbar() {
                   aria-label="Account options"
                 >
                   <div className="px-4 py-2 border-b" style={{ borderColor: '#2a2a2a' }}>
-                    <p className="text-xs text-white/40">Signed in as</p>
+                    <p className="text-xs text-white/70">Signed in as</p>
                     <p className="text-sm text-white truncate" style={{ fontWeight: 500 }}>{user.email}</p>
                   </div>
                   {user.role === 'admin' ? (
@@ -161,7 +161,7 @@ export function Navbar() {
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
                       onClick={() => setDropdownOpen(false)}
                     >
-                      <Shield className="w-4 h-4 text-white/30" aria-hidden="true" />
+                      <Shield className="w-4 h-4 text-white/70" aria-hidden="true" />
                       Admin Panel
                     </Link>
                   ) : (
@@ -171,7 +171,7 @@ export function Navbar() {
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
                       onClick={() => setDropdownOpen(false)}
                     >
-                      <LayoutDashboard className="w-4 h-4 text-white/30" aria-hidden="true" />
+                      <LayoutDashboard className="w-4 h-4 text-white/70" aria-hidden="true" />
                       My Dashboard
                     </Link>
                   )}
@@ -180,7 +180,7 @@ export function Navbar() {
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
                     onClick={() => { setDropdownOpen(false); }}
                   >
-                    <Settings className="w-4 h-4 text-white/30" aria-hidden="true" />
+                    <Settings className="w-4 h-4 text-white/70" aria-hidden="true" />
                     Settings
                   </Link>
                   <div className="border-t mt-1" style={{ borderColor: '#2a2a2a' }}>
@@ -257,7 +257,7 @@ export function Navbar() {
                     </span>
                     <div>
                       <p className="text-sm text-white" style={{ fontWeight: 600 }}>{userDisplayName}</p>
-                      <p className="text-xs text-white/40">{user.membershipTier} member</p>
+                      <p className="text-xs text-white/70">{user.membershipTier} member</p>
                     </div>
                   </div>
                   {user.role === 'admin' ? (

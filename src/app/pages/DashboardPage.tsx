@@ -185,7 +185,7 @@ export function DashboardPage() {
             <SurfaceCard variant="light" padding="none" className="overflow-hidden shadow-sm">
               <div className="bg-slate-900 p-5">
                 <div className="flex items-center gap-3">
-                  <span className="w-11 h-11 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-base">
+                  <span className="w-11 h-11 bg-orange-800 rounded-full flex items-center justify-center text-white font-bold text-base">
                     {initials}
                   </span>
                   <div className="min-w-0">
@@ -194,7 +194,7 @@ export function DashboardPage() {
                   </div>
                 </div>
                 <div className="mt-3 flex items-center gap-1.5">
-                  <span className="px-2.5 py-0.5 bg-orange-500 text-white text-xs rounded-full font-medium">
+                  <span className="px-2.5 py-0.5 bg-orange-800 text-white text-xs rounded-full font-medium">
                     {currentTier ? currentTier.plan_name : (user.membershipTier || 'Basic')}
                   </span>
                   <span className="text-slate-400 text-xs">{user.role || 'Member'}</span>
@@ -270,7 +270,7 @@ export function DashboardPage() {
                 <SurfaceCard variant="light" className="mb-6 shadow-sm">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-slate-900 font-bold">Upcoming Classes</h2>
-                    <button onClick={() => setTab('bookings')} className="text-orange-500 text-sm hover:underline font-medium">
+                    <button onClick={() => setTab('bookings')} className="text-orange-800 text-sm hover:underline font-medium">
                       View all
                     </button>
                   </div>
@@ -278,7 +278,7 @@ export function DashboardPage() {
                     <div className="text-center py-8">
                       <Calendar className="w-10 h-10 text-slate-300 mx-auto mb-2" aria-hidden="true" />
                       <p className="text-slate-500 text-sm">No upcoming bookings.</p>
-                      <Link to="/classes" className="text-orange-500 text-sm hover:underline mt-1 inline-block font-medium">Browse classes</Link>
+                      <Link to="/classes" className="text-orange-800 text-sm hover:underline mt-1 inline-block font-medium">Browse classes</Link>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -286,7 +286,7 @@ export function DashboardPage() {
                         <div key={booking.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center">
-                              <Calendar className="w-4 h-4 text-orange-500" aria-hidden="true" />
+                              <Calendar className="w-4 h-4 text-orange-800" aria-hidden="true" />
                             </div>
                             <div>
                               <p className="text-slate-800 text-sm font-semibold">{booking.className}</p>
@@ -308,7 +308,7 @@ export function DashboardPage() {
               <section aria-labelledby="bookings-heading">
                 <div className="flex items-center justify-between mb-6">
                   <h2 id="bookings-heading" className="text-slate-900 font-bold text-2xl">My Bookings</h2>
-                  <Link to="/classes" className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-medium">
+                  <Link to="/classes" className="px-4 py-2 bg-orange-800 hover:bg-orange-900 text-white text-sm rounded-lg transition-colors font-medium">
                     Book a Class
                   </Link>
                 </div>
@@ -430,7 +430,7 @@ export function DashboardPage() {
                         />
                       </div>
                       <div className="flex gap-3">
-                        <button onClick={() => {handleProfileSave();}} disabled={savingProfile} className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-semibold">
+                        <button onClick={() => {handleProfileSave();}} disabled={savingProfile} className="px-5 py-2.5 bg-orange-800 hover:bg-orange-900 text-white text-sm rounded-lg transition-colors font-semibold">
                           {savingProfile ? 'Saving...' : 'Save Changes'}
                         </button>
                         <button onClick={() => { setEditMode(false); setProfileErrors({}); }} className="px-5 py-2.5 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 transition-colors font-medium">
@@ -518,7 +518,7 @@ export function DashboardPage() {
                     <p className="text-slate-500 text-sm mb-5">{currentTier.description}</p>
                     
                     <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-100">
-                      <Link to="/membership" className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-semibold">
+                      <Link to="/membership" className="px-5 py-2.5 bg-orange-800 hover:bg-orange-900 text-white text-sm rounded-lg transition-colors font-semibold">
                         Change Plan
                       </Link>
                     </div>
@@ -528,7 +528,7 @@ export function DashboardPage() {
                           <CreditCard className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                           <h3 className="text-lg font-bold">No Active Membership</h3>
                           <p className="text-slate-500 mb-4">You do not have an active membership plan.</p>
-                          <Link to="/membership" className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg transition-colors font-semibold">
+                          <Link to="/membership" className="px-5 py-2.5 bg-orange-800 hover:bg-orange-900 text-white text-sm rounded-lg transition-colors font-semibold">
                             Browse Plans
                           </Link>
                       </div>

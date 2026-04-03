@@ -118,7 +118,7 @@ export function MembershipPage() {
       <section className="bg-slate-900 py-16" aria-label="Membership pricing">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {loading ? (
-                <div className="text-center text-slate-400 py-12">Loading plans...</div>
+                <div className="text-center text-slate-300 py-12">Loading plans...</div>
             ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 justify-center">
             {plans.map((tier, index) => (
@@ -137,14 +137,14 @@ export function MembershipPage() {
                   <h2 className={`mb-1 ${tierAccentColour[index % tierAccentColour.length]}`} style={{ fontWeight: 700, fontSize: '1.25rem' }}>
                     {tier.plan_name}
                   </h2>
-                  <p className="text-slate-500 text-sm mb-5">{tier.description}</p>
+                  <p className="text-sm mb-5" style={{ color: '#b3b3b3' }}>{tier.description}</p>
 
                   {/* Price */}
                   <div className="mb-6">
                     <span className="text-white" style={{ fontWeight: 800, fontSize: '2.5rem', lineHeight: 1 }}>
                       £{tier.price}
                     </span>
-                    <span className="text-slate-400 text-sm">/mo</span>
+                    <span className="text-sm" style={{ color: '#b3b3b3' }}>/mo</span>
                   </div>
 
                   {/* Features */}
@@ -157,7 +157,10 @@ export function MembershipPage() {
                             ) : (
                             <XCircle className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" aria-hidden="true" />
                             )}
-                            <span className={`text-sm ${f.included || index > 0 ? 'text-slate-200' : 'text-slate-500'}`}>
+                            <span
+                              className={`text-sm ${f.included || index > 0 ? 'text-slate-200' : ''}`}
+                              style={!(f.included || index > 0) ? { color: '#9ca3af' } : undefined}
+                            >
                             {f.text}
                             </span>
                         </li>
@@ -196,13 +199,13 @@ export function MembershipPage() {
                   >
                     <span className="text-slate-50 text-sm pr-4" style={{ fontWeight: 600 }}>{item.q}</span>
                     <Info
-                      className={`w-4 h-4 shrink-0 transition-colors ${openFaq === idx ? 'text-orange-500' : 'text-slate-400'}`}
+                      className={`w-4 h-4 shrink-0 transition-colors ${openFaq === idx ? 'text-orange-500' : 'text-slate-300'}`}
                     />
                   </button>
                 </dt>
                 {openFaq === idx && (
                   <dd id={`faq-answer-${idx}`} className="px-5 pb-4">
-                    <p className="text-slate-400 text-sm leading-relaxed">{item.a}</p>
+                    <p className="text-slate-300 text-sm leading-relaxed">{item.a}</p>
                   </dd>
                 )}
               </SurfaceCard>

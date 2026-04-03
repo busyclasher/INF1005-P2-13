@@ -77,9 +77,9 @@ export function AboutPage() {
                 />
               </div>
               {/* Stats overlay */}
-              <div className="absolute -bottom-6 -left-6 bg-orange-500 rounded-2xl p-5 shadow-xl text-white hidden sm:block">
-                <p style={{ fontWeight: 800, fontSize: '2rem', lineHeight: 1 }}>1,200+</p>
-                <p className="text-orange-100 text-sm">Happy members</p>
+              <div className="absolute -bottom-6 -left-6 bg-orange-700 rounded-2xl p-5 shadow-xl text-white hidden sm:block">
+                <p className="text-white" style={{ fontWeight: 800, fontSize: '2rem', lineHeight: 1 }}>1,200+</p>
+                <p className="text-white text-sm">Happy members</p>
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@ export function AboutPage() {
                   <Icon className="w-6 h-6 text-orange-400" aria-hidden="true" />
                 </div>
                 <h3 className="text-slate-100 mb-2 font-bold">{title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
+                <p className="text-slate-300 text-sm leading-relaxed">{desc}</p>
               </SurfaceCard>
             ))}
           </div>
@@ -153,7 +153,7 @@ export function AboutPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" aria-hidden="true" />
                   <div className="absolute bottom-3 left-3 right-3">
-                    <span className="text-xs bg-orange-500 text-white px-2.5 py-1 rounded-full" style={{ fontWeight: 500 }}>
+                    <span className="text-xs bg-orange-800 text-white px-2.5 py-1 rounded-full" style={{ fontWeight: 500 }}>
                       {member.experience}
                     </span>
                   </div>
@@ -161,7 +161,7 @@ export function AboutPage() {
                 <div className="p-5">
                   <h3 className="text-slate-100 mb-0.5" style={{ fontWeight: 700 }}>{member.name}</h3>
                   <p className="text-orange-400 text-sm mb-3" style={{ fontWeight: 500 }}>{member.role}</p>
-                  <p className="text-slate-400 text-sm leading-relaxed mb-4">{member.bio}</p>
+                  <p className="text-slate-300 text-sm leading-relaxed mb-4">{member.bio}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {member.specialities.map((s) => (
                       <span key={s} className="text-xs px-2 py-0.5 bg-slate-800 text-slate-300 rounded-full">
@@ -194,7 +194,7 @@ export function AboutPage() {
                   </div>
                   <div>
                     <p className="text-slate-100 text-sm" style={{ fontWeight: 600 }}>Address</p>
-                    <p className="text-slate-400 text-sm">14 KineticHub Way, Tanjong Pagar<br />Singapore, 088741</p>
+                    <p className="text-slate-300 text-sm">14 KineticHub Way, Tanjong Pagar<br />Singapore, 088741</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -203,7 +203,7 @@ export function AboutPage() {
                   </div>
                   <div>
                     <p className="text-slate-100 text-sm" style={{ fontWeight: 600 }}>Opening Hours</p>
-                    <div className="text-slate-400 text-sm space-y-0.5">
+                    <div className="text-slate-300 text-sm space-y-0.5">
                       <p>Monday – Friday: 05:30 – 22:00</p>
                       <p>Saturday: 07:00 – 19:00</p>
                       <p>Sunday: 08:00 – 17:00</p>
@@ -216,7 +216,7 @@ export function AboutPage() {
                   </div>
                   <div>
                     <p className="text-slate-100 text-sm" style={{ fontWeight: 600 }}>Phone</p>
-                    <a href="tel:+6562345678" className="text-slate-400 text-sm hover:text-orange-400 transition-colors">
+                    <a href="tel:+6562345678" className="text-slate-300 text-sm hover:text-orange-400 transition-colors">
                       +65 6234 5678
                     </a>
                   </div>
@@ -227,7 +227,7 @@ export function AboutPage() {
                   </div>
                   <div>
                     <p className="text-slate-100 text-sm" style={{ fontWeight: 600 }}>Email</p>
-                    <a href="mailto:hello@kinetikhub.sg" className="text-slate-400 text-sm hover:text-orange-400 transition-colors">
+                    <a href="mailto:hello@kinetikhub.sg" className="text-slate-300 text-sm hover:text-orange-400 transition-colors">
                       hello@kinetikhub.sg
                     </a>
                   </div>
@@ -238,14 +238,14 @@ export function AboutPage() {
             {/* Map placeholder */}
             <div className="bg-slate-800 rounded-2xl overflow-hidden min-h-[320px] flex items-center justify-center" aria-label="Map showing studio location">
               <div className="text-center p-8">
-                <MapPin className="w-12 h-12 text-slate-400 mx-auto mb-3" aria-hidden="true" />
+                <MapPin className="w-12 h-12 text-slate-300 mx-auto mb-3" aria-hidden="true" />
                 <p className="text-slate-200 text-sm" style={{ fontWeight: 500 }}>14 KineticHub Way, Tanjong Pagar</p>
-                <p className="text-slate-400 text-xs mt-1">Singapore, 088741</p>
+                <p className="text-slate-300 text-xs mt-1">Singapore, 088741</p>
                 <a
                   href="https://www.google.com/maps/search/?api=1&query=14%20KineticHub%20Way%2C%20Tanjong%20Pagar%2C%20Singapore%20088741"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition-colors"
+                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-orange-800 text-white text-sm rounded-lg hover:bg-orange-900 transition-colors"
                   style={{ fontWeight: 500 }}
                 >
                   Open in Maps
@@ -262,7 +262,7 @@ export function AboutPage() {
           <h2 id="about-cta" className="text-white mb-3" style={{ fontWeight: 800, fontSize: '2rem', letterSpacing: '-0.02em' }}>
             Come say hello
           </h2>
-          <p className="text-slate-400 mb-7">
+          <p className="text-slate-300 mb-7">
             Visit us for a free trial class and see for yourself what makes KineticHub different.
           </p>
           <PrimaryButton to="/register" variant="brand" rounded="xl" className="px-8 py-3.5 gap-2">
