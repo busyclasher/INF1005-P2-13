@@ -265,7 +265,7 @@ export function AboutPage() {
           <p className="text-slate-300 mb-7">
             Visit us for a free trial class and see for yourself what makes KineticHub different.
           </p>
-          <PrimaryButton to="/register" variant="brand" rounded="xl" className="px-8 py-3.5 gap-2">
+          <PrimaryButton to="/register" variant="brand" className="px-8 py-3.5 gap-2">
             Get Your Free Class
           </PrimaryButton>
         </div>

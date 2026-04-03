@@ -14,9 +14,9 @@ type Tab = 'overview' | 'bookings' | 'profile' | 'membership';
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://35.212.166.173/backend/api';
 
 const statusColour: Record<string, string> = {
-  Confirmed: 'bg-green-100 text-green-700',
-  Attended: 'bg-slate-100 text-slate-600',
-  Cancelled: 'bg-red-100 text-red-600',
+  Confirmed: 'bg-green-100 text-green-800',
+  Attended: 'bg-slate-100 text-slate-700',
+  Cancelled: 'bg-red-100 text-red-800',
 };
 
 export function DashboardPage() {
@@ -185,19 +185,19 @@ export function DashboardPage() {
             <SurfaceCard variant="light" padding="none" className="overflow-hidden shadow-sm">
               <div className="bg-slate-900 p-5">
                 <div className="flex items-center gap-3">
-                  <span className="w-11 h-11 bg-orange-800 rounded-full flex items-center justify-center text-white font-bold text-base">
+                  <span className="w-11 h-11 bg-primary rounded-full flex items-center justify-center text-black font-bold text-base">
                     {initials}
                   </span>
                   <div className="min-w-0">
                     <p className="text-white text-sm truncate font-semibold">{fullName}</p>
-                    <p className="text-slate-400 text-xs truncate">{user.email}</p>
+                    <p className="text-slate-300 text-xs truncate">{user.email}</p>
                   </div>
                 </div>
                 <div className="mt-3 flex items-center gap-1.5">
                   <span className="px-2.5 py-0.5 bg-orange-800 text-white text-xs rounded-full font-medium">
                     {currentTier ? currentTier.plan_name : (user.membershipTier || 'Basic')}
                   </span>
-                  <span className="text-slate-400 text-xs">{user.role || 'Member'}</span>
+                  <span className="text-slate-300 text-xs">{user.role || 'Member'}</span>
                 </div>
               </div>
 
@@ -207,7 +207,7 @@ export function DashboardPage() {
                     key={id}
                     onClick={() => setTab(id)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors mb-0.5 ${
-                      tab === id ? 'bg-orange-50 text-orange-600 font-semibold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-normal'
+                      tab === id ? 'bg-orange-100 text-orange-900 font-semibold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-normal'
                     }`}
                     aria-current={tab === id ? 'page' : undefined}
                   >
@@ -220,7 +220,7 @@ export function DashboardPage() {
               <div className="p-2 border-t border-slate-100">
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-500 hover:bg-red-50 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-800 hover:bg-red-100 transition-colors"
                 >
                   <LogOut className="w-4 h-4" aria-hidden="true" />
                   Sign Out
@@ -251,17 +251,17 @@ export function DashboardPage() {
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   {[
-                    { label: 'Upcoming', value: myBookings.length, icon: Calendar, colour: 'text-blue-600', bg: 'bg-blue-50' },
-                    { label: 'Attended', value: 0, icon: CheckCircle2, colour: 'text-green-600', bg: 'bg-green-50' },
-                    { label: 'Total', value: myBookings.length, icon: Zap, colour: 'text-orange-600', bg: 'bg-orange-50' },
-                    { label: 'Member Since', value: new Date(user.joinDate || Date.now()).getFullYear(), icon: User, colour: 'text-purple-600', bg: 'bg-purple-50' },
+                    { label: 'Upcoming', value: myBookings.length, icon: Calendar, colour: 'text-blue-800', bg: 'bg-blue-100' },
+                    { label: 'Attended', value: 0, icon: CheckCircle2, colour: 'text-green-800', bg: 'bg-green-100' },
+                    { label: 'Total', value: myBookings.length, icon: Zap, colour: 'text-orange-900', bg: 'bg-orange-100' },
+                    { label: 'Member Since', value: new Date(user.joinDate || Date.now()).getFullYear(), icon: User, colour: 'text-purple-900', bg: 'bg-purple-100' },
                   ].map(({ label, value, icon: Icon, colour, bg }) => (
                     <SurfaceCard key={label} variant="light" padding="default" className="rounded-xl p-4 shadow-sm">
                       <div className={`w-9 h-9 ${bg} rounded-lg flex items-center justify-center mb-3`}>
                         <Icon className={`w-4 h-4 ${colour}`} aria-hidden="true" />
                       </div>
                       <p className="text-slate-900 font-extrabold text-2xl leading-none">{value}</p>
-                      <p className="text-slate-500 text-xs mt-1">{label}</p>
+                      <p className="text-slate-600 text-xs mt-1">{label}</p>
                     </SurfaceCard>
                   ))}
                 </div>
@@ -290,7 +290,7 @@ export function DashboardPage() {
                             </div>
                             <div>
                               <p className="text-slate-800 text-sm font-semibold">{booking.className}</p>
-                              <p className="text-slate-500 text-xs">{booking.day} at {booking.time}</p>
+                              <p className="text-slate-600 text-xs">{booking.day} at {booking.time}</p>
                             </div>
                           </div>
                           <span className={`px-2 py-0.5 rounded-full text-xs ${statusColour[booking.status]}`} style={{ fontWeight: 500 }}>
@@ -316,7 +316,7 @@ export function DashboardPage() {
                   <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
                     <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" aria-hidden="true" />
                     <p className="text-slate-600 font-medium">No bookings yet</p>
-                    <p className="text-slate-400 text-sm">Browse our classes and book your first session.</p>
+                    <p className="text-slate-600 text-sm">Browse our classes and book your first session.</p>
                   </div>
                 ) : (
                   <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
@@ -324,7 +324,7 @@ export function DashboardPage() {
                       <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
                           {['Class', 'Day & Time', 'Booked On', 'Status', 'Action'].map((h) => (
-                            <th key={h} scope="col" className="text-left text-xs text-slate-500 px-4 py-3 font-semibold uppercase tracking-wide">
+                            <th key={h} scope="col" className="text-left text-xs text-slate-600 px-4 py-3 font-semibold uppercase tracking-wide">
                               {h}
                             </th>
                           ))}
@@ -338,9 +338,9 @@ export function DashboardPage() {
                             </td>
                             <td className="px-4 py-3.5">
                               <p className="text-slate-600 text-sm">{b.day}</p>
-                              <p className="text-slate-400 text-xs">{b.time}</p>
+                              <p className="text-slate-600 text-xs">{b.time}</p>
                             </td>
-                            <td className="px-4 py-3.5 text-slate-500 text-sm">{b.bookedAt}</td>
+                            <td className="px-4 py-3.5 text-slate-600 text-sm">{b.bookedAt}</td>
                             <td className="px-4 py-3.5">
                               <span className={`px-2.5 py-1 rounded-full text-xs ${statusColour[b.status]}`} style={{ fontWeight: 500 }}>
                                 {b.status}
@@ -349,7 +349,7 @@ export function DashboardPage() {
                             <td className="px-4 py-3.5">
                                 <button 
                                     onClick={() => cancelBooking(b.id)}
-                                    className="px-3 py-1 bg-red-50 text-red-600 border border-red-200 rounded text-xs hover:bg-red-100 font-medium transition-colors">
+                                    className="px-3 py-1 bg-red-50 text-red-800 border border-red-300 rounded text-xs hover:bg-red-100 font-medium transition-colors">
                                     Cancel
                                 </button>
                             </td>
@@ -513,7 +513,7 @@ export function DashboardPage() {
                     </div>
                     
                     <p className="text-slate-900 mb-1 font-bold text-3xl">
-                      £{currentTier.price}<span className="text-slate-400 text-base font-normal">/month</span>
+                      £{currentTier.price}<span className="text-slate-600 text-base font-normal">/month</span>
                     </p>
                     <p className="text-slate-500 text-sm mb-5">{currentTier.description}</p>
                     

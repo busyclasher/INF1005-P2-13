@@ -170,7 +170,6 @@ export function ProgrammesPage() {
                       <PrimaryButton
                         to="/register"
                         variant="brand"
-                        rounded="lg"
                         className="px-4 py-2 text-sm gap-1.5"
                         aria-label={`Enrol in ${prog.name}`}
                       >
@@ -201,7 +200,6 @@ export function ProgrammesPage() {
           <PrimaryButton
             to="/register"
             variant="brand"
-            rounded="xl"
             className="px-8 py-3.5 gap-2"
           >
             Book Free Consultation <ArrowRight className="w-4 h-4" aria-hidden="true" />

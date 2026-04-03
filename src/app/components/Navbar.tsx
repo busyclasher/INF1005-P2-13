@@ -132,13 +132,13 @@ export function Navbar() {
               >
                 <span
                   className="w-7 h-7 rounded-full flex items-center justify-center text-xs"
-                  style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                  style={{ background: LIME, color: '#000000', fontWeight: 700 }}
                 >
                   {userInitials}
                 </span>
                 <span className="max-w-[120px] truncate text-white">{userDisplayName}</span>
                 {user.role === 'admin' && (
-                  <span className="px-1.5 py-0.5 text-xs rounded" style={{ background: LIME, color: '#111', fontWeight: 600 }}>Admin</span>
+                  <span className="px-1.5 py-0.5 text-xs rounded" style={{ background: LIME, color: '#000000', fontWeight: 600 }}>Admin</span>
                 )}
                 <ChevronDown className={`w-3.5 h-3.5 text-white/70 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
               </button>
@@ -207,7 +207,7 @@ export function Navbar() {
               <Link
                 to="/register"
                 className="px-5 py-2 text-sm rounded-full transition-all hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
-                style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                style={{ background: LIME, color: '#000000', fontWeight: 700 }}
               >
                 Try for free
               </Link>
@@ -251,7 +251,7 @@ export function Navbar() {
                   <div className="flex items-center gap-3 px-4 py-2">
                     <span
                       className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
-                      style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                      style={{ background: LIME, color: '#000000', fontWeight: 700 }}
                     >
                       {userInitials}
                     </span>
@@ -281,7 +281,7 @@ export function Navbar() {
                   <Link
                     to="/register"
                     className="px-4 py-3 rounded-full text-sm text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
-                    style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                    style={{ background: LIME, color: '#000000', fontWeight: 700 }}
                     onClick={() => setMobileOpen(false)}
                   >
                     Try for free

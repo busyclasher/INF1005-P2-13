@@ -169,7 +169,6 @@ export function MembershipPage() {
 
                   <PrimaryButton
                     variant="brand"
-                    rounded="xl"
                     className="w-full py-3"
                     onClick={() => handleSubscribe(tier.plan_id)}
                   >

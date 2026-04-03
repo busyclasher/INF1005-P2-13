@@ -221,7 +221,7 @@ export function RegisterPage() {
           <div className="px-8 py-7 text-center" style={{ borderBottom: `1px solid ${BORDER}` }}>
             <Link to="/" className="inline-flex items-center justify-center gap-2 mb-4">
               <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: LIME }}>
-                <Zap className="w-4 h-4" style={{ color: '#111' }} aria-hidden="true" />
+                <Zap className="w-4 h-4" style={{ color: '#000000' }} aria-hidden="true" />
               </span>
               <span className="text-white" style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
                 KINETIC<span style={{ color: LIME }}>HUB</span>
@@ -241,7 +241,7 @@ export function RegisterPage() {
                       className="w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
                       style={{
                         background: i < step ? '#22c55e' : i === step ? LIME : '#2a2a2a',
-                        color: i < step ? '#fff' : i === step ? '#111' : '#a3a3a3',
+                        color: i < step ? '#fff' : i === step ? '#000000' : '#a3a3a3',
                         fontWeight: 700,
                       }}
                       aria-current={i === step ? 'step' : undefined}
@@ -529,7 +529,7 @@ export function RegisterPage() {
                         {tier.popular && (
                           <span
                             className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-xs"
-                            style={{ background: LIME, color: '#111', fontWeight: 600 }}
+                            style={{ background: LIME, color: '#000000', fontWeight: 600 }}
                           >Most Popular</span>
                         )}
                       </div>
@@ -628,7 +628,7 @@ export function RegisterPage() {
                   type="button"
                   onClick={handleNext}
                   className="px-6 py-2.5 rounded-full text-sm transition-all hover:opacity-90"
-                  style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                  style={{ background: LIME, color: '#000000', fontWeight: 700 }}
                 >
                   Continue
                 </button>
@@ -637,7 +637,7 @@ export function RegisterPage() {
                   type="submit"
                   disabled={submitting}
                   className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full text-sm transition-all hover:opacity-90 disabled:opacity-50"
-                  style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                  style={{ background: LIME, color: '#000000', fontWeight: 700 }}
                   aria-busy={submitting}
                 >
                   {submitting ? (

@@ -2,12 +2,13 @@ import { Link } from 'react-router';
 import { cn } from '../ui/utils';
 
 const variants = {
+  /** Brand CTA: lime #C8F400, black text, bold — matches marketing “Try for free” reference */
   brand:
-    'bg-primary text-primary-foreground hover:opacity-90 active:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]',
+    'bg-primary text-black font-bold hover:opacity-90 active:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]',
   marketing:
-    'bg-orange-800 text-white hover:bg-orange-900 active:bg-orange-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+    'bg-orange-800 text-white font-semibold hover:bg-orange-900 active:bg-orange-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
   dark:
-    'bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50',
+    'bg-slate-900 text-white font-semibold hover:bg-slate-800 active:bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50',
 };
 
 const roundedMap = {
@@ -38,7 +39,7 @@ export type PrimaryButtonProps = PrimaryButtonAsLink | PrimaryButtonAsButton;
 export function PrimaryButton(props: PrimaryButtonProps) {
   const {
     variant = 'brand',
-    rounded = 'xl',
+    rounded = 'full',
     className,
     children,
     to,
@@ -46,7 +47,7 @@ export function PrimaryButton(props: PrimaryButtonProps) {
   } = props;
 
   const base = cn(
-    'inline-flex items-center justify-center gap-2 font-semibold text-sm transition-all disabled:opacity-50 disabled:pointer-events-none px-5 py-2.5',
+    'inline-flex items-center justify-center gap-2 text-sm transition-all disabled:opacity-50 disabled:pointer-events-none px-5 py-2.5',
     roundedMap[rounded],
     variants[variant],
     className,

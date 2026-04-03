@@ -16,14 +16,14 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://35.212.166.173/bac
 
 const statusColour: Record<string, string> = {
   Active: 'bg-green-100 text-green-700',
-  Suspended: 'bg-red-100 text-red-600',
+  Suspended: 'bg-red-100 text-red-800',
   Expired: 'bg-slate-100 text-slate-500',
 };
 
 const bookingStatusColour: Record<string, string> = {
   Confirmed: 'bg-green-100 text-green-700',
   Attended: 'bg-slate-100 text-slate-600',
-  Cancelled: 'bg-red-100 text-red-600',
+  Cancelled: 'bg-red-100 text-red-800',
 };
 
 type AdminNotice = {
@@ -495,7 +495,7 @@ export function AdminPage() {
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
               <div className="bg-slate-900 p-5">
                 <div className="flex items-center gap-3">
-                  <span className="w-11 h-11 bg-orange-800 rounded-full flex items-center justify-center text-white" style={{ fontWeight: 700, fontSize: '1rem' }}>
+                  <span className="w-11 h-11 bg-primary rounded-full flex items-center justify-center text-black" style={{ fontWeight: 700, fontSize: '1rem' }}>
                     {user?.firstName?.[0]}{user?.lastName?.[0]}
                   </span>
                   <div className="min-w-0">
@@ -513,7 +513,7 @@ export function AdminPage() {
                   <button
                     key={id}
                     onClick={() => setTab(id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors mb-0.5 ${tab === id ? 'bg-orange-50 text-orange-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors mb-0.5 ${tab === id ? 'bg-orange-100 text-orange-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                       }`}
                     style={{ fontWeight: tab === id ? 600 : 400 }}
                     aria-current={tab === id ? 'page' : undefined}
@@ -527,7 +527,7 @@ export function AdminPage() {
               <div className="p-2 border-t border-slate-100">
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-500 hover:bg-red-50 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-800 hover:bg-red-100 transition-colors"
                 >
                   <LogOut className="w-4 h-4" aria-hidden="true" />
                   Sign Out
@@ -548,23 +548,23 @@ export function AdminPage() {
                 {/* KPIs */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   {[
-                    { label: 'Total Members', value: totalMembers, sub: `${activeMembers} active`, icon: Users, colour: 'text-blue-600', bg: 'bg-blue-50', trend: '+12%' },
-                    { label: 'Active Classes', value: totalClasses, sub: '36 sessions/wk', icon: Calendar, colour: 'text-green-600', bg: 'bg-green-50', trend: 'stable' },
-                    { label: 'Confirmed Bookings', value: confirmedBookings, sub: 'this week', icon: CheckCircle2, colour: 'text-orange-600', bg: 'bg-orange-50', trend: '+8%' },
-                    { label: 'Monthly Revenue', value: '£4,820', sub: 'memberships', icon: TrendingUp, colour: 'text-purple-600', bg: 'bg-purple-50', trend: '+5%' },
+                    { label: 'Total Members', value: totalMembers, sub: `${activeMembers} active`, icon: Users, colour: 'text-blue-800', bg: 'bg-blue-100', trend: '+12%' },
+                    { label: 'Active Classes', value: totalClasses, sub: '36 sessions/wk', icon: Calendar, colour: 'text-green-800', bg: 'bg-green-100', trend: 'stable' },
+                    { label: 'Confirmed Bookings', value: confirmedBookings, sub: 'this week', icon: CheckCircle2, colour: 'text-orange-900', bg: 'bg-orange-100', trend: '+8%' },
+                    { label: 'Monthly Revenue', value: '£4,820', sub: 'memberships', icon: TrendingUp, colour: 'text-purple-900', bg: 'bg-purple-100', trend: '+5%' },
                   ].map(({ label, value, sub, icon: Icon, colour, bg, trend }) => (
                     <div key={label} className="bg-white rounded-xl border border-slate-200 p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div className={`w-9 h-9 ${bg} rounded-lg flex items-center justify-center`}>
                           <Icon className={`w-4 h-4 ${colour}`} aria-hidden="true" />
                         </div>
-                        <span className={`text-xs px-1.5 py-0.5 rounded ${trend.startsWith('+') ? 'bg-green-50 text-green-600' : 'bg-slate-100 text-slate-500'}`} style={{ fontWeight: 500 }}>
+                        <span className={`text-xs px-1.5 py-0.5 rounded ${trend.startsWith('+') ? 'bg-green-100 text-green-800' : 'bg-slate-200 text-slate-800'}`} style={{ fontWeight: 500 }}>
                           {trend}
                         </span>
                       </div>
                       <p className="text-slate-900" style={{ fontWeight: 800, fontSize: '1.5rem', lineHeight: 1 }}>{value}</p>
-                      <p className="text-slate-500 text-xs mt-1">{label}</p>
-                      <p className="text-slate-400 text-xs">{sub}</p>
+                      <p className="text-slate-600 text-xs mt-1">{label}</p>
+                      <p className="text-slate-700 text-xs">{sub}</p>
                     </div>
                   ))}
                 </div>
@@ -577,7 +577,7 @@ export function AdminPage() {
                       <thead>
                         <tr className="border-b border-slate-100">
                           {['Member', 'Class', 'Day / Time', 'Status'].map(h => (
-                            <th key={h} scope="col" className="text-left text-xs text-slate-400 pb-3 pr-4" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <th key={h} scope="col" className="text-left text-xs text-slate-600 pb-3 pr-4" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                               {h}
                             </th>
                           ))}
@@ -588,7 +588,7 @@ export function AdminPage() {
                           <tr key={b.id} className="hover:bg-slate-50 transition-colors">
                             <td className="py-3 pr-4 text-slate-800 text-sm" style={{ fontWeight: 500 }}>{b.memberName}</td>
                             <td className="py-3 pr-4 text-slate-600 text-sm">{b.className}</td>
-                            <td className="py-3 pr-4 text-slate-500 text-sm">{b.day} {b.time}</td>
+                            <td className="py-3 pr-4 text-slate-600 text-sm">{b.day} {b.time}</td>
                             <td className="py-3">
                               <span className={`px-2 py-0.5 rounded-full text-xs ${bookingStatusColour[b.status]}`} style={{ fontWeight: 500 }}>
                                 {b.status}
@@ -841,20 +841,20 @@ export function AdminPage() {
                             <div className="h-1.5 flex-1 bg-slate-100 rounded-full overflow-hidden max-w-[120px]">
                               <div className={`h-full rounded-full ${pct > 80 ? 'bg-red-500' : pct > 50 ? 'bg-amber-500' : 'bg-green-500'}`} style={{ width: `${pct}%` }} aria-hidden="true" />
                             </div>
-                            <span className="text-slate-400 text-xs">{pct}% full</span>
+                            <span className="text-slate-600 text-xs">{pct}% full</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <button
                             onClick={() => openEditClass(cls)}
-                            className="p-2 text-slate-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-400 hover:text-orange-900 hover:bg-orange-100 rounded-lg transition-colors"
                             aria-label={`Edit ${cls.name}`}
                           >
                             <Edit3 className="w-4 h-4" aria-hidden="true" />
                           </button>
                           <button
                             onClick={() => handleDeleteClass(cls.id)}
-                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-400 hover:text-red-800 hover:bg-red-100 rounded-lg transition-colors"
                             aria-label={`Delete ${cls.name}`}
                           >
                             <Trash2 className="w-4 h-4" aria-hidden="true" />
@@ -896,7 +896,7 @@ export function AdminPage() {
                         <thead className="bg-slate-50 border-b border-slate-200">
                           <tr>
                             {['Name', 'Email', 'Phone', 'Plan', 'Joined', 'Role', 'Actions'].map(h => (
-                              <th key={h} scope="col" className="text-left text-xs text-slate-500 px-4 py-3 font-semibold uppercase tracking-wide">
+                              <th key={h} scope="col" className="text-left text-xs text-slate-600 px-4 py-3 font-semibold uppercase tracking-wide">
                                 {h}
                               </th>
                             ))}
@@ -968,7 +968,7 @@ export function AdminPage() {
                     </div>
                     {filteredMembers.length === 0 && (
                       <div className="p-10 text-center">
-                        <p className="text-slate-400 text-sm">No members match your search.</p>
+                        <p className="text-slate-600 text-sm">No members match your search.</p>
                       </div>
                     )}
                   </div>
@@ -999,7 +999,7 @@ export function AdminPage() {
                   {[
                     { label: 'Confirmed', count: bookings.filter(b => b.status === 'Confirmed').length, colour: 'bg-green-100 text-green-700' },
                     { label: 'Attended', count: bookings.filter(b => b.status === 'Attended').length, colour: 'bg-slate-100 text-slate-600' },
-                    { label: 'Cancelled', count: bookings.filter(b => b.status === 'Cancelled').length, colour: 'bg-red-100 text-red-600' },
+                    { label: 'Cancelled', count: bookings.filter(b => b.status === 'Cancelled').length, colour: 'bg-red-100 text-red-800' },
                   ].map(({ label, count, colour }) => (
                     <span key={label} className={`px-3 py-1.5 rounded-full text-sm ${colour}`} style={{ fontWeight: 600 }}>
                       {label}: {count}
@@ -1013,7 +1013,7 @@ export function AdminPage() {
                       <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
                           {['Member', 'Class', 'Day / Time', 'Booked On', 'Status', 'Actions'].map(h => (
-                            <th key={h} scope="col" className="text-left text-xs text-slate-500 px-4 py-3" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <th key={h} scope="col" className="text-left text-xs text-slate-600 px-4 py-3" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                               {h}
                             </th>
                           ))}
@@ -1026,9 +1026,9 @@ export function AdminPage() {
                             <td className="px-4 py-3.5 text-slate-600 text-sm">{b.className}</td>
                             <td className="px-4 py-3.5">
                               <p className="text-slate-600 text-sm">{b.day}</p>
-                              <p className="text-slate-400 text-xs">{b.time}</p>
+                              <p className="text-slate-600 text-xs">{b.time}</p>
                             </td>
-                            <td className="px-4 py-3.5 text-slate-500 text-sm">{b.bookedAt}</td>
+                            <td className="px-4 py-3.5 text-slate-600 text-sm">{b.bookedAt}</td>
                             <td className="px-4 py-3.5">
                               <span className={`px-2.5 py-0.5 rounded-full text-xs ${bookingStatusColour[b.status]}`} style={{ fontWeight: 500 }}>
                                 {b.status}
@@ -1038,7 +1038,7 @@ export function AdminPage() {
                               {b.status === 'Confirmed' && (
                                 <button
                                   onClick={() => cancelBooking(b.id)}
-                                  className="flex items-center gap-1 px-2.5 py-1 text-xs text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                                  className="flex items-center gap-1 px-2.5 py-1 text-xs text-red-800 border border-red-300 rounded-lg hover:bg-red-100 transition-colors"
                                   style={{ fontWeight: 500 }}
                                   aria-label={`Cancel booking for ${b.memberName} - ${b.className}`}
                                 >
@@ -1053,7 +1053,7 @@ export function AdminPage() {
                   </div>
                   {filteredBookings.length === 0 && (
                     <div className="p-10 text-center">
-                      <p className="text-slate-400 text-sm">No bookings match your search.</p>
+                      <p className="text-slate-600 text-sm">No bookings match your search.</p>
                     </div>
                   )}
                 </div>
@@ -1136,11 +1136,11 @@ export function AdminPage() {
                 <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
                   {noticesLoading ? (
                     <div className="p-10 text-center">
-                      <p className="text-slate-400 text-sm">Loading notices...</p>
+                      <p className="text-slate-600 text-sm">Loading notices...</p>
                     </div>
                   ) : notices.length === 0 ? (
                     <div className="p-10 text-center">
-                      <p className="text-slate-400 text-sm">No notices available.</p>
+                      <p className="text-slate-600 text-sm">No notices available.</p>
                     </div>
                   ) : (
                     <div className="divide-y divide-slate-100">
@@ -1152,12 +1152,12 @@ export function AdminPage() {
                               <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full">{notice.author_name}</span>
                             </div>
                             <p className="text-slate-600 text-sm whitespace-pre-line">{notice.content}</p>
-                            <p className="text-slate-400 text-xs mt-2">Posted {new Date(notice.created_at).toLocaleString()}</p>
+                            <p className="text-slate-600 text-xs mt-2">Posted {new Date(notice.created_at).toLocaleString()}</p>
                           </div>
                           <button
                             onClick={() => void handleDeleteNotice(notice.id)}
                             disabled={deletingNoticeId === notice.id}
-                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 disabled:text-slate-300 rounded-lg transition-colors shrink-0"
+                            className="p-2 text-slate-400 hover:text-red-800 hover:bg-red-100 disabled:text-slate-300 rounded-lg transition-colors shrink-0"
                             aria-label={`Delete ${notice.title}`}
                           >
                             <Trash2 className="w-4 h-4" aria-hidden="true" />

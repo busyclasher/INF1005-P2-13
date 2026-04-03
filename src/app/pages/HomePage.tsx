@@ -179,8 +179,7 @@ export function HomePage() {
               <PrimaryButton
                 to="/register"
                 variant="brand"
-                rounded="full"
-                className="px-7 py-3.5 text-[0.95rem] font-bold gap-2 hover:-translate-y-0.5 hover:opacity-90"
+                className="px-7 py-3.5 text-[0.95rem] gap-2 hover:-translate-y-0.5 hover:opacity-90"
               >
                 Try for free <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
               </PrimaryButton>
@@ -537,7 +536,7 @@ export function HomePage() {
                       <Link
                         to="/classes"
                         className="px-4 py-1.5 rounded-full text-sm transition-all hover:opacity-90"
-                        style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                        style={{ background: LIME, color: '#000000', fontWeight: 700 }}
                       >
                         Book Now
                       </Link>
@@ -632,7 +631,7 @@ export function HomePage() {
               <Link
                 to="/programmes"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:opacity-90 self-start"
-                style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                style={{ background: LIME, color: '#000000', fontWeight: 700 }}
               >
                 Explore Programmes <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
@@ -737,7 +736,7 @@ export function HomePage() {
                   style={
                     tier.popular
                       ? { background: '#111', color: LIME, fontWeight: 700 }
-                      : { background: LIME, color: '#111', fontWeight: 700 }
+                      : { background: LIME, color: '#000000', fontWeight: 700 }
                   }
                 >
                   Get Started
@@ -782,7 +781,7 @@ export function HomePage() {
                 <footer className="flex items-center gap-3">
                   <span
                     className="w-9 h-9 rounded-full flex items-center justify-center text-xs"
-                    style={{ background: LIME, color: '#111', fontWeight: 700 }}
+                    style={{ background: LIME, color: '#000000', fontWeight: 700 }}
                   >
                     {t.avatarInitials}
                   </span>
@@ -810,7 +809,7 @@ export function HomePage() {
             <Link
               to="/register"
               className="px-8 py-4 rounded-full transition-all hover:opacity-90 hover:-translate-y-0.5"
-              style={{ background: LIME, color: '#111', fontWeight: 700 }}
+              style={{ background: LIME, color: '#000000', fontWeight: 700 }}
             >
               Join KineticHub
             </Link>
